@@ -81,4 +81,27 @@ public class Format {
 		return encoding;
 	}
 
+	//
+	// OBJECT METHODS
+	//
+
+	@Override
+	public int hashCode() {
+		return (channels << 16) ^ frequency ^ encoding.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if ((object == null) || (getClass() != object.getClass())) {
+			return false;
+		}
+		Format format = (Format) object;
+		return (format.channels == channels) && (format.frequency == frequency) && format.encoding.equals(encoding());
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%d Channels, %d Hz, %s", channels, frequency, encoding);
+	}
+
 }
