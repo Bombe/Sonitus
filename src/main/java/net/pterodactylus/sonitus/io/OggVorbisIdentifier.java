@@ -79,7 +79,7 @@ public class OggVorbisIdentifier {
 			syncState.wrote(read);
 			switch (syncState.pageout(page)) {
 				case -1:
-					throw new IOException("Hole in Ogg data!");
+					throw new IdentifierException("Hole in Ogg data!");
 				case 1:
 					if (!streamStateInitialized) {
 						/* init stream state. */
@@ -90,11 +90,11 @@ public class OggVorbisIdentifier {
 						streamStateInitialized = true;
 					}
 					if (streamState.pagein(page) == -1) {
-						throw new IOException("Error parsing Ogg data!");
+						throw new IdentifierException("Error parsing Ogg data!");
 					}
 					switch (streamState.packetout(packet)) {
 						case -1:
-							throw new IOException("Error parsing Ogg data!");
+							throw new IdentifierException("Error parsing Ogg data!");
 						case 1:
 							info.synthesis_headerin(comment, packet);
 							packetsRead++;
