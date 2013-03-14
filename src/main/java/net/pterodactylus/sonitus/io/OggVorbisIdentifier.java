@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import net.pterodactylus.sonitus.data.Format;
 
+import com.google.common.base.Optional;
 import com.jcraft.jogg.Packet;
 import com.jcraft.jogg.Page;
 import com.jcraft.jogg.StreamState;
@@ -49,10 +50,13 @@ public class OggVorbisIdentifier {
 	 * Format} describing the stream.
 	 *
 	 * @param inputStream
-	 * @return
+	 * 		The input stream to identify as Ogg Vorbis
+	 * @return The identified format, or {@link com.google.common.base.Optional#absent()}
+	 *         if the stream could not be identified
 	 * @throws IOException
+	 * 		if an I/O error occurs
 	 */
-	public static Format identify(InputStream inputStream) throws IOException {
+	public static Optional<Format> identify(InputStream inputStream) throws IOException {
 
 		/* stuff needed to decode Ogg. */
 		Packet packet = new Packet();
@@ -79,7 +83,7 @@ public class OggVorbisIdentifier {
 			syncState.wrote(read);
 			switch (syncState.pageout(page)) {
 				case -1:
-					throw new IdentifierException("Hole in Ogg data!");
+					return Optional.absent();
 				case 1:
 					if (!streamStateInitialized) {
 						/* init stream state. */
@@ -90,11 +94,11 @@ public class OggVorbisIdentifier {
 						streamStateInitialized = true;
 					}
 					if (streamState.pagein(page) == -1) {
-						throw new IdentifierException("Error parsing Ogg data!");
+						return Optional.absent();
 					}
 					switch (streamState.packetout(packet)) {
 						case -1:
-							throw new IdentifierException("Error parsing Ogg data!");
+							return Optional.absent();
 						case 1:
 							info.synthesis_headerin(comment, packet);
 							packetsRead++;
@@ -109,7 +113,7 @@ public class OggVorbisIdentifier {
 			buffer = syncState.data;
 		}
 
-		return new Format(info.channels, info.rate, "Vorbis");
+		return Optional.of(new Format(info.channels, info.rate, "Vorbis"));
 	}
 
 }

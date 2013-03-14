@@ -83,11 +83,9 @@ public class IdentifyingInputStream extends FilterInputStream {
 		RememberingInputStream rememberingInputStream = new RememberingInputStream(inputStream);
 
 		/* try Ogg Vorbis first. */
-		try {
-			Format format = OggVorbisIdentifier.identify(rememberingInputStream);
-			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), format));
-		} catch (IdentifierException ie1) {
-			rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
+		Optional<Format> format = OggVorbisIdentifier.identify(rememberingInputStream);
+		if (format.isPresent()) {
+			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), format.get()));
 		}
 
 		return Optional.absent();
