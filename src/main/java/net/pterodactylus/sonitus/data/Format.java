@@ -50,6 +50,10 @@ public class Format {
 		this.encoding = encoding;
 	}
 
+	//
+	// ACCESSORS
+	//
+
 	/**
 	 * Returns the number of channels of this format.
 	 *
