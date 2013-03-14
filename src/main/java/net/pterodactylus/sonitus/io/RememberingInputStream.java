@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 
 /**
  * Wrapper around an {@link InputStream} that remembers all bytes that have been
@@ -51,12 +52,13 @@ public class RememberingInputStream extends FilterInputStream {
 	//
 
 	/**
-	 * Returns all remembered bytes as an {@link InputStream}.
+	 * Returns an input stream that repeats the originally wrapped stream,
+	 * including all bytes that have already been read.
 	 *
-	 * @return All remembered bytes
+	 * @return A new input stream with the original content
 	 */
 	public InputStream remembered() {
-		return new ByteArrayInputStream(rememberBuffer.toByteArray());
+		return new SequenceInputStream(new ByteArrayInputStream(rememberBuffer.toByteArray()), in);
 	}
 
 	//
