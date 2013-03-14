@@ -25,6 +25,15 @@ package net.pterodactylus.sonitus.data;
  */
 public class Format {
 
+	/** Constant for an unknown number of channels. */
+	public static final int UNKNOWN_CHANNELS = -1;
+
+	/** Constant for an unknown frequency. */
+	public static final int UNKNOWN_FREQUENCY = -1;
+
+	/** Constant for an unknown format. */
+	public static final String UNKNOWN_ENCODING = "UNKNOWN";
+
 	/** The number of channels of this format. */
 	private final int channels;
 
