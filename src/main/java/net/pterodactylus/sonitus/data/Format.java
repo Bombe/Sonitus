@@ -110,7 +110,7 @@ public class Format {
 
 	@Override
 	public String toString() {
-		return String.format("%d Channels, %d Hz, %s", channels, frequency, encoding);
+		return String.format("%d Channel%s, %d Hz, %s", channels, channels != 1 ? "s" : "", frequency, encoding);
 	}
 
 }
