@@ -22,26 +22,6 @@ package net.pterodactylus.sonitus.data;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface Filter {
-
-	/**
-	 * Returns whether this filter understands the given format.
-	 *
-	 * @param format
-	 * 		The format to check for
-	 * @return {@code true} if this filter understands the given format, {@code
-	 *         false} otherwise
-	 */
-	boolean understands(Format format);
-
-	/**
-	 * Returns whether this filter can produce the given format.
-	 *
-	 * @param format
-	 * 		The format to check for
-	 * @return {@code true} if this filter can produce the given format, {@code
-	 *         false} otherwise
-	 */
-	boolean produces(Format format);
+public interface Filter extends Source, Sink{
 
 }
