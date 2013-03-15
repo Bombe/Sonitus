@@ -91,6 +91,46 @@ public class Format {
 	}
 
 	//
+	// MUTATORS
+	//
+
+	/**
+	 * Returns a format with the same parameters as this format and the given
+	 * number of channels.
+	 *
+	 * @param channels
+	 * 		The new number of channels
+	 * @return A new format with the given number of channels
+	 */
+	public Format channels(int channels) {
+		return new Format(channels, frequency, encoding);
+	}
+
+	/**
+	 * Returns a new format with the same parameters as this format and the given
+	 * frequency.
+	 *
+	 * @param frequency
+	 * 		The new frequency
+	 * @return A new format with the given frequency
+	 */
+	public Format frequency(int frequency) {
+		return new Format(channels, frequency, encoding);
+	}
+
+	/**
+	 * Returns a new format with the same parameters as this format and the given
+	 * encoding.
+	 *
+	 * @param encoding
+	 * 		The new encoding
+	 * @return A new format with the given encoding
+	 */
+	public Format encoding(String encoding) {
+		return new Format(channels, frequency, encoding);
+	}
+
+	//
 	// OBJECT METHODS
 	//
 
