@@ -24,6 +24,7 @@ import java.io.InputStream;
 import net.pterodactylus.sonitus.data.Format;
 
 import com.google.common.base.Optional;
+import com.google.common.io.ByteStreams;
 
 /**
  * Wrapper around an {@link InputStream} that identifies the {@link Format} of
@@ -84,6 +85,14 @@ public class IdentifyingInputStream extends FilterInputStream {
 
 		/* try Ogg Vorbis first. */
 		Optional<Format> format = OggVorbisIdentifier.identify(rememberingInputStream);
+		if (format.isPresent()) {
+			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), format.get()));
+		}
+
+		/* try MP3 now. */
+		rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
+		InputStream limitedInputStream = ByteStreams.limit(rememberingInputStream, 1048576);
+		format = Mp3Identifier.identify(limitedInputStream);
 		if (format.isPresent()) {
 			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), format.get()));
 		}
