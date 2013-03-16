@@ -36,6 +36,13 @@ public interface Source {
 	Format format();
 
 	/**
+	 * Returns the metadata of this source.
+	 *
+	 * @return The metadata of this source
+	 */
+	Metadata metadata();
+
+	/**
 	 * Retrieves the given name of bytes from this source. The source should always
 	 * try to read as much data as was requested but is free to return a byte array
 	 * with less elements that requested. However, the byte array will always be

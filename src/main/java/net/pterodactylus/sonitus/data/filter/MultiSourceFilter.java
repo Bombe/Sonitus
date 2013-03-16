@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.ReusableSink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
@@ -68,6 +69,13 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	public Format format() {
 		synchronized (syncObject) {
 			return connection.source.format();
+		}
+	}
+
+	@Override
+	public Metadata metadata() {
+		synchronized (syncObject) {
+			return connection.source.metadata();
 		}
 	}
 

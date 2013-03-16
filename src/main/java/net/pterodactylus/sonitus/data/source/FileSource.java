@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.IdentifyingInputStream;
 
@@ -80,6 +81,11 @@ public class FileSource implements Source {
 	@Override
 	public Format format() {
 		return format;
+	}
+
+	@Override
+	public Metadata metadata() {
+		return new Metadata().name(path);
 	}
 
 	@Override

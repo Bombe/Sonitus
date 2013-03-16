@@ -30,6 +30,7 @@ import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Connection;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 
 import com.google.common.base.Preconditions;
@@ -71,6 +72,11 @@ public class RateLimitingFilter implements Filter {
 	@Override
 	public Format format() {
 		return source.format();
+	}
+
+	@Override
+	public Metadata metadata() {
+		return source.metadata();
 	}
 
 	@Override
