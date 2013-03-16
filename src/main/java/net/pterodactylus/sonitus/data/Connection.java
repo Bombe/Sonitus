@@ -58,6 +58,11 @@ public abstract class Connection implements Runnable {
 				break;
 			}
 		}
+		try {
+			finish();
+		} catch (IOException ioe1) {
+			/* well, what can we do? nothing. */
+		}
 	}
 
 	//
