@@ -22,6 +22,6 @@ package net.pterodactylus.sonitus.data;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface Filter extends Source, Sink{
+public interface Filter extends Source, Sink {
 
 }

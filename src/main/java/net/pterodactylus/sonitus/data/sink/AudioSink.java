@@ -32,8 +32,8 @@ import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 
 /**
- * {@link Sink} implementation that uses the JDK’s {@link javax.sound.sampled.AudioSystem} to play all {@link
- * net.pterodactylus.sonitus.data.Source}s.
+ * {@link Sink} implementation that uses the JDK’s {@link
+ * javax.sound.sampled.AudioSystem} to play all {@link net.pterodactylus.sonitus.data.Source}s.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -54,6 +54,7 @@ public class AudioSink implements Sink {
 			sourceDataLine.open(audioFormat);
 			sourceDataLine.start();
 			new Thread(new Connection(source) {
+
 				@Override
 				protected int bufferSize() {
 					return sourceFormat.channels() * sourceFormat.frequency() * 2;
@@ -70,8 +71,7 @@ public class AudioSink implements Sink {
 					sourceDataLine.stop();
 				}
 			}).start();
-		}
-		catch (LineUnavailableException lue1) {
+		} catch (LineUnavailableException lue1) {
 			throw new ConnectException(lue1);
 		}
 	}

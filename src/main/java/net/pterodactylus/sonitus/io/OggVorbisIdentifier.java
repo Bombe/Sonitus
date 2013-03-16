@@ -31,10 +31,8 @@ import com.jcraft.jorbis.Comment;
 import com.jcraft.jorbis.Info;
 
 /**
- * Identifies Ogg Vorbis files.
- * <p>
- * All knowledge used in this class has been taken from <a
- * href="http://www.jcraft.com/jorbis/tutorial/Tutorial.html">jcraft.com/jorbis/tutorial/Tutorial.html</a>.
+ * Identifies Ogg Vorbis files. <p> All knowledge used in this class has been
+ * taken from <a href="http://www.jcraft.com/jorbis/tutorial/Tutorial.html">jcraft.com/jorbis/tutorial/Tutorial.html</a>.
  * </p>
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
