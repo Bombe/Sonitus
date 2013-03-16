@@ -136,7 +136,7 @@ public class Format {
 
 	@Override
 	public int hashCode() {
-		return (channels << 16) ^ frequency ^ encoding.hashCode();
+		return (channels << 16) ^ frequency ^ encoding.toUpperCase().hashCode();
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class Format {
 			return false;
 		}
 		Format format = (Format) object;
-		return (format.channels == channels) && (format.frequency == frequency) && format.encoding.equals(encoding());
+		return (format.channels == channels) && (format.frequency == frequency) && format.encoding.equalsIgnoreCase(encoding());
 	}
 
 	@Override
