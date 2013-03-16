@@ -35,6 +35,9 @@ import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.ReusableSink;
 import net.pterodactylus.sonitus.data.Source;
 
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+
 /**
  * {@link ReusableSink} implementation that supports changing the source without
  * letting the {@link net.pterodactylus.sonitus.data.Sink} know.
@@ -49,11 +52,19 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	/** Object used for synchronization. */
 	private final Object syncObject = new Object();
 
+	/** The event bus. */
+	private final EventBus eventBus;
+
 	/** The connection. */
 	private Connection connection;
 
 	/** The format. */
 	private Format format;
+
+	@Inject
+	public MultiSourceFilter(EventBus eventBus) {
+		this.eventBus = eventBus;
+	}
 
 	@Override
 	public Format format() {
