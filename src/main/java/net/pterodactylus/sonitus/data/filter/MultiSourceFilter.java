@@ -144,10 +144,11 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 		 */
 		public Connection source(Source source) throws IOException {
 			synchronized (syncObject) {
-				if (this.source != null) {
-					eventBus.post(new SourceFinishedEvent(this.source));
-				}
+				Source oldSource = this.source;
 				this.source = source;
+				if (oldSource != null) {
+					eventBus.post(new SourceFinishedEvent(oldSource));
+				}
 				pipedInputStream = new PipedInputStream();
 				pipedOutputStream = new PipedOutputStream(pipedInputStream);
 				syncObject.notifyAll();
