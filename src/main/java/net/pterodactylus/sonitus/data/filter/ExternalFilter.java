@@ -49,8 +49,8 @@ public abstract class ExternalFilter implements Filter {
 	/** The logger. */
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
-	/** The format of the source. */
-	private Format format;
+	/** The source. */
+	private Source source;
 
 	/** The input stream that will hold the converted source. */
 	private PipedInputStream pipedInputStream;
@@ -61,7 +61,7 @@ public abstract class ExternalFilter implements Filter {
 
 	@Override
 	public Format format() {
-		return format;
+		return source.format();
 	}
 
 	@Override
@@ -78,9 +78,9 @@ public abstract class ExternalFilter implements Filter {
 	public void connect(Source source) throws ConnectException {
 		Preconditions.checkNotNull(source, "source must not be null");
 
-		format = source.format();
+		this.source = source;
 		try {
-			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(format)).addAll(parameters(format)).build(), String.class));
+			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(source.format())).addAll(parameters(source.format())).build(), String.class));
 			final InputStream processOutput = process.getInputStream();
 			final OutputStream processInput = process.getOutputStream();
 			final InputStream processError = process.getErrorStream();

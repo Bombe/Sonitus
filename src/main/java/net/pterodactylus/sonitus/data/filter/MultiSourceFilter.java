@@ -59,9 +59,6 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	/** The connection. */
 	private Connection connection;
 
-	/** The format. */
-	private Format format;
-
 	@Inject
 	public MultiSourceFilter(EventBus eventBus) {
 		this.eventBus = eventBus;
@@ -69,7 +66,9 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 
 	@Override
 	public Format format() {
-		return format;
+		synchronized (syncObject) {
+			return connection.source.format();
+		}
 	}
 
 	@Override
@@ -86,10 +85,8 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	@Override
 	public void connect(Source source) throws ConnectException {
 		checkNotNull(source, "source must not be null");
-		if (format != null) {
-			checkArgument(format.equals(source.format()), "source’s format must equal this sink’s format");
-		} else {
-			format = source.format();
+		if ((connection != null) && (connection.source != null)) {
+			checkArgument(connection.source.format().equals(source.format()), "source’s format must equal this sink’s format");
 		}
 
 		if (connection == null) {

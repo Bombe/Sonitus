@@ -49,7 +49,7 @@ public class RateLimitingFilter implements Filter {
 	private final int rate;
 
 	/** The source’s format. */
-	private Format format;
+	private Source source;
 
 	/** The input stream to read from. */
 	private PipedInputStream pipedInputStream = new PipedInputStream();
@@ -70,7 +70,7 @@ public class RateLimitingFilter implements Filter {
 
 	@Override
 	public Format format() {
-		return format;
+		return source.format();
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class RateLimitingFilter implements Filter {
 	public void connect(Source source) throws ConnectException {
 		Preconditions.checkNotNull(source, "source must not be null");
 
-		format = source.format();
+		this.source = source;
 		final long start = System.currentTimeMillis();
 		try {
 			pipedInputStream = new PipedInputStream();
