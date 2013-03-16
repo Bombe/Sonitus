@@ -102,7 +102,7 @@ public abstract class ExternalFilter implements Filter {
 					} catch (IOException ioe1) {
 						/* okay, just exit. */
 					}
-					logger.finest("ExternalFilter: Reading stdout finished.");
+					logger.finest("Reading stdout finished.");
 				}
 			}).start();
 			new Thread(new Connection(source) {
