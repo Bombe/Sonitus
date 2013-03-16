@@ -115,6 +115,7 @@ public abstract class ExternalFilter implements Filter {
 				@Override
 				protected void feed(byte[] buffer) throws IOException {
 					processInput.write(buffer);
+					processInput.flush();
 				}
 
 				@Override
