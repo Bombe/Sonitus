@@ -135,9 +135,11 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 			while (true) {
 				/* wait for source to be set. */
 				OutputStream outputStream;
+				Source source;
 				logger.finest("Entering synchronized block...");
 				synchronized (syncObject) {
 					logger.finest("Entered synchronized block.");
+					source = this.source;
 					while (source == null) {
 						try {
 							logger.finest("Waiting for source to connect...");
@@ -145,6 +147,7 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 						} catch (InterruptedException ie1) {
 							/* ignore, keep waiting. */
 						}
+						source = this.source;
 					}
 					outputStream = pipedOutputStream;
 				}
