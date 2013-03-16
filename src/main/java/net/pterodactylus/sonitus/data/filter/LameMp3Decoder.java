@@ -17,6 +17,8 @@
 
 package net.pterodactylus.sonitus.data.filter;
 
+import net.pterodactylus.sonitus.data.Format;
+
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -25,6 +27,12 @@ import com.google.common.collect.ImmutableList;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class LameMp3Decoder extends ExternalMp3Decoder {
+
+	/** The location of the binary. */
+	private final String binary;
+
+	/** Whether to swap bytes in the decoded output. */
+	private final boolean swapBytes;
 
 	/**
 	 * Creates a new LAME MP3 decoder.
@@ -36,22 +44,21 @@ public class LameMp3Decoder extends ExternalMp3Decoder {
 	 * 		endianness
 	 */
 	public LameMp3Decoder(String binary, boolean swapBytes) {
-		super(binary, generateParameters(swapBytes));
+		this.binary = binary;
+		this.swapBytes = swapBytes;
 	}
 
 	//
-	// STATIC METHODS
+	// EXTERNALFILTER METHODS
 	//
 
-	/**
-	 * Generates the parameters for LAME.
-	 *
-	 * @param swapBytes
-	 * 		{@code true} to swap the decoded bytes, {@code false} to use platform
-	 * 		endianness
-	 * @return The parameters for LAME
-	 */
-	private static Iterable<String> generateParameters(boolean swapBytes) {
+	@Override
+	protected String binary(Format format) {
+		return binary;
+	}
+
+	@Override
+	protected Iterable<String> parameters(Format format) {
 		ImmutableList.Builder parameters = ImmutableList.builder();
 		parameters.add("--mp3input").add("--decode").add("-t");
 		if (swapBytes) {

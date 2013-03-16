@@ -48,30 +48,11 @@ public abstract class ExternalFilter implements Filter {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(ExternalFilter.class.getName());
 
-	/** The binary to execute. */
-	private final String binary;
-
-	/** The parameters for the binary. */
-	private final Iterable<String> parameters;
-
 	/** The format of the source. */
 	private Format format;
 
 	/** The input stream that will hold the converted source. */
 	private PipedInputStream pipedInputStream;
-
-	/**
-	 * Creates a new external filter.
-	 *
-	 * @param binary
-	 * 		The binary to execute
-	 * @param parameters
-	 * 		The parameter for the binary
-	 */
-	public ExternalFilter(String binary, Iterable<String> parameters) {
-		this.binary = binary;
-		this.parameters = parameters;
-	}
 
 	//
 	// FILTER METHODS
@@ -94,7 +75,7 @@ public abstract class ExternalFilter implements Filter {
 
 		format = source.format();
 		try {
-			Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary).addAll(parameters).build(), String.class));
+			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(format)).addAll(parameters(format)).build(), String.class));
 			final InputStream processOutput = process.getInputStream();
 			final OutputStream processInput = process.getOutputStream();
 			final InputStream processError = process.getErrorStream();
@@ -140,6 +121,28 @@ public abstract class ExternalFilter implements Filter {
 
 		}
 	}
+
+	//
+	// SUBCLASS METHODS
+	//
+
+	/**
+	 * Returns the location of the binary to execute.
+	 *
+	 * @param format
+	 * 		The format being processed
+	 * @return The location of the binary to execute
+	 */
+	protected abstract String binary(Format format);
+
+	/**
+	 * Returns the parameters for the binary.
+	 *
+	 * @param format
+	 * 		The format being processed
+	 * @return The parameters for the binary
+	 */
+	protected abstract Iterable<String> parameters(Format format);
 
 	//
 	// STATIC METHODS

@@ -29,19 +29,7 @@ import net.pterodactylus.sonitus.data.Source;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class ExternalMp3Decoder extends ExternalFilter {
-
-	/**
-	 * Creates a new external MP3 decoder.
-	 *
-	 * @param binary
-	 * 		The binary to execute
-	 * @param parameters
-	 * 		The parameters for the binary
-	 */
-	public ExternalMp3Decoder(String binary, Iterable<String> parameters) {
-		super(binary, parameters);
-	}
+public abstract class ExternalMp3Decoder extends ExternalFilter {
 
 	@Override
 	public Format format() {
