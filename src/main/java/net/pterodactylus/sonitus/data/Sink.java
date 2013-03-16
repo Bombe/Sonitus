@@ -36,4 +36,7 @@ public interface Sink {
 	 */
 	void connect(Source source) throws ConnectException;
 
+	/** Notifies the sink that a source has updated its metadata. */
+	void metadataUpdated();
+
 }

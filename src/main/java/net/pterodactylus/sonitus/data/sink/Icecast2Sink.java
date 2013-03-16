@@ -157,6 +157,10 @@ public class Icecast2Sink implements Sink {
 		}
 	}
 
+	@Override
+	public void metadataUpdated() {
+	}
+
 	//
 	// PRIVATE METHODS
 	//

@@ -108,6 +108,11 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 		}
 	}
 
+	@Override
+	public void metadataUpdated() {
+		/* ignore. */
+	}
+
 	/**
 	 * The connection feeds the input from the currently connected source to the
 	 * input stream that {@link #get(int)} will get its data from.

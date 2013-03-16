@@ -133,4 +133,9 @@ public class RateLimitingFilter implements Filter {
 		}
 	}
 
+	@Override
+	public void metadataUpdated() {
+		/* ignore. */
+	}
+
 }

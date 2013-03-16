@@ -130,6 +130,11 @@ public abstract class ExternalFilter implements Filter {
 		}
 	}
 
+	@Override
+	public void metadataUpdated() {
+		/* ignore. */
+	}
+
 	//
 	// SUBCLASS METHODS
 	//

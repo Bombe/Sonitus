@@ -81,4 +81,9 @@ public class FileSink implements Sink {
 		}
 	}
 
+	@Override
+	public void metadataUpdated() {
+		/* ignore. */
+	}
+
 }

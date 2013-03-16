@@ -76,4 +76,9 @@ public class AudioSink implements Sink {
 		}
 	}
 
+	@Override
+	public void metadataUpdated() {
+		/* ignore. */
+	}
+
 }
