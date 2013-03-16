@@ -57,6 +57,7 @@ public abstract class ExternalFilter implements Filter {
 
 	//
 	// FILTER METHODS
+	//
 
 	@Override
 	public Format format() {
