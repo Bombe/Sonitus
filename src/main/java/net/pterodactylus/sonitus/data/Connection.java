@@ -55,7 +55,7 @@ public abstract class Connection implements Runnable {
 				byte[] buffer = source.get(bufferSize());
 				feed(buffer);
 			} catch (IOException e) {
-				return;
+				break;
 			}
 		}
 	}
