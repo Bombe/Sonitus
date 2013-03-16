@@ -64,6 +64,11 @@ public class AudioSink implements Sink {
 					sourceDataLine.write(buffer, 0, buffer.length);
 					logger.finest(String.format("AudioSink: Wrote %d Bytes.", buffer.length));
 				}
+
+				@Override
+				protected void finish() {
+					sourceDataLine.stop();
+				}
 			}).start();
 		}
 		catch (LineUnavailableException lue1) {

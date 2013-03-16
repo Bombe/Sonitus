@@ -116,6 +116,11 @@ public abstract class ExternalFilter implements Filter {
 				protected void feed(byte[] buffer) throws IOException {
 					processInput.write(buffer);
 				}
+
+				@Override
+				protected void finish() throws IOException {
+					processInput.close();
+				}
 			}).start();
 		} catch (IOException ioe1) {
 

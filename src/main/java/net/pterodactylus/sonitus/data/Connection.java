@@ -82,4 +82,12 @@ public abstract class Connection implements Runnable {
 	 */
 	protected abstract void feed(byte[] buffer) throws IOException;
 
+	/**
+	 * Notifies the sink that the source does not deliver any more data.
+	 *
+	 * @throws IOException
+	 * 		if an I/O error occurs
+	 */
+	protected abstract void finish() throws IOException;
+
 }
