@@ -60,6 +60,9 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	/** The bitrate to encode to. */
 	private final Optional<Integer> bitrate;
 
+	/** Whether to use highest quality encoding. */
+	private boolean hq = false;
+
 	/**
 	 * Creates a new LAME MP3 encoder.
 	 *
@@ -110,6 +113,18 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 		this.bitrate = (bitrate < 0) ? Optional.<Integer>absent() : Optional.<Integer>of(bitrate);
 	}
 
+	/**
+	 * Sets whether to use highest quality encoding.
+	 *
+	 * @param hq
+	 * 		{@code true} to use highest quality encoding, {@code false} otherwise
+	 * @return This MP3 encoder
+	 */
+	public LameMp3Encoder hq(boolean hq) {
+		this.hq = hq;
+		return this;
+	}
+
 	//
 	// EXTERNALFILTER METHODS
 	//
@@ -138,7 +153,9 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 			parameters.add(String.valueOf(bitrate.get()));
 		}
 		parameters.add("-p");
-		parameters.add("-q").add("0");
+		if (hq) {
+			parameters.add("-q").add("0");
+		}
 		parameters.add("-").add("-");
 		return parameters.build();
 	}
