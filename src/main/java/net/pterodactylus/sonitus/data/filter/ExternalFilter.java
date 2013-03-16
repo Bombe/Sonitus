@@ -46,7 +46,7 @@ import com.google.common.io.ByteStreams;
 public abstract class ExternalFilter implements Filter {
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger(ExternalFilter.class.getName());
+	private final Logger logger = Logger.getLogger(getClass().getName());
 
 	/** The format of the source. */
 	private Format format;
