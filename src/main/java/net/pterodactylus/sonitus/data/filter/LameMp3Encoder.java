@@ -52,7 +52,7 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	private final String binary;
 
 	/** Whether to swap bytes in the input. */
-	private final boolean swapBytes;
+	private boolean swapBytes;
 
 	/** The preset to use. */
 	private final Optional<Preset> preset;
@@ -68,14 +68,11 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	 *
 	 * @param binary
 	 * 		The location of the binary
-	 * @param swapBytes
-	 * 		{@code true} to swap bytes in the input, {@code false} to use platform
-	 * 		endianness
 	 * @param preset
 	 * 		The preset to use
 	 */
-	public LameMp3Encoder(String binary, boolean swapBytes, Preset preset) {
-		this(binary, swapBytes, preset, -1);
+	public LameMp3Encoder(String binary, Preset preset) {
+		this(binary, preset, -1);
 	}
 
 	/**
@@ -83,14 +80,11 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	 *
 	 * @param binary
 	 * 		The location of the binary
-	 * @param swapBytes
-	 * 		{@code true} to swap bytes in the input, {@code false} to use platform
-	 * 		endianness
 	 * @param bitrate
 	 * 		The bitrate to encode to (in kbps)
 	 */
-	public LameMp3Encoder(String binary, boolean swapBytes, int bitrate) {
-		this(binary, swapBytes, null, bitrate);
+	public LameMp3Encoder(String binary, int bitrate) {
+		this(binary, null, bitrate);
 	}
 
 	/**
@@ -98,19 +92,28 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	 *
 	 * @param binary
 	 * 		The location of the binary
-	 * @param swapBytes
-	 * 		{@code true} to swap bytes in the input, {@code false} to use platform
-	 * 		endianness
 	 * @param preset
 	 * 		The preset to use
 	 * @param bitrate
 	 * 		The bitrate to encode to (in kbps)
 	 */
-	private LameMp3Encoder(String binary, boolean swapBytes, Preset preset, int bitrate) {
+	private LameMp3Encoder(String binary, Preset preset, int bitrate) {
 		this.binary = binary;
-		this.swapBytes = swapBytes;
 		this.preset = Optional.fromNullable(preset);
 		this.bitrate = (bitrate < 0) ? Optional.<Integer>absent() : Optional.<Integer>of(bitrate);
+	}
+
+	/**
+	 * Sets whether to swap bytes on the input to encode
+	 *
+	 * @param swapBytes
+	 * 		{@code true} to swap the input bytes, {@code false} to use platform
+	 * 		endianness
+	 * @return This MP3 encoder
+	 */
+	public LameMp3Encoder swapBytes(boolean swapBytes) {
+		this.swapBytes = swapBytes;
+		return this;
 	}
 
 	/**

@@ -32,20 +32,29 @@ public class LameMp3Decoder extends ExternalMp3Decoder {
 	private final String binary;
 
 	/** Whether to swap bytes in the decoded output. */
-	private final boolean swapBytes;
+	private boolean swapBytes;
 
 	/**
 	 * Creates a new LAME MP3 decoder.
 	 *
 	 * @param binary
 	 * 		The location of the binary
+	 */
+	public LameMp3Decoder(String binary) {
+		this.binary = binary;
+	}
+
+	/**
+	 * Sets whether to swap bytes on the decoded output.
+	 *
 	 * @param swapBytes
 	 * 		{@code true} to swap the decoded bytes, {@code false} to use platform
 	 * 		endianness
+	 * @return This MP3 decoder
 	 */
-	public LameMp3Decoder(String binary, boolean swapBytes) {
-		this.binary = binary;
+	public LameMp3Decoder swapBytes(boolean swapBytes) {
 		this.swapBytes = swapBytes;
+		return this;
 	}
 
 	//
