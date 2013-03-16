@@ -18,6 +18,8 @@
 package net.pterodactylus.sonitus.data;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A connection reads bytes from a {@link Source} and feeds it to a sink. This
@@ -30,6 +32,9 @@ import java.io.IOException;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public abstract class Connection implements Runnable {
+
+	/** The logger. */
+	private static final Logger logger = Logger.getLogger(Connection.class.getName());
 
 	/** The source to consume. */
 	private final Source source;
@@ -55,10 +60,12 @@ public abstract class Connection implements Runnable {
 				byte[] buffer = source.get(bufferSize());
 				feed(buffer);
 			} catch (IOException ioe1) {
+				logger.log(Level.WARNING, "Sink died!", ioe1);
 				break;
 			}
 		}
 		try {
+			logger.info("Connection finished.");
 			finish();
 		} catch (IOException ioe1) {
 			/* well, what can we do? nothing. */
