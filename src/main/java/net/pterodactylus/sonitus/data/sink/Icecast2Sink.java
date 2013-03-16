@@ -199,16 +199,17 @@ public class Icecast2Sink implements Sink {
 	 * @return The MIME type of the format
 	 */
 	private static String getContentType(Format format) {
-		switch (format.encoding().toUpperCase()) {
-			case "VORBIS":
-				return "audio/ogg";
-			case "MP3":
-				return "audio/mpeg";
-			case "PCM":
-				return "audio/vnd.wave";
-			default:
-				return "application/octet-stream";
+		String encoding = format.encoding();
+		if ("Vorbis".equalsIgnoreCase(encoding)) {
+			return "audio/ogg";
 		}
+		if ("MP3".equalsIgnoreCase(encoding)) {
+			return "audio/mpeg";
+		}
+		if ("PCM".equalsIgnoreCase(encoding)) {
+			return "audio/vnd.wave";
+		}
+		return "application/octet-stream";
 	}
 
 }
