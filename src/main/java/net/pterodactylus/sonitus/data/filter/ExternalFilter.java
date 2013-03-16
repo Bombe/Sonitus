@@ -67,6 +67,9 @@ public abstract class ExternalFilter implements Filter {
 	public byte[] get(int bufferSize) throws EOFException, IOException {
 		byte[] buffer = new byte[bufferSize];
 		int read = pipedInputStream.read(buffer);
+		if (read == -1) {
+			throw new EOFException();
+		}
 		return Arrays.copyOf(buffer, read);
 	}
 
