@@ -24,15 +24,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Connection;
 import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.Closeables;
 
@@ -70,6 +78,9 @@ public class Icecast2Sink implements Sink {
 
 	/** Whether to publish the server. */
 	private final boolean publishServer;
+
+	/** The connected source. */
+	private Source source;
 
 	/**
 	 * Creates a new Icecast2 sink.
@@ -111,6 +122,7 @@ public class Icecast2Sink implements Sink {
 	public void connect(Source source) throws ConnectException {
 		checkNotNull(source, "source must not be null");
 
+		this.source = source;
 		try {
 			logger.info(String.format("Icecast2Sink: Connecting to %s:%d...", server, port));
 			final Socket socket = new Socket(server, port);
@@ -152,6 +164,8 @@ public class Icecast2Sink implements Sink {
 					Closeables.close(socket, true);
 				}
 			}).start();
+
+			metadataUpdated();
 		} catch (IOException ioe1) {
 			throw new ConnectException(ioe1);
 		}
@@ -159,6 +173,39 @@ public class Icecast2Sink implements Sink {
 
 	@Override
 	public void metadataUpdated() {
+		Metadata metadata = source.metadata();
+		String metadataString = String.format("%s (%s)", Joiner.on(" - ").skipNulls().join(FluentIterable.from(Arrays.asList(metadata.artist(), metadata.name())).transform(new Function<Optional<String>, Object>() {
+
+			@Override
+			public Object apply(Optional<String> input) {
+				return input.orNull();
+			}
+		})), "Sonitus");
+		logger.info(String.format("Updating metadata to %s", metadataString));
+
+		Socket socket = null;
+		OutputStream socketOutputStream = null;
+		try {
+			socket = new Socket(server, port);
+			socketOutputStream = socket.getOutputStream();
+
+			sendLine(socketOutputStream, String.format("GET /admin/metadata?pass=%s&mode=updinfo&mount=/%s&song=%s HTTP/1.0", password, mountPoint, URLEncoder.encode(metadataString, "UTF-8")));
+			sendLine(socketOutputStream, String.format("Authorization: Basic %s", generatePassword(password)));
+			sendLine(socketOutputStream, String.format("User-Agent: Mozilla/Sonitus"));
+			sendLine(socketOutputStream, "");
+			socketOutputStream.flush();
+
+			new InputStreamDrainer(socket.getInputStream()).run();
+		} catch (IOException ioe1) {
+			logger.log(Level.WARNING, "Could not update metadata!", ioe1);
+		} finally {
+			try {
+				Closeables.close(socketOutputStream, true);
+				Closeables.close(socket, true);
+			} catch (IOException ioe1) {
+				/* ignore, will not happen. */
+			}
+		}
 	}
 
 	//
