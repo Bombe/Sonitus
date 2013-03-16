@@ -34,6 +34,7 @@ import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.ReusableSink;
 import net.pterodactylus.sonitus.data.Source;
+import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -133,6 +134,9 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 		 */
 		public Connection source(Source source) throws IOException {
 			synchronized (syncObject) {
+				if (this.source != null) {
+					eventBus.post(new SourceFinishedEvent(this.source));
+				}
 				this.source = source;
 				pipedInputStream = new PipedInputStream();
 				pipedOutputStream = new PipedOutputStream(pipedInputStream);
