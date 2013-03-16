@@ -120,6 +120,8 @@ public abstract class ExternalFilter implements Filter {
 				@Override
 				protected void finish() throws IOException {
 					processInput.close();
+					processOutput.close();
+					processError.close();
 				}
 			}).start();
 		} catch (IOException ioe1) {
