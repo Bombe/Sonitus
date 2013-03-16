@@ -31,6 +31,7 @@ import net.pterodactylus.sonitus.data.Connection;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.Source;
+import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -81,18 +82,7 @@ public abstract class ExternalFilter implements Filter {
 			final InputStream processError = process.getErrorStream();
 			final PipedOutputStream pipedOutputStream = new PipedOutputStream();
 			pipedInputStream = new PipedInputStream(pipedOutputStream);
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						drainInputStream(processError);
-					} catch (IOException ioe1) {
-						/* ignore, just let the thread exit. */
-					}
-					logger.finest("ExternalFilter: Reading stderr finished.");
-				}
-			}).start();
+			new Thread(new InputStreamDrainer(processError)).start();
 			new Thread(new Runnable() {
 
 				@Override
@@ -151,18 +141,5 @@ public abstract class ExternalFilter implements Filter {
 	 * @return The parameters for the binary
 	 */
 	protected abstract Iterable<String> parameters(Format format);
-
-	//
-	// STATIC METHODS
-	//
-
-	private static void drainInputStream(InputStream inputStream) throws IOException {
-		byte[] buffer = new byte[4096];
-		int read;
-		while ((read = inputStream.read(buffer)) != -1) {
-			logger.finest(String.format("ExternalFilter: Drained %d Bytes.", read));
-			/* do nothing, just read the damn thing. */
-		}
-	}
 
 }
