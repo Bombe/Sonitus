@@ -115,7 +115,39 @@ public class OggVorbisIdentifier {
 			buffer = syncState.data;
 		}
 
-		return Optional.of(new Metadata(info.channels, info.rate, "Vorbis"));
+		Metadata metadata = new Metadata(info.channels, info.rate, "Vorbis");
+		for (int c = 0; c < comment.comments; ++c) {
+			String field = comment.getComment(c);
+			Optional<String> extractedField = extractField(field, "ARTIST");
+			if (extractedField.isPresent()) {
+				metadata = metadata.artist(extractedField.get());
+				continue;
+			}
+			extractedField = extractField(field, "TITLE");
+			if (extractedField.isPresent()) {
+				metadata = metadata.name(extractedField.get());
+				continue;
+			}
+		}
+		return Optional.of(metadata);
+	}
+
+	/**
+	 * Extracts the content of the field from the comment if the comment contains
+	 * the given field.
+	 *
+	 * @param comment
+	 * 		The comment to extract the value from
+	 * @param fieldName
+	 * 		The name of the field to extract
+	 * @return The extracted field, or {@link Optional#absent()} if the comment
+	 *         does not contain the given field
+	 */
+	private static Optional<String> extractField(String comment, String fieldName) {
+		if (comment.startsWith(fieldName + "=")) {
+			return Optional.of(comment.substring(fieldName.length() + 1));
+		}
+		return Optional.absent();
 	}
 
 }
