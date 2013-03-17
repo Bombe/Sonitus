@@ -123,9 +123,9 @@ public class Icecast2Sink implements Sink {
 
 		this.source = source;
 		try {
-			logger.info(String.format("Icecast2Sink: Connecting to %s:%d...", server, port));
+			logger.info(String.format("Connecting to %s:%d...", server, port));
 			final Socket socket = new Socket(server, port);
-			logger.info("Icecast2Sink: Connected.");
+			logger.info("Connected.");
 			final OutputStream socketOutputStream = socket.getOutputStream();
 			final InputStream socketInputStream = socket.getInputStream();
 
