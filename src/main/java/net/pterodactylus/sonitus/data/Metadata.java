@@ -160,7 +160,7 @@ public class Metadata {
 	 * @return New metadata with a changed artist
 	 */
 	public Metadata artist(String artist) {
-		return new Metadata(channels, frequency, encoding, artist, this.artist.orNull());
+		return new Metadata(channels, frequency, encoding, artist, name.orNull());
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class Metadata {
 	 * @return New metadata with a changed name
 	 */
 	public Metadata name(String name) {
-		return new Metadata(channels, frequency, encoding, name, this.name.orNull());
+		return new Metadata(channels, frequency, encoding, artist.orNull(), name);
 	}
 
 	//
