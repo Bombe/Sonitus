@@ -69,7 +69,7 @@ public class FileSource implements Source {
 			metadata = identifyingInputStream.get().metadata();
 		} else {
 			/* fallback. */
-			metadata = new Metadata(UNKNOWN_CHANNELS, UNKNOWN_FREQUENCY, UNKNOWN_ENCODING);
+			metadata = new Metadata(UNKNOWN_CHANNELS, UNKNOWN_FREQUENCY, UNKNOWN_ENCODING).name(path);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class FileSource implements Source {
 
 	@Override
 	public Metadata metadata() {
-		return metadata.name(path);
+		return metadata;
 	}
 
 	@Override
