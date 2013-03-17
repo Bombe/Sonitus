@@ -26,6 +26,8 @@ import com.google.common.base.Optional;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Header;
+import org.blinkenlights.jid3.ID3Exception;
+import org.blinkenlights.jid3.v2.ID3V2Tag;
 
 /**
  * Identifies MP3 files.
@@ -46,12 +48,25 @@ public class Mp3Identifier {
 	 */
 	public static Optional<Metadata> identify(InputStream inputStream) throws IOException {
 		Bitstream bitstream = new Bitstream(inputStream);
+		Optional<ID3V2Tag> id3v2Tag = Optional.absent();
+		try {
+			InputStream id3v2Stream = bitstream.getRawID3v2();
+			id3v2Stream.read(new byte[3]);
+			id3v2Tag = Optional.fromNullable(ID3V2Tag.read(id3v2Stream));
+		} catch (ID3Exception id3e1) {
+			/* ID3v2 tag could not be parsed, don’t cry about it. */
+		}
 		try {
 			Header frame = bitstream.readFrame();
 			if (frame == null) {
 				return Optional.absent();
 			}
-			return Optional.of(new Metadata(frame.mode() == Header.SINGLE_CHANNEL ? 1 : 2, frame.frequency(), "MP3"));
+			Metadata metadata = new Metadata(frame.mode() == Header.SINGLE_CHANNEL ? 1 : 2, frame.frequency(), "MP3");
+			if (id3v2Tag.isPresent()) {
+				metadata = metadata.artist(id3v2Tag.get().getArtist());
+				metadata = metadata.name(id3v2Tag.get().getTitle());
+			}
+			return Optional.of(metadata);
 		} catch (BitstreamException be1) {
 			return Optional.absent();
 		}
