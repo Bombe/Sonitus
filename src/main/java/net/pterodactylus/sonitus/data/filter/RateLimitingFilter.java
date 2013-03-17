@@ -42,8 +42,14 @@ public class RateLimitingFilter implements Filter {
 	/** The limiting rate in bytes/second. */
 	private final int rate;
 
+	/** The fast start time. */
+	private final long fastStartTime;
+
 	/** The source. */
 	private Source source;
+
+	/** The remaining fast start time. */
+	private long remainingFastStartTime;
 
 	/**
 	 * Creates a new rate limiting filter.
@@ -52,7 +58,22 @@ public class RateLimitingFilter implements Filter {
 	 * 		The limiting rate (in bytes/second)
 	 */
 	public RateLimitingFilter(int rate) {
+		this(rate, 0);
+	}
+
+	/**
+	 * Creates a new rate limiting filter.
+	 *
+	 * @param rate
+	 * 		The limiting rate (in bytes/second)
+	 * @param fastStartTime
+	 * 		The amount of time at the start of the filtering during which no delay
+	 * 		will occur (in milliseconds)
+	 */
+	public RateLimitingFilter(int rate, long fastStartTime) {
 		this.rate = rate;
+		this.fastStartTime = fastStartTime;
+		remainingFastStartTime = fastStartTime;
 	}
 
 	//
@@ -70,7 +91,8 @@ public class RateLimitingFilter implements Filter {
 		byte[] buffer = source.get(bufferSize);
 		/* delay. */
 		long waitTime = 1000 * buffer.length / rate;
-		while ((System.currentTimeMillis() - now) < waitTime) {
+		remainingFastStartTime = Math.max(remainingFastStartTime - waitTime, 0);
+		while ((remainingFastStartTime == 0) && (System.currentTimeMillis() - now) < waitTime) {
 			try {
 				long limitDelay = waitTime - (System.currentTimeMillis() - now);
 				logger.finest(String.format("Waiting %d ms...", limitDelay));
