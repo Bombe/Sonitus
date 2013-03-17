@@ -160,7 +160,9 @@ public class Icecast2Sink implements Sink {
 				@Override
 				protected void finish() throws IOException {
 					Closeables.close(socketOutputStream, true);
-					Closeables.close(socket, true);
+					if (socket != null) {
+						socket.close();
+					}
 				}
 			}).start();
 
@@ -200,9 +202,11 @@ public class Icecast2Sink implements Sink {
 		} finally {
 			try {
 				Closeables.close(socketOutputStream, true);
-				Closeables.close(socket, true);
+				if (socket != null) {
+					socket.close();
+				}
 			} catch (IOException ioe1) {
-				/* ignore, will not happen. */
+				/* ignore. */
 			}
 		}
 	}
