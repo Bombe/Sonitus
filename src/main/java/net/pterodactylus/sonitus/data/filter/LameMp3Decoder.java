@@ -68,7 +68,7 @@ public class LameMp3Decoder extends ExternalMp3Decoder {
 
 	@Override
 	protected Iterable<String> parameters(Metadata metadata) {
-		ImmutableList.Builder parameters = ImmutableList.builder();
+		ImmutableList.Builder<String> parameters = ImmutableList.builder();
 		parameters.add("--mp3input").add("--decode").add("-t");
 		if (swapBytes) {
 			parameters.add("-x");

@@ -88,7 +88,7 @@ public class OggVorbisDecoder extends ExternalFilter {
 
 	@Override
 	protected Iterable<String> parameters(Metadata metadata) {
-		ImmutableList.Builder parameters = ImmutableList.builder();
+		ImmutableList.Builder<String> parameters = ImmutableList.builder();
 		parameters.add("-R");
 		if (swapBytes) {
 			parameters.add("-e").add("1");

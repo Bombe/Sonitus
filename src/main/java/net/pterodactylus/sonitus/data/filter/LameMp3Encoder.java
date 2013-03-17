@@ -139,7 +139,7 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 
 	@Override
 	protected Iterable<String> parameters(Metadata metadata) {
-		ImmutableList.Builder parameters = ImmutableList.builder();
+		ImmutableList.Builder<String> parameters = ImmutableList.builder();
 		parameters.add("-r");
 		parameters.add("-s").add(String.valueOf(metadata.frequency() / 1000.0));
 		if (swapBytes) {
