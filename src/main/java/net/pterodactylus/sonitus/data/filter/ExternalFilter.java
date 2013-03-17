@@ -21,7 +21,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -36,7 +35,6 @@ import net.pterodactylus.sonitus.io.InputStreamDrainer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.io.ByteStreams;
 
 /**
  * {@link Filter} implementation that runs its {@link Source} through an
@@ -52,8 +50,7 @@ public abstract class ExternalFilter implements Filter {
 	/** The source. */
 	private Source source;
 
-	/** The input stream that will hold the converted source. */
-	private PipedInputStream pipedInputStream;
+	private InputStream processInputStream;
 
 	//
 	// FILTER METHODS
@@ -67,7 +64,7 @@ public abstract class ExternalFilter implements Filter {
 	@Override
 	public byte[] get(int bufferSize) throws EOFException, IOException {
 		byte[] buffer = new byte[bufferSize];
-		int read = pipedInputStream.read(buffer);
+		int read = processInputStream.read(buffer);
 		if (read == -1) {
 			throw new EOFException();
 		}
@@ -81,24 +78,11 @@ public abstract class ExternalFilter implements Filter {
 		this.source = source;
 		try {
 			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(source.metadata())).addAll(parameters(source.metadata())).build(), String.class));
-			final InputStream processOutput = process.getInputStream();
+			processInputStream = process.getInputStream();
 			final OutputStream processInput = process.getOutputStream();
 			final InputStream processError = process.getErrorStream();
 			final PipedOutputStream pipedOutputStream = new PipedOutputStream();
-			pipedInputStream = new PipedInputStream(pipedOutputStream);
 			new Thread(new InputStreamDrainer(processError)).start();
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						ByteStreams.copy(processOutput, pipedOutputStream);
-					} catch (IOException ioe1) {
-						/* okay, just exit. */
-					}
-					logger.finest("Reading stdout finished.");
-				}
-			}).start();
 			new Thread(new Connection(source) {
 
 				@Override
@@ -115,7 +99,6 @@ public abstract class ExternalFilter implements Filter {
 				@Override
 				protected void finish() throws IOException {
 					processInput.close();
-					processOutput.close();
 					processError.close();
 				}
 			}).start();
