@@ -20,7 +20,7 @@ package net.pterodactylus.sonitus.data.filter;
 import static com.google.common.base.Preconditions.*;
 
 import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 
 /**
@@ -32,14 +32,14 @@ import net.pterodactylus.sonitus.data.Source;
 public abstract class ExternalMp3Decoder extends ExternalFilter {
 
 	@Override
-	public Format format() {
-		return super.format().encoding("PCM");
+	public Metadata metadata() {
+		return super.metadata().encoding("PCM");
 	}
 
 	@Override
 	public void connect(Source source) throws ConnectException {
 		checkNotNull(source, "source must not be null");
-		checkState(source.format().encoding().equalsIgnoreCase("MP3"), "source must be MP3-encoded");
+		checkState(source.metadata().encoding().equalsIgnoreCase("MP3"), "source must be MP3-encoded");
 
 		super.connect(source);
 	}

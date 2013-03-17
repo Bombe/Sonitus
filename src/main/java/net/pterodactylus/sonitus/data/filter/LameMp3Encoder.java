@@ -19,7 +19,7 @@ package net.pterodactylus.sonitus.data.filter;
 
 import java.util.Arrays;
 
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -133,15 +133,15 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	//
 
 	@Override
-	protected String binary(Format format) {
+	protected String binary(Metadata metadata) {
 		return binary;
 	}
 
 	@Override
-	protected Iterable<String> parameters(Format format) {
+	protected Iterable<String> parameters(Metadata metadata) {
 		ImmutableList.Builder parameters = ImmutableList.builder();
 		parameters.add("-r");
-		parameters.add("-s").add(String.valueOf(format.frequency() / 1000.0));
+		parameters.add("-s").add(String.valueOf(metadata.frequency() / 1000.0));
 		if (swapBytes) {
 			parameters.add("-x");
 		}

@@ -21,33 +21,33 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 
 /**
- * Wrapper around an {@link InputStream} that identifies the {@link Format} of
+ * Wrapper around an {@link InputStream} that identifies the {@link Metadata} of
  * the wrapped stream.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class IdentifyingInputStream extends FilterInputStream {
 
-	/** The identified format. */
-	private final Format format;
+	/** The identified metadata. */
+	private final Metadata metadata;
 
 	/**
 	 * Creates a new identifying input stream.
 	 *
 	 * @param inputStream
 	 * 		The input stream to wrap
-	 * @param format
-	 * 		The format of the stream
+	 * @param metadata
+	 * 		The metadata of the stream
 	 */
-	private IdentifyingInputStream(InputStream inputStream, Format format) {
+	private IdentifyingInputStream(InputStream inputStream, Metadata metadata) {
 		super(inputStream);
-		this.format = format;
+		this.metadata = metadata;
 	}
 
 	//
@@ -55,12 +55,12 @@ public class IdentifyingInputStream extends FilterInputStream {
 	//
 
 	/**
-	 * Returns the identified format.
+	 * Returns the identified metadata.
 	 *
-	 * @return The identified format
+	 * @return The identified metadata
 	 */
-	public Format format() {
-		return format;
+	public Metadata metadata() {
+		return metadata;
 	}
 
 	//
@@ -73,8 +73,8 @@ public class IdentifyingInputStream extends FilterInputStream {
 	 * @param inputStream
 	 * 		The input stream to identify
 	 * @return An identifying input stream that delivers the original stream and
-	 *         the format it detected, or {@link com.google.common.base.Optional#absent()}
-	 *         if no format could be identified
+	 *         the metadata it detected, or {@link Optional#absent()} if no
+	 *         metadata could be identified
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
@@ -84,17 +84,17 @@ public class IdentifyingInputStream extends FilterInputStream {
 		RememberingInputStream rememberingInputStream = new RememberingInputStream(inputStream);
 
 		/* try Ogg Vorbis first. */
-		Optional<Format> format = OggVorbisIdentifier.identify(rememberingInputStream);
-		if (format.isPresent()) {
-			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), format.get()));
+		Optional<Metadata> metadata = OggVorbisIdentifier.identify(rememberingInputStream);
+		if (metadata.isPresent()) {
+			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
 		}
 
 		/* try MP3 now. */
 		rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
 		InputStream limitedInputStream = ByteStreams.limit(rememberingInputStream, 1048576);
-		format = Mp3Identifier.identify(limitedInputStream);
-		if (format.isPresent()) {
-			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), format.get()));
+		metadata = Mp3Identifier.identify(limitedInputStream);
+		if (metadata.isPresent()) {
+			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
 		}
 
 		return Optional.absent();

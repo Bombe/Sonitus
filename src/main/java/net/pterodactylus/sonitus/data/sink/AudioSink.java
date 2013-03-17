@@ -27,7 +27,7 @@ import javax.sound.sampled.SourceDataLine;
 
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Connection;
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 
@@ -45,10 +45,10 @@ public class AudioSink implements Sink {
 	@Override
 	public void connect(Source source) throws ConnectException {
 		checkNotNull(source, "source must not be null");
-		checkState(source.format().encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
+		checkState(source.metadata().encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
 
-		final Format sourceFormat = source.format();
-		AudioFormat audioFormat = new AudioFormat(sourceFormat.frequency(), 16, sourceFormat.channels(), true, false);
+		final Metadata sourceMetadata = source.metadata();
+		AudioFormat audioFormat = new AudioFormat(sourceMetadata.frequency(), 16, sourceMetadata.channels(), true, false);
 		try {
 			final SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(audioFormat);
 			sourceDataLine.open(audioFormat);
@@ -57,7 +57,7 @@ public class AudioSink implements Sink {
 
 				@Override
 				protected int bufferSize() {
-					return sourceFormat.channels() * sourceFormat.frequency() * 2;
+					return sourceMetadata.channels() * sourceMetadata.frequency() * 2;
 				}
 
 				@Override

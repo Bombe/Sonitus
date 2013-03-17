@@ -17,7 +17,7 @@
 
 package net.pterodactylus.sonitus.data.filter;
 
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.collect.ImmutableList;
 
@@ -62,12 +62,12 @@ public class LameMp3Decoder extends ExternalMp3Decoder {
 	//
 
 	@Override
-	protected String binary(Format format) {
+	protected String binary(Metadata metadata) {
 		return binary;
 	}
 
 	@Override
-	protected Iterable<String> parameters(Format format) {
+	protected Iterable<String> parameters(Metadata metadata) {
 		ImmutableList.Builder parameters = ImmutableList.builder();
 		parameters.add("--mp3input").add("--decode").add("-t");
 		if (swapBytes) {

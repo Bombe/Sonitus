@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Connection;
 import net.pterodactylus.sonitus.data.Filter;
-import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
@@ -61,11 +60,6 @@ public abstract class ExternalFilter implements Filter {
 	//
 
 	@Override
-	public Format format() {
-		return source.format();
-	}
-
-	@Override
 	public Metadata metadata() {
 		return source.metadata();
 	}
@@ -86,7 +80,7 @@ public abstract class ExternalFilter implements Filter {
 
 		this.source = source;
 		try {
-			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(source.format())).addAll(parameters(source.format())).build(), String.class));
+			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(source.metadata())).addAll(parameters(source.metadata())).build(), String.class));
 			final InputStream processOutput = process.getInputStream();
 			final OutputStream processInput = process.getOutputStream();
 			final InputStream processError = process.getErrorStream();
@@ -142,19 +136,19 @@ public abstract class ExternalFilter implements Filter {
 	/**
 	 * Returns the location of the binary to execute.
 	 *
-	 * @param format
-	 * 		The format being processed
+	 * @param metadata
+	 * 		The metadata being processed
 	 * @return The location of the binary to execute
 	 */
-	protected abstract String binary(Format format);
+	protected abstract String binary(Metadata metadata);
 
 	/**
 	 * Returns the parameters for the binary.
 	 *
-	 * @param format
-	 * 		The format being processed
+	 * @param metadata
+	 * 		The metadata being processed
 	 * @return The parameters for the binary
 	 */
-	protected abstract Iterable<String> parameters(Format format);
+	protected abstract Iterable<String> parameters(Metadata metadata);
 
 }

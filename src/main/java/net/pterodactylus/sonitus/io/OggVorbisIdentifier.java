@@ -20,7 +20,7 @@ package net.pterodactylus.sonitus.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Optional;
 import com.jcraft.jogg.Packet;
@@ -49,16 +49,16 @@ public class OggVorbisIdentifier {
 
 	/**
 	 * Tries to parse the given stream as Ogg Vorbis file and returns a {@link
-	 * Format} describing the stream.
+	 * Metadata} describing the stream.
 	 *
 	 * @param inputStream
 	 * 		The input stream to identify as Ogg Vorbis
-	 * @return The identified format, or {@link com.google.common.base.Optional#absent()}
-	 *         if the stream could not be identified
+	 * @return The identified metadata, or {@link Optional#absent()} if the stream
+	 *         could not be identified
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
-	public static Optional<Format> identify(InputStream inputStream) throws IOException {
+	public static Optional<Metadata> identify(InputStream inputStream) throws IOException {
 
 		/* stuff needed to decode Ogg. */
 		Packet packet = new Packet();
@@ -115,7 +115,7 @@ public class OggVorbisIdentifier {
 			buffer = syncState.data;
 		}
 
-		return Optional.of(new Format(info.channels, info.rate, "Vorbis"));
+		return Optional.of(new Metadata(info.channels, info.rate, "Vorbis"));
 	}
 
 }

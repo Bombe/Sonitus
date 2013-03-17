@@ -18,9 +18,9 @@
 package net.pterodactylus.sonitus.data.source;
 
 import static com.google.common.base.Preconditions.*;
-import static net.pterodactylus.sonitus.data.Format.UNKNOWN_CHANNELS;
-import static net.pterodactylus.sonitus.data.Format.UNKNOWN_ENCODING;
-import static net.pterodactylus.sonitus.data.Format.UNKNOWN_FREQUENCY;
+import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_CHANNELS;
+import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_ENCODING;
+import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_FREQUENCY;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.IdentifyingInputStream;
@@ -46,8 +45,8 @@ public class FileSource implements Source {
 	/** The path of the file. */
 	private final String path;
 
-	/** The identified format of the file. */
-	private final Format format;
+	/** The identified metadata of the file. */
+	private final Metadata metadata;
 
 	/** The input stream. */
 	private InputStream fileInputStream;
@@ -67,10 +66,10 @@ public class FileSource implements Source {
 		/* identify file type. */
 		Optional<IdentifyingInputStream> identifyingInputStream = IdentifyingInputStream.create(new FileInputStream(path));
 		if (identifyingInputStream.isPresent()) {
-			format = identifyingInputStream.get().format();
+			metadata = identifyingInputStream.get().metadata();
 		} else {
 			/* fallback. */
-			format = new Format(UNKNOWN_CHANNELS, UNKNOWN_FREQUENCY, UNKNOWN_ENCODING);
+			metadata = new Metadata(UNKNOWN_CHANNELS, UNKNOWN_FREQUENCY, UNKNOWN_ENCODING);
 		}
 	}
 
@@ -79,13 +78,8 @@ public class FileSource implements Source {
 	//
 
 	@Override
-	public Format format() {
-		return format;
-	}
-
-	@Override
 	public Metadata metadata() {
-		return new Metadata().name(path);
+		return metadata.name(path);
 	}
 
 	@Override
@@ -104,7 +98,7 @@ public class FileSource implements Source {
 
 	@Override
 	public String toString() {
-		return String.format("%s (%s)", path, format);
+		return String.format("%s (%s)", path, metadata);
 	}
 
 }

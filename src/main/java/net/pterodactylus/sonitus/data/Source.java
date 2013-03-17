@@ -29,13 +29,6 @@ import java.io.IOException;
 public interface Source {
 
 	/**
-	 * Returns the format of this source.
-	 *
-	 * @return The format of this source
-	 */
-	Format format();
-
-	/**
 	 * Returns the metadata of this source.
 	 *
 	 * @return The metadata of this source

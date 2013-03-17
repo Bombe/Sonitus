@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Connection;
-import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
@@ -132,7 +131,7 @@ public class Icecast2Sink implements Sink {
 
 			sendLine(socketOutputStream, String.format("SOURCE /%s ICE/1.0", mountPoint));
 			sendLine(socketOutputStream, String.format("Authorization: Basic %s", generatePassword(password)));
-			sendLine(socketOutputStream, String.format("Content-Type: %s", getContentType(source.format())));
+			sendLine(socketOutputStream, String.format("Content-Type: %s", getContentType(source.metadata())));
 			sendLine(socketOutputStream, String.format("ICE-Name: %s", serverName));
 			sendLine(socketOutputStream, String.format("ICE-Description: %s", serverDescription));
 			sendLine(socketOutputStream, String.format("ICE-Genre: %s", genre));
@@ -242,15 +241,15 @@ public class Icecast2Sink implements Sink {
 	}
 
 	/**
-	 * Returns a MIME type for the given format. Currently only Vorbis, MP3, and
+	 * Returns a MIME type for the given metadata. Currently only Vorbis, MP3, and
 	 * PCM formats are recognized.
 	 *
-	 * @param format
-	 * 		The format to get a MIME type for
-	 * @return The MIME type of the format
+	 * @param metadata
+	 * 		The metadata to get a MIME type for
+	 * @return The MIME type of the metadata
 	 */
-	private static String getContentType(Format format) {
-		String encoding = format.encoding();
+	private static String getContentType(Metadata metadata) {
+		String encoding = metadata.encoding();
 		if ("Vorbis".equalsIgnoreCase(encoding)) {
 			return "audio/ogg";
 		}

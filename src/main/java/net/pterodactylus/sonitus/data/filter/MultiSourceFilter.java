@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Filter;
-import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.ReusableSink;
 import net.pterodactylus.sonitus.data.Source;
@@ -66,13 +65,6 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	}
 
 	@Override
-	public Format format() {
-		synchronized (syncObject) {
-			return connection.source.format();
-		}
-	}
-
-	@Override
 	public Metadata metadata() {
 		synchronized (syncObject) {
 			return connection.source.metadata();
@@ -94,7 +86,9 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	public void connect(Source source) throws ConnectException {
 		checkNotNull(source, "source must not be null");
 		if ((connection != null) && (connection.source != null)) {
-			checkArgument(connection.source.format().equals(source.format()), "source’s format must equal this sink’s format");
+			checkArgument(connection.source.metadata().channels() == source.metadata().channels(), "source’s channel count must equal existing source’s channel count");
+			checkArgument(connection.source.metadata().frequency() == source.metadata().frequency(), "source’s frequency must equal existing source’s frequency");
+			checkArgument(connection.source.metadata().encoding().equalsIgnoreCase(source.metadata().encoding()), "source’s encoding must equal existing source’s encoding");
 		}
 
 		if (connection == null) {

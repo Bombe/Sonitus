@@ -32,7 +32,8 @@ public interface Sink {
 	 * @param source
 	 * 		The source to connect to
 	 * @throws ConnectException
-	 * 		if the source can not be connected, e.g. due to a {@link Format} mismatch
+	 * 		if the source can not be connected, e.g. due to a {@link Metadata}
+	 * 		mismatch
 	 */
 	void connect(Source source) throws ConnectException;
 

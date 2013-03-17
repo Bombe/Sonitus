@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.ConnectException;
 import net.pterodactylus.sonitus.data.Connection;
 import net.pterodactylus.sonitus.data.Filter;
-import net.pterodactylus.sonitus.data.Format;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 
@@ -49,7 +48,7 @@ public class RateLimitingFilter implements Filter {
 	/** The limiting rate in bytes/second. */
 	private final int rate;
 
-	/** The source’s format. */
+	/** The source. */
 	private Source source;
 
 	/** The input stream to read from. */
@@ -68,11 +67,6 @@ public class RateLimitingFilter implements Filter {
 	//
 	// FILTER METHODS
 	//
-
-	@Override
-	public Format format() {
-		return source.format();
-	}
 
 	@Override
 	public Metadata metadata() {

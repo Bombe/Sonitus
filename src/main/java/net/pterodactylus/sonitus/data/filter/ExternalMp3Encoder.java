@@ -18,28 +18,28 @@
 package net.pterodactylus.sonitus.data.filter;
 
 import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 
 import com.google.common.base.Preconditions;
 
 /**
  * Basic {@link ExternalFilter} implementation that verifies that the connected
- * source is PCM-encoded and that returns an MP3-encoded format.
+ * source is PCM-encoded and that returns an MP3-encoded metadata.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public abstract class ExternalMp3Encoder extends ExternalFilter {
 
 	@Override
-	public Format format() {
-		return super.format().encoding("MP3");
+	public Metadata metadata() {
+		return super.metadata().encoding("MP3");
 	}
 
 	@Override
 	public void connect(Source source) throws ConnectException {
 		Preconditions.checkNotNull(source, "source must not be null");
-		Preconditions.checkState(source.format().encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
+		Preconditions.checkState(source.metadata().encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
 
 		super.connect(source);
 	}

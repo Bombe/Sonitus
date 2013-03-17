@@ -20,7 +20,7 @@ package net.pterodactylus.sonitus.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.pterodactylus.sonitus.data.Format;
+import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Optional;
 import javazoom.jl.decoder.Bitstream;
@@ -39,19 +39,19 @@ public class Mp3Identifier {
 	 *
 	 * @param inputStream
 	 * 		The input stream
-	 * @return The identified format, or {@link com.google.common.base.Optional#absent()}
-	 *         if the format can not be identified
+	 * @return The identified metadata, or {@link Optional#absent()} if the
+	 *         metadata can not be identified
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
-	public static Optional<Format> identify(InputStream inputStream) throws IOException {
+	public static Optional<Metadata> identify(InputStream inputStream) throws IOException {
 		Bitstream bitstream = new Bitstream(inputStream);
 		try {
 			Header frame = bitstream.readFrame();
 			if (frame == null) {
 				return Optional.absent();
 			}
-			return Optional.of(new Format(frame.mode() == Header.SINGLE_CHANNEL ? 1 : 2, frame.frequency(), "MP3"));
+			return Optional.of(new Metadata(frame.mode() == Header.SINGLE_CHANNEL ? 1 : 2, frame.frequency(), "MP3"));
 		} catch (BitstreamException be1) {
 			return Optional.absent();
 		}
