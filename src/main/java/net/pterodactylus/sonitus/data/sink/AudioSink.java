@@ -42,9 +42,12 @@ public class AudioSink implements Sink {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(AudioSink.class.getName());
 
+	/** The current source. */
+	private Source source;
+
 	@Override
 	public void connect(Source source) throws ConnectException {
-		checkNotNull(source, "source must not be null");
+		this.source = checkNotNull(source, "source must not be null");
 		checkState(source.metadata().encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
 
 		final Metadata sourceMetadata = source.metadata();
@@ -71,6 +74,7 @@ public class AudioSink implements Sink {
 					sourceDataLine.stop();
 				}
 			}).start();
+			metadataUpdated();
 		} catch (LineUnavailableException lue1) {
 			throw new ConnectException(lue1);
 		}
