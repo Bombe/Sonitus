@@ -56,8 +56,14 @@ public abstract class Connection implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
+			byte[] buffer = null;
 			try {
-				byte[] buffer = source.get(bufferSize());
+				buffer = source.get(bufferSize());
+			} catch (IOException ioe1) {
+				logger.log(Level.WARNING, "Source died!", ioe1);
+				break;
+			}
+			try {
 				feed(buffer);
 			} catch (IOException ioe1) {
 				logger.log(Level.WARNING, "Sink died!", ioe1);
