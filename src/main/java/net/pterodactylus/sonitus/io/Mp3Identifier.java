@@ -17,15 +17,19 @@
 
 package net.pterodactylus.sonitus.io;
 
+import static com.google.common.io.Closeables.close;
+import static net.pterodactylus.sonitus.io.mp3.Frame.ChannelMode.SINGLE_CHANNEL;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import net.pterodactylus.sonitus.data.Metadata;
+import net.pterodactylus.sonitus.io.mp3.Frame;
+import net.pterodactylus.sonitus.io.mp3.Parser;
 
 import com.google.common.base.Optional;
-import javazoom.jl.decoder.Bitstream;
-import javazoom.jl.decoder.BitstreamException;
-import javazoom.jl.decoder.Header;
 import org.blinkenlights.jid3.ID3Exception;
 import org.blinkenlights.jid3.v2.ID3V2Tag;
 
@@ -47,29 +51,27 @@ public class Mp3Identifier {
 	 * 		if an I/O error occurs
 	 */
 	public static Optional<Metadata> identify(InputStream inputStream) throws IOException {
-		Bitstream bitstream = new Bitstream(inputStream);
-		Optional<ID3V2Tag> id3v2Tag = Optional.absent();
-		try {
-			InputStream id3v2Stream = bitstream.getRawID3v2();
-			id3v2Stream.read(new byte[3]);
-			id3v2Tag = Optional.fromNullable(ID3V2Tag.read(id3v2Stream));
-		} catch (ID3Exception id3e1) {
-			/* ID3v2 tag could not be parsed, don’t cry about it. */
-		}
-		try {
-			Header frame = bitstream.readFrame();
-			if (frame == null) {
-				return Optional.absent();
+		Parser mp3Parser = new Parser(inputStream);
+		Frame frame = mp3Parser.nextFrame();
+		Metadata metadata = new Metadata((frame.channelMode() == SINGLE_CHANNEL) ? 1 : 2, frame.samplingRate(), "MP3");
+		/* check for ID3v2 tag. */
+		Optional<byte[]> id3v2TagBuffer = mp3Parser.getId3Tag();
+		if (id3v2TagBuffer.isPresent()) {
+			byte[] buffer = id3v2TagBuffer.get();
+			ByteArrayInputStream tagInputStream = new ByteArrayInputStream(Arrays.copyOfRange(buffer, 3, buffer.length));
+			try {
+				/* skip “ID3” header tag. */
+				ID3V2Tag id3v2Tag = ID3V2Tag.read(tagInputStream);
+				if (id3v2Tag != null) {
+					metadata = metadata.artist(id3v2Tag.getArtist()).name(id3v2Tag.getTitle());
+				}
+			} catch (ID3Exception id3e1) {
+				id3e1.printStackTrace();
+			} finally {
+				close(tagInputStream, true);
 			}
-			Metadata metadata = new Metadata(frame.mode() == Header.SINGLE_CHANNEL ? 1 : 2, frame.frequency(), "MP3");
-			if (id3v2Tag.isPresent()) {
-				metadata = metadata.artist(id3v2Tag.get().getArtist());
-				metadata = metadata.name(id3v2Tag.get().getTitle());
-			}
-			return Optional.of(metadata);
-		} catch (BitstreamException be1) {
-			return Optional.absent();
 		}
+		return Optional.of(metadata);
 	}
 
 }
