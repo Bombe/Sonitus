@@ -63,7 +63,12 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 
 	@Override
 	public byte[] get(int bufferSize) throws EOFException, IOException {
-		return source.get().get(bufferSize);
+		try {
+			return source.get().get(bufferSize);
+		} catch (EOFException eofe1) {
+			eventBus.post(new SourceFinishedEvent(source.get()));
+			throw eofe1;
+		}
 	}
 
 	@Override
@@ -75,8 +80,6 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 			checkArgument(oldSource.metadata().channels() == source.metadata().channels(), "source’s channel count must equal existing source’s channel count");
 			checkArgument(oldSource.metadata().frequency() == source.metadata().frequency(), "source’s frequency must equal existing source’s frequency");
 			checkArgument(oldSource.metadata().encoding().equalsIgnoreCase(source.metadata().encoding()), "source’s encoding must equal existing source’s encoding");
-
-			eventBus.post(new SourceFinishedEvent(oldSource));
 		}
 	}
 
