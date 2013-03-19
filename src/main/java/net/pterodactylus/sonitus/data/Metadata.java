@@ -206,7 +206,7 @@ public class Metadata {
 			return false;
 		}
 		Metadata metadata = (Metadata) object;
-		if ((metadata.channels != channels) || (metadata.frequency != frequency) || !metadata.encoding.equalsIgnoreCase(encoding())) {
+		if ((metadata.channels != channels) || (metadata.frequency != frequency) || !metadata.encoding.equalsIgnoreCase(encoding)) {
 			return false;
 		}
 		if (artist.equals(metadata.artist)) {
