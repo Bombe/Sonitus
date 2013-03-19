@@ -285,12 +285,15 @@ public class Pipeline {
 				} catch (IOException e) {
 					/* TODO */
 					e.printStackTrace();
+					break;
 				} catch (InterruptedException e) {
 					/* TODO */
 					e.printStackTrace();
+					break;
 				} catch (ExecutionException e) {
 					/* TODO */
 					e.printStackTrace();
+					break;
 				}
 			}
 		}
