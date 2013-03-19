@@ -27,6 +27,8 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * A single MPEG audio frame.
+ * <p/>
+ * This uses information from <a href="http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm">mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm</a>.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */

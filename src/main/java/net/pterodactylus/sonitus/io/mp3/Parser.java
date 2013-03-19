@@ -27,6 +27,8 @@ import com.google.common.io.ByteStreams;
 /**
  * A parser for MP3 files. It can recognize (and skip) ID3v2 header tags and
  * MPEG audio frames.
+ * <p/>
+ * This uses information from <a href="http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm">mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm</a>.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
