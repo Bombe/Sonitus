@@ -255,7 +255,7 @@ public class Pipeline {
 
 		@Override
 		public void run() {
-			Metadata firstMetadata = source.metadata();
+			Metadata firstMetadata = null;
 			while (!stopped.get()) {
 				try {
 					final Metadata lastMetadata = firstMetadata;
