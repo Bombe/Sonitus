@@ -1,43 +1,46 @@
-/*
- * Sonitus - Sink.java - Copyright © 2013 David Roden
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package net.pterodactylus.sonitus.data;
 
+import java.io.IOException;
+
 /**
- * A sink is an endpoint for an audio stream. It might be a file on disk, it can
- * be an audio output in the current system, or it can be sent to a remote
- * streaming server for broadcasting.
+ * A sink is a destination for audio data. It can be played on speakers, it can
+ * be written to a file, or it can be sent to a remote streaming server.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public interface Sink {
 
 	/**
-	 * Connects this sink to the given source.
+	 * Opens this sink using the format parameters of the given metadata.
 	 *
-	 * @param source
-	 * 		The source to connect to
-	 * @throws ConnectException
-	 * 		if the source can not be connected, e.g. due to a {@link Metadata}
-	 * 		mismatch
+	 * @param metadata
+	 * 		The metadata of the stream
+	 * @throws IOException
+	 * 		if an I/O error occurs
 	 */
-	void connect(Source source) throws ConnectException;
+	void open(Metadata metadata) throws IOException;
 
-	/** Notifies the sink that a source has updated its metadata. */
-	void metadataUpdated();
+	/** Closes this sink. */
+	void close();
+
+	/**
+	 * Processes the given buffer of data.
+	 *
+	 * @param buffer
+	 * 		The data to process
+	 * @throws IOException
+	 * 		if an I/O error occurs
+	 */
+	void process(byte[] buffer) throws IOException;
+
+	/**
+	 * Notifies the sink that the metadata of the audio stream has changed. This
+	 * method should return as fast as possible, i.e. every heavy lifting should be
+	 * done from another thread.
+	 *
+	 * @param metadata
+	 * 		The new metadata
+	 */
+	void metadataUpdated(Metadata metadata);
 
 }

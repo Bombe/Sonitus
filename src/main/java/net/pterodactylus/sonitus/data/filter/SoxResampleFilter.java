@@ -17,11 +17,12 @@
 
 package net.pterodactylus.sonitus.data.filter;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import net.pterodactylus.sonitus.data.ConnectException;
+import java.io.IOException;
+
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Source;
 
 import com.google.common.collect.ImmutableList;
 
@@ -62,11 +63,11 @@ public class SoxResampleFilter extends ExternalFilter {
 	}
 
 	@Override
-	public void connect(Source source) throws ConnectException {
-		checkNotNull(source, "source must not be null");
-		checkArgument(source.metadata().encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
+	public void open(Metadata metadata) throws IOException {
+		checkNotNull(metadata, "metadata must not be null");
+		checkArgument(metadata.encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
 
-		super.connect(source);
+		super.open(metadata);
 	}
 
 	//

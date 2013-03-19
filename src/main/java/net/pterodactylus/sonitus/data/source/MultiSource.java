@@ -15,19 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.pterodactylus.sonitus.data.filter;
+package net.pterodactylus.sonitus.data.source;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.ReusableSink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
 
@@ -35,15 +32,16 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 /**
- * {@link ReusableSink} implementation that supports changing the source without
- * letting the {@link net.pterodactylus.sonitus.data.Sink} know.
+ * {@link Source} implementation that simply forwards another source and
+ * supports changing the source without letting the {@link
+ * net.pterodactylus.sonitus.data.Sink} know.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class MultiSourceFilter implements Filter, ReusableSink {
+public class MultiSource implements Source {
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger(MultiSourceFilter.class.getName());
+	private static final Logger logger = Logger.getLogger(MultiSource.class.getName());
 
 	/** The event bus. */
 	private final EventBus eventBus;
@@ -51,10 +49,40 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 	/** The current source. */
 	private final AtomicReference<Source> source = new AtomicReference<Source>();
 
+	/** Whether the source was changed. */
+	private boolean sourceChanged;
+
 	@Inject
-	public MultiSourceFilter(EventBus eventBus) {
+	public MultiSource(EventBus eventBus) {
 		this.eventBus = eventBus;
 	}
+
+	//
+	// ACTIONS
+	//
+
+	/**
+	 * Sets the new source to use.
+	 *
+	 * @param source
+	 * 		The new source to use
+	 */
+	public void setSource(Source source) {
+		checkNotNull(source, "source must not be null");
+
+		Source oldSource = this.source.getAndSet(source);
+		if (oldSource != null) {
+			synchronized (this.source) {
+				sourceChanged = true;
+				this.source.notifyAll();
+			}
+			logger.info(String.format("Next Source set: %s", source));
+		}
+	}
+
+	//
+	// SOURCE METHODS
+	//
 
 	@Override
 	public Metadata metadata() {
@@ -63,29 +91,28 @@ public class MultiSourceFilter implements Filter, ReusableSink {
 
 	@Override
 	public byte[] get(int bufferSize) throws EOFException, IOException {
-		try {
-			return source.get().get(bufferSize);
-		} catch (EOFException eofe1) {
-			eventBus.post(new SourceFinishedEvent(source.get()));
-			throw eofe1;
+		while (true) {
+			try {
+				return source.get().get(bufferSize);
+			} catch (EOFException eofe1) {
+				eventBus.post(new SourceFinishedEvent(source.get()));
+				synchronized (source) {
+					while (!sourceChanged) {
+						try {
+							logger.info("Waiting for next Source...");
+							source.wait();
+							logger.info("Was notified.");
+						} catch (InterruptedException ioe1) {
+							/* ignore: we’ll end up here again if we were interrupted. */
+						}
+					}
+				}
+			} finally {
+				synchronized (source) {
+					sourceChanged = false;
+				}
+			}
 		}
-	}
-
-	@Override
-	public void connect(Source source) throws ConnectException {
-		checkNotNull(source, "source must not be null");
-
-		Source oldSource = this.source.getAndSet(source);
-		if (oldSource != null) {
-			checkArgument(oldSource.metadata().channels() == source.metadata().channels(), "source’s channel count must equal existing source’s channel count");
-			checkArgument(oldSource.metadata().frequency() == source.metadata().frequency(), "source’s frequency must equal existing source’s frequency");
-			checkArgument(oldSource.metadata().encoding().equalsIgnoreCase(source.metadata().encoding()), "source’s encoding must equal existing source’s encoding");
-		}
-	}
-
-	@Override
-	public void metadataUpdated() {
-		/* ignore. */
 	}
 
 }

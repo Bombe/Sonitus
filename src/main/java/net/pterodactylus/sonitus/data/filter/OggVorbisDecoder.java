@@ -17,11 +17,13 @@
 
 package net.pterodactylus.sonitus.data.filter;
 
-import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Source;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Preconditions;
+import java.io.IOException;
+
+import net.pterodactylus.sonitus.data.Metadata;
+
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -70,11 +72,11 @@ public class OggVorbisDecoder extends ExternalFilter {
 	}
 
 	@Override
-	public void connect(Source source) throws ConnectException {
-		Preconditions.checkNotNull(source, "source must not be null");
-		Preconditions.checkArgument(source.metadata().encoding().equalsIgnoreCase("Vorbis"), "source must be Vorbis-encoded");
+	public void open(Metadata metadata) throws IOException {
+		checkNotNull(metadata, "metadata must not be null");
+		checkArgument(metadata.encoding().equalsIgnoreCase("Vorbis"), "source must be Vorbis-encoded");
 
-		super.connect(source);
+		super.open(metadata);
 	}
 
 	//

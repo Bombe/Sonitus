@@ -17,8 +17,6 @@
 
 package net.pterodactylus.sonitus.data.sink;
 
-import static com.google.common.base.Preconditions.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,11 +27,8 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Connection;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
-import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
 import com.google.common.base.Function;
@@ -44,8 +39,8 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.Closeables;
 
 /**
- * {@link Sink} implementation that delivers all incoming data to an Icecast2
- * server.
+ * {@link net.pterodactylus.sonitus.data.Sink} implementation that delivers all
+ * incoming data to an Icecast2 server.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -78,8 +73,7 @@ public class Icecast2Sink implements Sink {
 	/** Whether to publish the server. */
 	private final boolean publishServer;
 
-	/** The connected source. */
-	private Source source;
+	private OutputStream socketOutputStream;
 
 	/**
 	 * Creates a new Icecast2 sink.
@@ -118,97 +112,85 @@ public class Icecast2Sink implements Sink {
 	//
 
 	@Override
-	public void connect(Source source) throws ConnectException {
-		checkNotNull(source, "source must not be null");
+	public void open(Metadata metadata) throws IOException {
+		logger.info(String.format("Connecting to %s:%d...", server, port));
+		Socket socket = new Socket(server, port);
+		logger.info("Connected.");
+		socketOutputStream = socket.getOutputStream();
+		InputStream socketInputStream = socket.getInputStream();
 
-		this.source = source;
+		sendLine(socketOutputStream, String.format("SOURCE /%s ICE/1.0", mountPoint));
+		sendLine(socketOutputStream, String.format("Authorization: Basic %s", generatePassword(password)));
+		sendLine(socketOutputStream, String.format("Content-Type: %s", getContentType(metadata)));
+		sendLine(socketOutputStream, String.format("ICE-Name: %s", serverName));
+		sendLine(socketOutputStream, String.format("ICE-Description: %s", serverDescription));
+		sendLine(socketOutputStream, String.format("ICE-Genre: %s", genre));
+		sendLine(socketOutputStream, String.format("ICE-Public: %d", publishServer ? 1 : 0));
+		sendLine(socketOutputStream, "");
+		socketOutputStream.flush();
+
+		new Thread(new InputStreamDrainer(socketInputStream)).start();
+
+		metadataUpdated(metadata);
+	}
+
+	@Override
+	public void close() {
 		try {
-			logger.info(String.format("Connecting to %s:%d...", server, port));
-			final Socket socket = new Socket(server, port);
-			logger.info("Connected.");
-			final OutputStream socketOutputStream = socket.getOutputStream();
-			final InputStream socketInputStream = socket.getInputStream();
-
-			sendLine(socketOutputStream, String.format("SOURCE /%s ICE/1.0", mountPoint));
-			sendLine(socketOutputStream, String.format("Authorization: Basic %s", generatePassword(password)));
-			sendLine(socketOutputStream, String.format("Content-Type: %s", getContentType(source.metadata())));
-			sendLine(socketOutputStream, String.format("ICE-Name: %s", serverName));
-			sendLine(socketOutputStream, String.format("ICE-Description: %s", serverDescription));
-			sendLine(socketOutputStream, String.format("ICE-Genre: %s", genre));
-			sendLine(socketOutputStream, String.format("ICE-Public: %d", publishServer ? 1 : 0));
-			sendLine(socketOutputStream, "");
-			socketOutputStream.flush();
-
-			new Thread(new InputStreamDrainer(socketInputStream)).start();
-			new Thread(new Connection(source) {
-
-				private long counter;
-
-				@Override
-				protected int bufferSize() {
-					return 4096;
-				}
-
-				@Override
-				protected void feed(byte[] buffer) throws IOException {
-					socketOutputStream.write(buffer);
-					socketOutputStream.flush();
-					counter += buffer.length;
-					logger.finest(String.format("Wrote %d Bytes.", counter));
-				}
-
-				@Override
-				protected void finish() throws IOException {
-					Closeables.close(socketOutputStream, true);
-					if (socket != null) {
-						socket.close();
-					}
-				}
-			}).start();
-
-			metadataUpdated();
-		} catch (IOException ioe1) {
-			throw new ConnectException(ioe1);
+			Closeables.close(socketOutputStream, true);
+		} catch (IOException e) {
+			/* will never throw. */
 		}
 	}
 
 	@Override
-	public void metadataUpdated() {
-		Metadata metadata = source.metadata();
-		String metadataString = String.format("%s (%s)", Joiner.on(" - ").skipNulls().join(FluentIterable.from(Arrays.asList(metadata.artist(), metadata.name())).transform(new Function<Optional<String>, Object>() {
+	public void metadataUpdated(final Metadata metadata) {
+		new Thread(new Runnable() {
 
 			@Override
-			public Object apply(Optional<String> input) {
-				return input.orNull();
-			}
-		})), "Sonitus");
-		logger.info(String.format("Updating metadata to %s", metadataString));
+			public void run() {
+				String metadataString = String.format("%s (%s)", Joiner.on(" - ").skipNulls().join(FluentIterable.from(Arrays.asList(metadata.artist(), metadata.name())).transform(new Function<Optional<String>, Object>() {
 
-		Socket socket = null;
-		OutputStream socketOutputStream = null;
-		try {
-			socket = new Socket(server, port);
-			socketOutputStream = socket.getOutputStream();
+					@Override
+					public Object apply(Optional<String> input) {
+						return input.orNull();
+					}
+				})), "Sonitus");
+				logger.info(String.format("Updating metadata to %s", metadataString));
 
-			sendLine(socketOutputStream, String.format("GET /admin/metadata?pass=%s&mode=updinfo&mount=/%s&song=%s HTTP/1.0", password, mountPoint, URLEncoder.encode(metadataString, "UTF-8")));
-			sendLine(socketOutputStream, String.format("Authorization: Basic %s", generatePassword(password)));
-			sendLine(socketOutputStream, String.format("User-Agent: Mozilla/Sonitus"));
-			sendLine(socketOutputStream, "");
-			socketOutputStream.flush();
+				Socket socket = null;
+				OutputStream socketOutputStream = null;
+				try {
+					socket = new Socket(server, port);
+					socketOutputStream = socket.getOutputStream();
 
-			new InputStreamDrainer(socket.getInputStream()).run();
-		} catch (IOException ioe1) {
-			logger.log(Level.WARNING, "Could not update metadata!", ioe1);
-		} finally {
-			try {
-				Closeables.close(socketOutputStream, true);
-				if (socket != null) {
-					socket.close();
+					sendLine(socketOutputStream, String.format("GET /admin/metadata?pass=%s&mode=updinfo&mount=/%s&song=%s HTTP/1.0", password, mountPoint, URLEncoder.encode(metadataString, "UTF-8")));
+					sendLine(socketOutputStream, String.format("Authorization: Basic %s", generatePassword(password)));
+					sendLine(socketOutputStream, String.format("User-Agent: Mozilla/Sonitus"));
+					sendLine(socketOutputStream, "");
+					socketOutputStream.flush();
+
+					new InputStreamDrainer(socket.getInputStream()).run();
+				} catch (IOException ioe1) {
+					logger.log(Level.WARNING, "Could not update metadata!", ioe1);
+				} finally {
+					try {
+						Closeables.close(socketOutputStream, true);
+						if (socket != null) {
+							socket.close();
+						}
+					} catch (IOException ioe1) {
+						/* ignore. */
+					}
 				}
-			} catch (IOException ioe1) {
-				/* ignore. */
 			}
-		}
+		}).start();
+	}
+
+	@Override
+	public void process(byte[] buffer) throws IOException {
+		socketOutputStream.write(buffer);
+		socketOutputStream.flush();
 	}
 
 	//
@@ -223,7 +205,7 @@ public class Icecast2Sink implements Sink {
 	 * 		The output stream to send the line to
 	 * @param line
 	 * 		The line to send
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 * 		if an I/O error occurs
 	 */
 	private static void sendLine(OutputStream outputStream, String line) throws IOException {
@@ -237,7 +219,7 @@ public class Icecast2Sink implements Sink {
 	 * @param password
 	 * 		The password to encode
 	 * @return The encoded password
-	 * @throws UnsupportedEncodingException
+	 * @throws java.io.UnsupportedEncodingException
 	 * 		if the UTF-8 encoding is not supported (which can never happen)
 	 */
 	private static String generatePassword(String password) throws UnsupportedEncodingException {

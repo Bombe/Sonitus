@@ -17,20 +17,16 @@
 
 package net.pterodactylus.sonitus.data.sink;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Connection;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
-import net.pterodactylus.sonitus.data.Source;
-
-import com.google.common.base.Preconditions;
 
 /**
- * {@link Sink} that writes all received data into a file.
+ * {@link net.pterodactylus.sonitus.data.Sink} that writes all received data
+ * into a file.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -41,6 +37,8 @@ public class FileSink implements Sink {
 
 	/** The path of the file to write to. */
 	private final String path;
+
+	private FileOutputStream fileOutputStream;
 
 	/**
 	 * Creates a new file sink that will write to the given path.
@@ -53,37 +51,28 @@ public class FileSink implements Sink {
 	}
 
 	@Override
-	public void connect(Source source) throws ConnectException {
-		Preconditions.checkNotNull(source, "source must not be null");
+	public void open(Metadata metadata) throws IOException {
+		fileOutputStream = new FileOutputStream(path);
+	}
 
+	@Override
+	public void close() {
 		try {
-			final FileOutputStream fileOutputStream = new FileOutputStream(path);
-			new Thread(new Connection(source) {
-
-				@Override
-				protected int bufferSize() {
-					return 65536;
-				}
-
-				@Override
-				protected void feed(byte[] buffer) throws IOException {
-					fileOutputStream.write(buffer);
-					logger.finest(String.format("FileSink: Wrote %d Bytes.", buffer.length));
-				}
-
-				@Override
-				protected void finish() throws IOException {
-					fileOutputStream.close();
-				}
-			}).start();
-		} catch (FileNotFoundException fnfe1) {
-			throw new ConnectException(fnfe1);
+			fileOutputStream.close();
+		} catch (IOException e) {
+			/* ignore. */
 		}
 	}
 
 	@Override
-	public void metadataUpdated() {
+	public void metadataUpdated(Metadata metadata) {
 		/* ignore. */
+	}
+
+	@Override
+	public void process(byte[] buffer) throws IOException {
+		fileOutputStream.write(buffer);
+		logger.finest(String.format("FileSink: Wrote %d Bytes.", buffer.length));
 	}
 
 }

@@ -17,7 +17,7 @@
 
 package net.pterodactylus.sonitus.data.source;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_CHANNELS;
 import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_ENCODING;
 import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_FREQUENCY;
@@ -33,10 +33,10 @@ import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.IdentifyingInputStream;
 
 import com.google.common.base.Optional;
-import com.google.common.io.ByteStreams;
 
 /**
- * A {@link Source} that is read from the local file system.
+ * A {@link net.pterodactylus.sonitus.data.Source} that is read from the local
+ * file system.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -56,7 +56,7 @@ public class FileSource implements Source {
 	 *
 	 * @param path
 	 * 		The path of the file
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 * 		if the file can not be found, or an I/O error occurs
 	 */
 	public FileSource(String path) throws IOException {
@@ -78,18 +78,18 @@ public class FileSource implements Source {
 	//
 
 	@Override
-	public Metadata metadata() {
-		return metadata;
-	}
-
-	@Override
 	public byte[] get(int bufferSize) throws IOException {
 		byte[] buffer = new byte[bufferSize];
-		int read = ByteStreams.read(fileInputStream, buffer, 0, bufferSize);
-		if (read == 0) {
+		int read = fileInputStream.read(buffer);
+		if (read == -1) {
 			throw new EOFException();
 		}
 		return Arrays.copyOf(buffer, read);
+	}
+
+	@Override
+	public Metadata metadata() {
+		return metadata;
 	}
 
 	//

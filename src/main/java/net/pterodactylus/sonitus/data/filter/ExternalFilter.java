@@ -17,99 +17,60 @@
 
 package net.pterodactylus.sonitus.data.filter;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedOutputStream;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.ConnectException;
-import net.pterodactylus.sonitus.data.Connection;
-import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
- * {@link Filter} implementation that runs its {@link Source} through an
- * external program.
+ * {@link net.pterodactylus.sonitus.data.Filter} implementation that runs its
+ * {@link net.pterodactylus.sonitus.data.Source} through an external program.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class ExternalFilter implements Filter {
+public abstract class ExternalFilter extends DummyFilter {
 
 	/** The logger. */
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
-	/** The source. */
-	private Source source;
-
-	private InputStream processInputStream;
+	/** The external process. */
+	private Process process;
 
 	//
 	// FILTER METHODS
 	//
 
 	@Override
-	public Metadata metadata() {
-		return source.metadata();
+	public void open(Metadata metadata) throws IOException {
+		process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(metadata)).addAll(parameters(metadata)).build(), String.class));
+		InputStream processError = process.getErrorStream();
+		new Thread(new InputStreamDrainer(processError)).start();
+		super.open(metadata);
 	}
 
 	@Override
-	public byte[] get(int bufferSize) throws EOFException, IOException {
-		byte[] buffer = new byte[bufferSize];
-		int read = processInputStream.read(buffer);
-		if (read == -1) {
-			throw new EOFException();
-		}
-		return Arrays.copyOf(buffer, read);
+	public void close() {
+		process.destroy();
+	}
+
+	//
+	// DUMMYFILTER METHODS
+	//
+
+	@Override
+	protected InputStream createInputStream() throws IOException {
+		return process.getInputStream();
 	}
 
 	@Override
-	public void connect(Source source) throws ConnectException {
-		Preconditions.checkNotNull(source, "source must not be null");
-
-		this.source = source;
-		try {
-			final Process process = Runtime.getRuntime().exec(Iterables.toArray(ImmutableList.<String>builder().add(binary(source.metadata())).addAll(parameters(source.metadata())).build(), String.class));
-			processInputStream = process.getInputStream();
-			final OutputStream processInput = process.getOutputStream();
-			final InputStream processError = process.getErrorStream();
-			final PipedOutputStream pipedOutputStream = new PipedOutputStream();
-			new Thread(new InputStreamDrainer(processError)).start();
-			new Thread(new Connection(source) {
-
-				@Override
-				protected int bufferSize() {
-					return 4096;
-				}
-
-				@Override
-				protected void feed(byte[] buffer) throws IOException {
-					processInput.write(buffer);
-					processInput.flush();
-				}
-
-				@Override
-				protected void finish() throws IOException {
-					processInput.close();
-					processError.close();
-				}
-			}).start();
-		} catch (IOException ioe1) {
-
-		}
-	}
-
-	@Override
-	public void metadataUpdated() {
-		/* ignore. */
+	protected OutputStream createOutputStream() throws IOException {
+		return process.getOutputStream();
 	}
 
 	//

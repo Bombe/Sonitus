@@ -18,7 +18,8 @@
 package net.pterodactylus.sonitus.data;
 
 /**
- * A filter processes an input to produce an output.
+ * A filter is both a {@link Source} and a {@link Sink}. It is used to process
+ * the audio date in whatever way seems appropriate.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
