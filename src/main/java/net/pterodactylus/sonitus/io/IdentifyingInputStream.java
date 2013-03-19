@@ -17,6 +17,7 @@
 
 package net.pterodactylus.sonitus.io;
 
+import java.io.EOFException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,17 +85,25 @@ public class IdentifyingInputStream extends FilterInputStream {
 		RememberingInputStream rememberingInputStream = new RememberingInputStream(inputStream);
 
 		/* try Ogg Vorbis first. */
-		Optional<Metadata> metadata = OggVorbisIdentifier.identify(rememberingInputStream);
-		if (metadata.isPresent()) {
-			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
+		try {
+			Optional<Metadata> metadata = OggVorbisIdentifier.identify(rememberingInputStream);
+			if (metadata.isPresent()) {
+				return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
+			}
+		} catch (EOFException eofe1) {
+			/* ignore. */
 		}
 
 		/* try MP3 now. */
-		rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
-		InputStream limitedInputStream = ByteStreams.limit(rememberingInputStream, 1048576);
-		metadata = Mp3Identifier.identify(limitedInputStream);
-		if (metadata.isPresent()) {
-			return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
+		try {
+			rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
+			InputStream limitedInputStream = ByteStreams.limit(rememberingInputStream, 1048576);
+			Optional<Metadata> metadata = Mp3Identifier.identify(limitedInputStream);
+			if (metadata.isPresent()) {
+				return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
+			}
+		} catch (EOFException eofe1) {
+			/* ignore. */
 		}
 
 		return Optional.absent();
