@@ -209,10 +209,10 @@ public class Metadata {
 		if ((metadata.channels != channels) || (metadata.frequency != frequency) || !metadata.encoding.equalsIgnoreCase(encoding)) {
 			return false;
 		}
-		if (artist.equals(metadata.artist)) {
+		if (!artist.equals(metadata.artist)) {
 			return false;
 		}
-		if (name.equals(metadata.name)) {
+		if (!name.equals(metadata.name)) {
 			return false;
 		}
 		return true;
