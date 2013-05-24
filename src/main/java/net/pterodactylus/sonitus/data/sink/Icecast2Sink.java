@@ -227,8 +227,8 @@ public class Icecast2Sink implements Sink {
 	}
 
 	/**
-	 * Returns a MIME type for the given metadata. Currently only Vorbis, MP3, and
-	 * PCM formats are recognized.
+	 * Returns a MIME type for the given metadata. Currently only Vorbis, MP3, PCM,
+	 * Ogg Vorbis, Opus, and FLAC formats are recognized.
 	 *
 	 * @param metadata
 	 * 		The metadata to get a MIME type for
@@ -244,6 +244,15 @@ public class Icecast2Sink implements Sink {
 		}
 		if ("PCM".equalsIgnoreCase(encoding)) {
 			return "audio/vnd.wave";
+		}
+		if ("Vorbis".equalsIgnoreCase(encoding)) {
+			return "application/ogg";
+		}
+		if ("Opus".equalsIgnoreCase(encoding)) {
+			return "audio/ogg; codecs=opus";
+		}
+		if ("FLAC".equalsIgnoreCase(encoding)) {
+			return "audio/flac";
 		}
 		return "application/octet-stream";
 	}
