@@ -26,13 +26,13 @@ import javax.sound.sampled.SourceDataLine;
 
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
+import net.pterodactylus.sonitus.data.Source;
 
 import com.google.common.base.Preconditions;
 
 /**
- * {@link net.pterodactylus.sonitus.data.Sink} implementation that uses the
- * JDK’s {@link javax.sound.sampled.AudioSystem} to play all {@link
- * net.pterodactylus.sonitus.data.Source}s.
+ * {@link Sink} implementation that uses the JDK’s {@link AudioSystem} to play
+ * all {@link Source}s.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
