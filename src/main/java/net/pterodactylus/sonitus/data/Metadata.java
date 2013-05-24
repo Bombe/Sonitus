@@ -30,49 +30,28 @@ import com.google.common.base.Optional;
  */
 public class Metadata {
 
-	/** Constant for an unknown number of channels. */
-	public static final int UNKNOWN_CHANNELS = -1;
+	/** The format metadata. */
+	private final FormatMetadata formatMetadata;
 
-	/** Constant for an unknown frequency. */
-	public static final int UNKNOWN_FREQUENCY = -1;
-
-	/** Constant for an unknown metadata. */
-	public static final String UNKNOWN_ENCODING = "UNKNOWN";
-
-	/** The number of channels of this metadata. */
-	private final int channels;
-
-	/** The sampling frequency of this metadata. */
-	private final int frequency;
-
-	/** The encoding of this metadata. */
-	private final String encoding;
-
-	/** The artist performing the content. */
-	private final Optional<String> artist;
-
-	/** The name of the content. */
-	private final Optional<String> name;
+	/** The content metadata. */
+	private final ContentMetadata contentMetadata;
 
 	/** Creates empty metadata. */
-	public Metadata(int channels, int frequency, String encoding) {
-		this(channels, frequency, encoding, null, null);
+	public Metadata() {
+		this(new FormatMetadata(), new ContentMetadata());
 	}
 
 	/**
-	 * Creates metadata with the given attributes.
+	 * Creates metadata from the given format and content metadata.
 	 *
-	 * @param artist
-	 * 		The artist performing the content (may be {@code null})
-	 * @param name
-	 * 		The name of the content (may be {@code null})
+	 * @param formatMetadata
+	 * 		The format metadata
+	 * @param contentMetadata
+	 * 		The content metadata
 	 */
-	private Metadata(int channels, int frequency, String encoding, String artist, String name) {
-		this.channels = channels;
-		this.frequency = frequency;
-		this.encoding = encoding;
-		this.artist = Optional.fromNullable(artist);
-		this.name = Optional.fromNullable(name);
+	public Metadata(FormatMetadata formatMetadata, ContentMetadata contentMetadata) {
+		this.formatMetadata = formatMetadata;
+		this.contentMetadata = contentMetadata;
 	}
 
 	//
@@ -85,7 +64,7 @@ public class Metadata {
 	 * @return The number of channels of this metadata
 	 */
 	public int channels() {
-		return channels;
+		return formatMetadata.channels();
 	}
 
 	/**
@@ -97,7 +76,7 @@ public class Metadata {
 	 * @return A new metadata with the given number of channels
 	 */
 	public Metadata channels(int channels) {
-		return new Metadata(channels, frequency, encoding, artist.orNull(), name.orNull());
+		return new Metadata(formatMetadata.channels(channels), contentMetadata);
 	}
 
 	/**
@@ -106,7 +85,7 @@ public class Metadata {
 	 * @return The sampling frequency of this metadata
 	 */
 	public int frequency() {
-		return frequency;
+		return formatMetadata.frequency();
 	}
 
 	/**
@@ -118,7 +97,7 @@ public class Metadata {
 	 * @return A new metadata with the given frequency
 	 */
 	public Metadata frequency(int frequency) {
-		return new Metadata(channels, frequency, encoding, artist.orNull(), name.orNull());
+		return new Metadata(formatMetadata.frequency(frequency), contentMetadata);
 	}
 
 	/**
@@ -127,7 +106,7 @@ public class Metadata {
 	 * @return The encoding of this metadata
 	 */
 	public String encoding() {
-		return encoding;
+		return formatMetadata.encoding();
 	}
 
 	/**
@@ -139,7 +118,7 @@ public class Metadata {
 	 * @return A new metadata with the given encoding
 	 */
 	public Metadata encoding(String encoding) {
-		return new Metadata(channels, frequency, encoding, artist.orNull(), name.orNull());
+		return new Metadata(formatMetadata.encoding(encoding), contentMetadata);
 	}
 
 	/**
@@ -148,7 +127,7 @@ public class Metadata {
 	 * @return The artist, or {@link Optional#absent()}
 	 */
 	public Optional<String> artist() {
-		return artist;
+		return contentMetadata.artist();
 	}
 
 	/**
@@ -160,7 +139,7 @@ public class Metadata {
 	 * @return New metadata with a changed artist
 	 */
 	public Metadata artist(String artist) {
-		return new Metadata(channels, frequency, encoding, (artist != null) ? artist.trim() : artist, name.orNull());
+		return new Metadata(formatMetadata, contentMetadata.artist(artist));
 	}
 
 	/**
@@ -169,7 +148,7 @@ public class Metadata {
 	 * @return The name, or {@link Optional#absent()}
 	 */
 	public Optional<String> name() {
-		return name;
+		return contentMetadata.name();
 	}
 
 	/**
@@ -181,7 +160,28 @@ public class Metadata {
 	 * @return New metadata with a changed name
 	 */
 	public Metadata name(String name) {
-		return new Metadata(channels, frequency, encoding, artist.orNull(), (name != null) ? name.trim() : name);
+		return new Metadata(formatMetadata, contentMetadata.name(name));
+	}
+
+	/**
+	 * Returns the title of the content.
+	 *
+	 * @return The title of the content
+	 */
+	public String title() {
+		return contentMetadata.title();
+	}
+
+	/**
+	 * Returns new metadata with the same attributes as this metadata but with the
+	 * title changed to the given title.
+	 *
+	 * @param title
+	 * 		The new title
+	 * @return The new metadata
+	 */
+	public Metadata title(String title) {
+		return new Metadata(formatMetadata, contentMetadata.title(title));
 	}
 
 	//
@@ -190,45 +190,21 @@ public class Metadata {
 
 	@Override
 	public int hashCode() {
-		int hashCode = (channels << 16) ^ frequency ^ encoding.toUpperCase().hashCode();
-		if (artist.isPresent()) {
-			hashCode ^= artist.get().hashCode();
-		}
-		if (name.isPresent()) {
-			hashCode ^= name.get().hashCode();
-		}
-		return hashCode;
+		return formatMetadata.hashCode() ^ contentMetadata.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object object) {
-		if ((object == null) || (getClass() != object.getClass())) {
+		if (!(object instanceof Metadata)) {
 			return false;
 		}
 		Metadata metadata = (Metadata) object;
-		if ((metadata.channels != channels) || (metadata.frequency != frequency) || !metadata.encoding.equalsIgnoreCase(encoding)) {
-			return false;
-		}
-		if (!artist.equals(metadata.artist)) {
-			return false;
-		}
-		if (!name.equals(metadata.name)) {
-			return false;
-		}
-		return true;
+		return formatMetadata.equals(metadata.formatMetadata) && contentMetadata.equals(metadata.contentMetadata);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder string = new StringBuilder();
-		string.append(String.format("%d Channel%s, %d Hz, %s:", channels, channels != 1 ? "s" : "", frequency, encoding));
-		if (artist.isPresent()) {
-			string.append(" Artist(").append(artist.get()).append(")");
-		}
-		if (name.isPresent()) {
-			string.append(" Name(").append(name.get()).append(")");
-		}
-		return string.toString();
+		return String.format("%s: %s", formatMetadata, contentMetadata);
 	}
 
 }

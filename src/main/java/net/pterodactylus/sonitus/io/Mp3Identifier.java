@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import net.pterodactylus.sonitus.data.ContentMetadata;
+import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.io.mp3.Frame;
 import net.pterodactylus.sonitus.io.mp3.Parser;
@@ -53,7 +55,8 @@ public class Mp3Identifier {
 	public static Optional<Metadata> identify(InputStream inputStream) throws IOException {
 		Parser mp3Parser = new Parser(inputStream);
 		Frame frame = mp3Parser.nextFrame();
-		Metadata metadata = new Metadata((frame.channelMode() == SINGLE_CHANNEL) ? 1 : 2, frame.samplingRate(), "MP3");
+		FormatMetadata formatMetadata = new FormatMetadata((frame.channelMode() == SINGLE_CHANNEL) ? 1 : 2, frame.samplingRate(), "MP3");
+		ContentMetadata contentMetadata = new ContentMetadata("");
 		/* check for ID3v2 tag. */
 		Optional<byte[]> id3v2TagBuffer = mp3Parser.getId3Tag();
 		if (id3v2TagBuffer.isPresent()) {
@@ -63,7 +66,7 @@ public class Mp3Identifier {
 				/* skip “ID3” header tag. */
 				ID3V2Tag id3v2Tag = ID3V2Tag.read(tagInputStream);
 				if (id3v2Tag != null) {
-					metadata = metadata.artist(id3v2Tag.getArtist()).name(id3v2Tag.getTitle());
+					contentMetadata = contentMetadata.artist(id3v2Tag.getArtist()).name(id3v2Tag.getTitle());
 				}
 			} catch (ID3Exception id3e1) {
 				id3e1.printStackTrace();
@@ -71,7 +74,7 @@ public class Mp3Identifier {
 				close(tagInputStream, true);
 			}
 		}
-		return Optional.of(metadata);
+		return Optional.of(new Metadata(formatMetadata, contentMetadata));
 	}
 
 }

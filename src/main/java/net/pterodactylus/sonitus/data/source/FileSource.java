@@ -18,9 +18,6 @@
 package net.pterodactylus.sonitus.data.source;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_CHANNELS;
-import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_ENCODING;
-import static net.pterodactylus.sonitus.data.Metadata.UNKNOWN_FREQUENCY;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -69,7 +66,7 @@ public class FileSource implements Source {
 			metadata = identifyingInputStream.get().metadata();
 		} else {
 			/* fallback. */
-			metadata = new Metadata(UNKNOWN_CHANNELS, UNKNOWN_FREQUENCY, UNKNOWN_ENCODING).name(path);
+			metadata = new Metadata().name(path);
 		}
 	}
 

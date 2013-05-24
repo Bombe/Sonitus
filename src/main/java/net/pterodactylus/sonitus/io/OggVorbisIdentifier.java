@@ -20,6 +20,8 @@ package net.pterodactylus.sonitus.io;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.pterodactylus.sonitus.data.ContentMetadata;
+import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Optional;
@@ -115,21 +117,22 @@ public class OggVorbisIdentifier {
 			buffer = syncState.data;
 		}
 
-		Metadata metadata = new Metadata(info.channels, info.rate, "Vorbis");
+		FormatMetadata formatMetadata = new FormatMetadata(info.channels, info.rate, "Vorbis");
+		ContentMetadata contentMetadata = new ContentMetadata("");
 		for (int c = 0; c < comment.comments; ++c) {
 			String field = comment.getComment(c);
 			Optional<String> extractedField = extractField(field, "ARTIST");
 			if (extractedField.isPresent()) {
-				metadata = metadata.artist(extractedField.get());
+				contentMetadata = contentMetadata.artist(extractedField.get());
 				continue;
 			}
 			extractedField = extractField(field, "TITLE");
 			if (extractedField.isPresent()) {
-				metadata = metadata.name(extractedField.get());
+				contentMetadata = contentMetadata.name(extractedField.get());
 				continue;
 			}
 		}
-		return Optional.of(metadata);
+		return Optional.of(new Metadata(formatMetadata, contentMetadata));
 	}
 
 	/**
