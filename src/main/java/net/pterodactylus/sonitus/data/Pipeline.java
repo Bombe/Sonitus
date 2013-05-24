@@ -35,6 +35,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A pipeline is responsible for streaming audio data from a {@link Source} to
@@ -234,7 +235,7 @@ public class Pipeline {
 			this.source = source;
 			this.sinks = sinks;
 			if (sinks.size() == 1) {
-				executorService = Executors.newSingleThreadExecutor();
+				executorService = MoreExecutors.sameThreadExecutor();
 			} else {
 				executorService = Executors.newCachedThreadPool();
 			}
