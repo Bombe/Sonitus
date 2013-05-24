@@ -47,6 +47,10 @@ public class AudioSink implements Sink {
 	/** The audio output. */
 	private SourceDataLine sourceDataLine;
 
+	//
+	// SINK METHODS
+	//
+
 	@Override
 	public void open(Metadata metadata) throws IOException {
 		Preconditions.checkArgument(metadata.encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
