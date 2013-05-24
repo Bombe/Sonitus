@@ -73,7 +73,7 @@ public class AudioSink implements Sink {
 
 	@Override
 	public void metadataUpdated(Metadata metadata) {
-		/* ignore. */
+		logger.info(String.format("Now playing %s.", metadata));
 	}
 
 	@Override
