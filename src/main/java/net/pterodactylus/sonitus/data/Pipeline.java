@@ -261,7 +261,12 @@ public class Pipeline {
 				try {
 					final Metadata lastMetadata = firstMetadata;
 					final Metadata metadata = firstMetadata = source.metadata();
-					final byte[] buffer = source.get(4096);
+					final byte[] buffer;
+					try {
+						buffer = source.get(4096);
+					} catch (IOException ioe1) {
+						throw new IOException(String.format("I/O error while reading from %s.", source), ioe1);
+					}
 					List<Future<Void>> futures = executorService.invokeAll(FluentIterable.from(sinks).transform(new Function<Sink, Callable<Void>>() {
 
 						@Override
@@ -273,7 +278,11 @@ public class Pipeline {
 									if (!metadata.equals(lastMetadata)) {
 										sink.metadataUpdated(metadata);
 									}
-									sink.process(buffer);
+									try {
+										sink.process(buffer);
+									} catch (IOException ioe1) {
+										throw new IOException(String.format("I/O error while writing to %s", sink), ioe1);
+									}
 									return null;
 								}
 							};
