@@ -263,7 +263,9 @@ public class Pipeline {
 					final Metadata metadata = firstMetadata = source.metadata();
 					final byte[] buffer;
 					try {
+						logger.finest(String.format("Getting %d bytes from %s...", 4096, source));
 						buffer = source.get(4096);
+						logger.finest(String.format("Got %d bytes from %s.", buffer.length, source));
 					} catch (IOException ioe1) {
 						throw new IOException(String.format("I/O error while reading from %s.", source), ioe1);
 					}
@@ -279,7 +281,9 @@ public class Pipeline {
 										sink.metadataUpdated(metadata);
 									}
 									try {
+										logger.finest(String.format("Sending %d bytes to %s.", buffer.length, sink));
 										sink.process(buffer);
+										logger.finest(String.format("Sent %d bytes to %s.", buffer.length, sink));
 									} catch (IOException ioe1) {
 										throw new IOException(String.format("I/O error while writing to %s", sink), ioe1);
 									}
