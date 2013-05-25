@@ -216,6 +216,34 @@ public class Frame {
 	/** The decoded emphasis mode. */
 	private final int emphasis;
 
+	/**
+	 * Creates a new frame from the given values.
+	 *
+	 * @param mpegAudioVersionId
+	 * 		The MPEG audio version ID
+	 * @param layerDescription
+	 * 		The layer description
+	 * @param protectionBit
+	 * 		The protection bit
+	 * @param bitrateIndex
+	 * 		The bitrate index
+	 * @param samplingRateFrequencyIndex
+	 * 		The sampling rate frequency index
+	 * @param paddingBit
+	 * 		The padding bit
+	 * @param privateBit
+	 * 		The private bit
+	 * @param channelMode
+	 * 		The channel mode
+	 * @param modeExtension
+	 * 		The mode extension
+	 * @param copyrightBit
+	 * 		The copyright bit
+	 * @param originalBit
+	 * 		The original bit
+	 * @param emphasis
+	 * 		The emphasis
+	 */
 	private Frame(int mpegAudioVersionId, int layerDescription, int protectionBit, int bitrateIndex, int samplingRateFrequencyIndex, int paddingBit, int privateBit, int channelMode, int modeExtension, int copyrightBit, int originalBit, int emphasis) {
 		this.mpegAudioVersionId = mpegAudioVersionId;
 		this.layerDescription = layerDescription;
@@ -235,48 +263,103 @@ public class Frame {
 	// ACCESSORS
 	//
 
+	/**
+	 * Returns the MPEG audio version.
+	 *
+	 * @return The MPEG audio version
+	 */
 	public MpegAudioVersion mpegAudioVersion() {
 		return MpegAudioVersion.values()[mpegAudioVersionId];
 	}
 
+	/**
+	 * Returns the layer description.
+	 *
+	 * @return The layer description
+	 */
 	public LayerDescription layerDescription() {
 		return LayerDescription.values()[layerDescription];
 	}
 
+	/**
+	 * Returns the protection bit.
+	 *
+	 * @return {@code true} if the protection bit is set, {@code false} otherwise
+	 */
 	public boolean protectionBit() {
 		return protectionBit != 0;
 	}
 
+	/**
+	 * Returns the bitrate of this frame.
+	 *
+	 * @return The bitrate of this frame (in kbps)
+	 */
 	public int bitrate() {
 		return bitrateSupplier.get().get(mpegAudioVersion()).get(layerDescription()).get(bitrateIndex);
 	}
 
+	/**
+	 * Returns the sampling rate of the audio data in this frame.
+	 *
+	 * @return The sample rate (in Hertz)
+	 */
 	public int samplingRate() {
 		return samplingRateSupplier.get().get(mpegAudioVersion()).get(samplingRateFrequencyIndex);
 	}
 
+	/**
+	 * Returns the padding bit.
+	 *
+	 * @return {@code true} if the padding bit is set, {@code false} otherwise
+	 */
 	public boolean paddingBit() {
 		return paddingBit != 0;
 	}
 
+	/**
+	 * Returns the private bit.
+	 *
+	 * @return {@code true} if the private bit is set, {@code false} otherwise
+	 */
 	public boolean privateBit() {
 		return privateBit != 0;
 	}
 
+	/**
+	 * Returns the channel mode.
+	 *
+	 * @return The channel mode
+	 */
 	public ChannelMode channelMode() {
 		return ChannelMode.values()[channelMode];
 	}
 
 	/* TODO - mode extension. */
 
+	/**
+	 * Returns the copyright bit.
+	 *
+	 * @return {@code true} if the copyright bit is set, {@code false} otherwise
+	 */
 	public boolean copyrightBit() {
 		return copyrightBit != 0;
 	}
 
+	/**
+	 * Returns the original bit.
+	 *
+	 * @return {@code true} if the original bit is set, {@code false} otherwise
+	 */
 	public boolean originalBit() {
 		return originalBit != 0;
 	}
 
+	/**
+	 * Returns the emphasis.
+	 *
+	 * @return The emphasis
+	 */
 	public Emphasis emphasis() {
 		return Emphasis.values()[emphasis];
 	}
@@ -285,10 +368,34 @@ public class Frame {
 	// STATIC METHODS
 	//
 
+	/**
+	 * Returns whether the data beginning at the given offset is an MPEG audio
+	 * frame.
+	 *
+	 * @param buffer
+	 * 		The buffer in which the data is stored
+	 * @param offset
+	 * 		The beginning of the data to parse
+	 * @param length
+	 * 		The length of the data to parse
+	 * @return {@code true} if the data at the given offset is an MPEG audio frame
+	 */
 	public static boolean isFrame(byte[] buffer, int offset, int length) {
-		return (((buffer[offset] & 0xff) == 0xff) && ((buffer[offset + 1] & 0xe0) == 0xe0));
+		return (length > 3) && (((buffer[offset] & 0xff) == 0xff) && ((buffer[offset + 1] & 0xe0) == 0xe0));
 	}
 
+	/**
+	 * Tries to create an MPEG audio from the given data.
+	 *
+	 * @param buffer
+	 * 		The buffer in which the data is stored
+	 * @param offset
+	 * 		The offset at which to look for a frame
+	 * @param length
+	 * 		The length of the data in the buffer
+	 * @return The frame if it could be parsed, or {@link Optional#absent()} if no
+	 *         frame could be found
+	 */
 	public static Optional<Frame> create(byte[] buffer, int offset, int length) {
 		if (isFrame(buffer, offset, length)) {
 			int mpegAudioVersionId = (buffer[offset + 1] & 0x18) >>> 3;
