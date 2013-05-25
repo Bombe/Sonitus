@@ -208,15 +208,15 @@ public class Frame {
 	private final int modeExtension;
 
 	/** The decoded copyright bit. */
-	private final int copyright;
+	private final int copyrightBit;
 
 	/** The deocded original bit. */
-	private final int original;
+	private final int originalBit;
 
 	/** The decoded emphasis mode. */
 	private final int emphasis;
 
-	private Frame(int mpegAudioVersionId, int layerDescription, int protectionBit, int bitrateIndex, int samplingRateFrequencyIndex, int paddingBit, int privateBit, int channelMode, int modeExtension, int copyright, int original, int emphasis) {
+	private Frame(int mpegAudioVersionId, int layerDescription, int protectionBit, int bitrateIndex, int samplingRateFrequencyIndex, int paddingBit, int privateBit, int channelMode, int modeExtension, int copyrightBit, int originalBit, int emphasis) {
 		this.mpegAudioVersionId = mpegAudioVersionId;
 		this.layerDescription = layerDescription;
 		this.protectionBit = protectionBit;
@@ -226,8 +226,8 @@ public class Frame {
 		this.privateBit = privateBit;
 		this.channelMode = channelMode;
 		this.modeExtension = modeExtension;
-		this.copyright = copyright;
-		this.original = original;
+		this.copyrightBit = copyrightBit;
+		this.originalBit = originalBit;
 		this.emphasis = emphasis;
 	}
 
@@ -270,11 +270,11 @@ public class Frame {
 	/* TODO - mode extension. */
 
 	public boolean copyrightBit() {
-		return copyright != 0;
+		return copyrightBit != 0;
 	}
 
 	public boolean originalBit() {
-		return original != 0;
+		return originalBit != 0;
 	}
 
 	public Emphasis emphasis() {
