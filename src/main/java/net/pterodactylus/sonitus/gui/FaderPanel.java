@@ -48,7 +48,7 @@ public class FaderPanel extends JPanel {
 		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
 		/* create label. */
-		JLabel label = new JLabel("Volume");
+		JLabel label = new JLabel(fader.name());
 		add(label, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		/* create fader labels. */

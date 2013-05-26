@@ -24,19 +24,26 @@ package net.pterodactylus.sonitus.data.controller;
  */
 public abstract class Switch extends AbstractController<Boolean> {
 
-	/** Creates a new switch that is off. */
-	public Switch() {
-		this(false);
+	/**
+	 * Creates a new switch that is off.
+	 *
+	 * @param name
+	 * 		The name of the switch
+	 */
+	public Switch(String name) {
+		this(name, false);
 	}
 
 	/**
 	 * Creates a new switch with the given state.
 	 *
+	 * @param name
+	 * 		The name of the switch
 	 * @param active
 	 * 		The state of the switch
 	 */
-	public Switch(boolean active) {
-		super(false, true, false, active);
+	public Switch(String name, boolean active) {
+		super(name, false, true, false, active);
 	}
 
 }

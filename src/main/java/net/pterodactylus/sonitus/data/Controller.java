@@ -25,6 +25,13 @@ package net.pterodactylus.sonitus.data;
 public interface Controller<V extends Comparable<V>> {
 
 	/**
+	 * Returns the name of this controller.
+	 *
+	 * @return The name of this controller
+	 */
+	String name();
+
+	/**
 	 * Returns the minimum value of this controller.
 	 *
 	 * @return The minimum value of this controller

@@ -47,7 +47,7 @@ public class SwitchPanel extends JPanel {
 		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
 		/* create label. */
-		JLabel label = new JLabel("Mute");
+		JLabel label = new JLabel(switchController.name());
 		add(label, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		/* create checkbox. */

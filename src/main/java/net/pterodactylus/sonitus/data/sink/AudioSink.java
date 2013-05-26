@@ -64,7 +64,7 @@ public class AudioSink implements Sink {
 	/** Creates a new audio sink. */
 	public AudioSink() {
 		super();
-		volumeFader = new Fader() {
+		volumeFader = new Fader("Volume") {
 
 			@Override
 			protected void valueSet(Double value) {
@@ -74,7 +74,7 @@ public class AudioSink implements Sink {
 				}
 			}
 		};
-		muteSwitch = new Switch() {
+		muteSwitch = new Switch("Mute") {
 
 			private float previousValue;
 

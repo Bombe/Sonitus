@@ -30,6 +30,9 @@ import net.pterodactylus.sonitus.data.Controller;
  */
 public abstract class AbstractController<V extends Comparable<V>> implements Controller<V> {
 
+	/** The name of this controller. */
+	private final String name;
+
 	/** The minimum value of this controller. */
 	private final V minimum;
 
@@ -45,6 +48,8 @@ public abstract class AbstractController<V extends Comparable<V>> implements Con
 	/**
 	 * Creates a new abstract controller.
 	 *
+	 * @param name
+	 * 		The name of the controller
 	 * @param minimum
 	 * 		The minimum value of the controller
 	 * @param maximum
@@ -53,9 +58,9 @@ public abstract class AbstractController<V extends Comparable<V>> implements Con
 	 * 		{@code true} if this controller has a “center” position, {@code false}
 	 * 		otherwise
 	 * @param currentValue
-	 * 		The current value of this controller
 	 */
-	public AbstractController(V minimum, V maximum, boolean centered, V currentValue) {
+	public AbstractController(String name, V minimum, V maximum, boolean centered, V currentValue) {
+		this.name = name;
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.centered = centered;
@@ -65,6 +70,11 @@ public abstract class AbstractController<V extends Comparable<V>> implements Con
 	//
 	// CONTROLLER METHODS
 	//
+
+	@Override
+	public String name() {
+		return name;
+	}
 
 	@Override
 	public V minimum() {
