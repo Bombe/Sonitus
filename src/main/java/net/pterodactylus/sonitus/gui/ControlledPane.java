@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.controller.Fader;
+import net.pterodactylus.sonitus.data.controller.Switch;
 
 /**
  * Panel that displays all {@link Controller}s of a {@link Controlled}
@@ -44,6 +45,8 @@ public class ControlledPane extends JPanel {
 		for (Controller controller : controlled.controllers()) {
 			if (controller instanceof Fader) {
 				add(new FaderPanel((Fader) controller));
+			} else if (controller instanceof Switch) {
+				add(new SwitchPanel((Switch) controller));
 			}
 		}
 		add(Box.createGlue());
