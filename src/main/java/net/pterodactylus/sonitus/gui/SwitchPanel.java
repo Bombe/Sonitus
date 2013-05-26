@@ -44,11 +44,6 @@ public class SwitchPanel extends JPanel {
 	 */
 	public SwitchPanel(final Switch switchController) {
 		super(new GridBagLayout());
-		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-
-		/* create label. */
-		JLabel label = new JLabel(switchController.name());
-		add(label, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		/* create checkbox. */
 		JCheckBox checkBox = new JCheckBox();
@@ -59,7 +54,7 @@ public class SwitchPanel extends JPanel {
 				switchController.value(((JCheckBox) actionEvent.getSource()).isSelected());
 			}
 		});
-		add(checkBox, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		add(checkBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 }

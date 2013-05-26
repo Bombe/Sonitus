@@ -20,7 +20,6 @@ package net.pterodactylus.sonitus.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,15 +44,10 @@ public class FaderPanel extends JPanel {
 	 */
 	public FaderPanel(final Fader fader) {
 		super(new GridBagLayout());
-		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-
-		/* create label. */
-		JLabel label = new JLabel(fader.name());
-		add(label, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		/* create fader labels. */
-		add(new JLabel("-∞"), new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
-		add(new JLabel("0"), new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
+		add(new JLabel("-∞"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
+		add(new JLabel("0"), new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
 
 		/* create fader. */
 		JSlider slider = new JSlider(new DefaultBoundedRangeModel((int) (fader.value() * Integer.MAX_VALUE), 0, 0, Integer.MAX_VALUE));
@@ -64,7 +58,7 @@ public class FaderPanel extends JPanel {
 				fader.value(((JSlider) changeEvent.getSource()).getValue() / (double) Integer.MAX_VALUE);
 			}
 		});
-		add(slider, new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		add(slider, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 }

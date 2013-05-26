@@ -17,8 +17,12 @@
 
 package net.pterodactylus.sonitus.gui;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Controller;
@@ -31,7 +35,7 @@ import net.pterodactylus.sonitus.data.controller.Switch;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class ControlledPane extends Box {
+public class ControlledPane extends JPanel {
 
 	/**
 	 * Creates a new controlled pane.
@@ -40,15 +44,20 @@ public class ControlledPane extends Box {
 	 * 		The controlled whose controllers to display
 	 */
 	public ControlledPane(Controlled controlled) {
-		super(BoxLayout.Y_AXIS);
+		super(new GridBagLayout());
+		setBorder(BorderFactory.createEmptyBorder(6, 12, 12, 12));
+
+		int controllerIndex = 0;
 		for (Controller controller : controlled.controllers()) {
+			add(new JLabel(controller.name()), new GridBagConstraints(0, controllerIndex, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 0, 6), 0, 0));
 			if (controller instanceof Fader) {
-				add(new FaderPanel((Fader) controller));
+				add(new FaderPanel((Fader) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			} else if (controller instanceof Switch) {
-				add(new SwitchPanel((Switch) controller));
+				add(new SwitchPanel((Switch) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			}
+			++controllerIndex;
 		}
-		add(Box.createGlue());
+		add(new JPanel(), new GridBagConstraints(0, controllerIndex, 2, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(6, 0, 0, 0), 0, 0));
 	}
 
 }
