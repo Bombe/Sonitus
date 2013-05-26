@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.controller.Fader;
+import net.pterodactylus.sonitus.data.controller.Knob;
 import net.pterodactylus.sonitus.data.controller.Switch;
 
 /**
@@ -54,6 +55,8 @@ public class ControlledPane extends JPanel {
 				add(new FaderPanel((Fader) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			} else if (controller instanceof Switch) {
 				add(new SwitchPanel((Switch) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
+			} else if (controller instanceof Knob) {
+				add(new KnobPanel((Knob) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			}
 			++controllerIndex;
 		}
