@@ -7,7 +7,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface Source {
+public interface Source extends Controlled {
 
 	/**
 	 * Returns the metadata of the audio stream.

@@ -17,16 +17,23 @@
 
 package net.pterodactylus.sonitus.data.sink;
 
+import static javax.sound.sampled.FloatControl.Type.VOLUME;
+
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
+import net.pterodactylus.sonitus.data.controller.Fader;
 
 import com.google.common.base.Preconditions;
 
@@ -41,11 +48,38 @@ public class AudioSink implements Sink {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(AudioSink.class.getName());
 
+	/** The volume fader. */
+	private final Fader volumeFader;
+
 	/** The current metadata. */
 	private Metadata metadata;
 
 	/** The audio output. */
 	private SourceDataLine sourceDataLine;
+
+	/** Creates a new audio sink. */
+	public AudioSink() {
+		super();
+		volumeFader = new Fader() {
+
+			@Override
+			protected void valueSet(int value) {
+				if (sourceDataLine != null) {
+					FloatControl volumeControl = (FloatControl) sourceDataLine.getControl(VOLUME);
+					volumeControl.setValue(value * volumeControl.getMaximum() / (float) maximum());
+				}
+			}
+		};
+	}
+
+	//
+	// CONTROLLED METHODS
+	//
+
+	@Override
+	public List<Controller> controllers() {
+		return Arrays.<Controller>asList(volumeFader);
+	}
 
 	//
 	// SINK METHODS

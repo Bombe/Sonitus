@@ -24,9 +24,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
@@ -105,6 +108,15 @@ public class Icecast2Sink implements Sink {
 		this.serverDescription = serverDescription;
 		this.genre = genre;
 		this.publishServer = publishServer;
+	}
+
+	//
+	// CONTROLLED METHODS
+	//
+
+	@Override
+	public List<Controller> controllers() {
+		return Collections.emptyList();
 	}
 
 	//

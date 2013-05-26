@@ -21,9 +21,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
@@ -78,6 +81,15 @@ public class MultiSource implements Source {
 			}
 			logger.info(String.format("Next Source set: %s", source));
 		}
+	}
+
+	//
+	// CONTROLLED METHODS
+	//
+
+	@Override
+	public List<Controller> controllers() {
+		return Collections.emptyList();
 	}
 
 	//

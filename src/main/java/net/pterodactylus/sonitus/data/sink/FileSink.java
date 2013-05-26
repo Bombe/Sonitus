@@ -19,8 +19,11 @@ package net.pterodactylus.sonitus.data.sink;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
+import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 
@@ -49,6 +52,19 @@ public class FileSink implements Sink {
 	public FileSink(String path) {
 		this.path = path;
 	}
+
+	//
+	// CONTROLLED METHODS
+	//
+
+	@Override
+	public List<Controller> controllers() {
+		return Collections.emptyList();
+	}
+
+	//
+	// SINK METHODS
+	//
 
 	@Override
 	public void open(Metadata metadata) throws IOException {

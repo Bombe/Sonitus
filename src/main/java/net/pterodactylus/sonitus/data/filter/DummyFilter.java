@@ -24,7 +24,10 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
@@ -45,6 +48,15 @@ public class DummyFilter implements Filter {
 
 	/** The current metadata. */
 	private Metadata metadata;
+
+	//
+	// CONTROLLED METHODS
+	//
+
+	@Override
+	public List<Controller> controllers() {
+		return Collections.emptyList();
+	}
 
 	//
 	// FILTER METHODS

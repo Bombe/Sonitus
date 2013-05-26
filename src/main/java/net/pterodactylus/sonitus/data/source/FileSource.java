@@ -24,7 +24,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.IdentifyingInputStream;
@@ -68,6 +71,15 @@ public class FileSource implements Source {
 			/* fallback. */
 			metadata = new Metadata().name(path);
 		}
+	}
+
+	//
+	// CONTROLLED METHODS
+	//
+
+	@Override
+	public List<Controller> controllers() {
+		return Collections.emptyList();
 	}
 
 	//
