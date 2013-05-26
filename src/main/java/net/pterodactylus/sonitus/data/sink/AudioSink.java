@@ -20,6 +20,7 @@ package net.pterodactylus.sonitus.data.sink;
 import static javax.sound.sampled.FloatControl.Type.VOLUME;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -35,6 +36,7 @@ import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.controller.Fader;
 import net.pterodactylus.sonitus.data.controller.Switch;
+import net.pterodactylus.sonitus.io.IntegralWriteOutputStream;
 
 import com.google.common.base.Preconditions;
 
@@ -60,6 +62,26 @@ public class AudioSink implements Sink {
 
 	/** The audio output. */
 	private SourceDataLine sourceDataLine;
+
+	/** A buffered output stream to ensure correct writing to the source data line. */
+	private OutputStream sourceDataLineOutputStream = new IntegralWriteOutputStream(new OutputStream() {
+
+		@Override
+		public void write(int b) throws IOException {
+		}
+
+		@Override
+		public void write(byte[] b) throws IOException {
+			write(b, 0, b.length);
+		}
+
+		@Override
+		public void write(byte[] b, int off, int len) throws IOException {
+			if (sourceDataLine != null) {
+				sourceDataLine.write(b, off, len);
+			}
+		}
+	}, 1024);
 
 	/** Creates a new audio sink. */
 	public AudioSink() {
@@ -132,8 +154,8 @@ public class AudioSink implements Sink {
 	}
 
 	@Override
-	public void process(byte[] buffer) {
-		sourceDataLine.write(buffer, 0, buffer.length);
+	public void process(byte[] buffer) throws IOException {
+		sourceDataLineOutputStream.write(buffer);
 		logger.finest(String.format("AudioSink: Wrote %d Bytes.", buffer.length));
 	}
 
