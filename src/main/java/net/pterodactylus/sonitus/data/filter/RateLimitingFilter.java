@@ -46,23 +46,28 @@ public class RateLimitingFilter extends DummyFilter {
 	/**
 	 * Creates a new rate limiting filter.
 	 *
+	 * @param name
+	 * 		The name of the filter
 	 * @param rate
 	 * 		The limiting rate (in bytes/second)
 	 */
-	public RateLimitingFilter(int rate) {
-		this(rate, 0);
+	public RateLimitingFilter(String name, int rate) {
+		this(name, rate, 0);
 	}
 
 	/**
 	 * Creates a new rate limiting filter.
 	 *
+	 * @param name
+	 * 		The name of the filter
 	 * @param rate
 	 * 		The limiting rate (in bytes/second)
 	 * @param fastStartTime
 	 * 		The amount of time at the start of the filtering during which no delay
 	 * 		will occur (in milliseconds)
 	 */
-	public RateLimitingFilter(int rate, long fastStartTime) {
+	public RateLimitingFilter(String name, int rate, long fastStartTime) {
+		super(name);
 		this.rate = rate;
 		this.counter = (long) (-rate * (fastStartTime / 1000.0));
 	}

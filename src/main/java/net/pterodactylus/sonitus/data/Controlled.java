@@ -27,6 +27,13 @@ import java.util.List;
 public interface Controlled {
 
 	/**
+	 * Returns the name of this controlled component.
+	 *
+	 * @return The name of this controlled component
+	 */
+	public String name();
+
+	/**
 	 * Returns the controllers offered by this component.
 	 *
 	 * @return The controllers of this component

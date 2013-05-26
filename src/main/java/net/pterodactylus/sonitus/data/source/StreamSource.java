@@ -50,6 +50,9 @@ public class StreamSource implements Source {
 	/** The URL of the stream. */
 	private final String streamUrl;
 
+	/** The name of the station. */
+	private final String streamName;
+
 	/** The metadata stream. */
 	private final MetadataStream metadataStream;
 
@@ -114,11 +117,17 @@ public class StreamSource implements Source {
 
 		metadata = new Metadata(new FormatMetadata(audioParameters.get("ice-channels"), audioParameters.get("ice-samplerate"), "MP3"), new ContentMetadata());
 		metadataStream = new MetadataStream(new BufferedInputStream(httpUrlConnection.getInputStream()), metadataInterval);
+		streamName = httpUrlConnection.getHeaderField("ICY-Name");
 	}
 
 	//
 	// CONTROLLED METHODS
 	//
+
+	@Override
+	public String name() {
+		return streamName;
+	}
 
 	@Override
 	public List<Controller<?>> controllers() {

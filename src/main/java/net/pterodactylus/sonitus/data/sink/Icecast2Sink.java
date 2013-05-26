@@ -115,6 +115,11 @@ public class Icecast2Sink implements Sink {
 	//
 
 	@Override
+	public String name() {
+		return String.format("icecast://%s:%d/%s", server, port, mountPoint);
+	}
+
+	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}

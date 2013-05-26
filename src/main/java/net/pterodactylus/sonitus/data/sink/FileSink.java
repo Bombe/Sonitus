@@ -58,6 +58,11 @@ public class FileSink implements Sink {
 	//
 
 	@Override
+	public String name() {
+		return path;
+	}
+
+	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}

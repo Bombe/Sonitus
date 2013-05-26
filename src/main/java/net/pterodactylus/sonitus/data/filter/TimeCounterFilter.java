@@ -41,19 +41,25 @@ public class TimeCounterFilter extends DummyFilter {
 	/**
 	 * Creates a new time counter filter that automatically resets the counter when
 	 * the metadata is {@link #metadataUpdated(Metadata) updated}.
+	 *
+	 * @param name
+	 * 		The name of the filter
 	 */
-	public TimeCounterFilter() {
-		this(true);
+	public TimeCounterFilter(String name) {
+		this(name, true);
 	}
 
 	/**
 	 * Creates a new time counter filter.
 	 *
+	 * @param name
+	 * 		The name of the filter
 	 * @param resetOnMetadataUpdate
 	 * 		{@code true} if the counter should automatically be reset if the metadata
 	 * 		is updated, {@code false} otherwise
 	 */
-	public TimeCounterFilter(boolean resetOnMetadataUpdate) {
+	public TimeCounterFilter(String name, boolean resetOnMetadataUpdate) {
+		super(name);
 		this.resetOnMetadataUpdate = resetOnMetadataUpdate;
 	}
 

@@ -37,6 +37,7 @@ public class StereoSeparationFilter extends AudioProcessingFilter {
 
 	/** Creates a new stereo separation filter. */
 	public StereoSeparationFilter() {
+		super("Stereo Separation");
 		separationKnob = new Knob("Separation", 1.0);
 	}
 

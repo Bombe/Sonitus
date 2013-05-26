@@ -88,6 +88,11 @@ public class MultiSource implements Source {
 	//
 
 	@Override
+	public String name() {
+		return "Multisource";
+	}
+
+	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}

@@ -40,6 +40,9 @@ import com.google.common.io.Closeables;
  */
 public class DummyFilter implements Filter {
 
+	/** The name of this filter. */
+	private final String name;
+
 	/** The input stream from which to read. */
 	private InputStream inputStream;
 
@@ -49,9 +52,24 @@ public class DummyFilter implements Filter {
 	/** The current metadata. */
 	private Metadata metadata;
 
+	/**
+	 * Creates a new dummy filter with the given name.
+	 *
+	 * @param name
+	 * 		The name of the filter
+	 */
+	public DummyFilter(String name) {
+		this.name = name;
+	}
+
 	//
 	// CONTROLLED METHODS
 	//
+
+	@Override
+	public String name() {
+		return name;
+	}
 
 	@Override
 	public List<Controller<?>> controllers() {

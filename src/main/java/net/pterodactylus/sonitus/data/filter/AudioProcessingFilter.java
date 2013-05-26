@@ -30,6 +30,16 @@ import net.pterodactylus.sonitus.io.ProcessingOutputStream;
  */
 public abstract class AudioProcessingFilter extends DummyFilter {
 
+	/**
+	 * Creates a new audio processing filter with the given name.
+	 *
+	 * @param name
+	 * 		The name of the filter
+	 */
+	protected AudioProcessingFilter(String name) {
+		super(name);
+	}
+
 	//
 	// DUMMYFILTER METHODS
 	//

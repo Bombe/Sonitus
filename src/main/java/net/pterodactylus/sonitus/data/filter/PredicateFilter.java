@@ -53,6 +53,7 @@ public class PredicateFilter extends DummyFilter {
 	 * 		The filter to use if the predicate matches the metadata
 	 */
 	public PredicateFilter(Predicate<Metadata> metadataPredicate, Filter filter) {
+		super(String.format("%s (maybe)", filter.name()));
 		this.metadataPredicate = metadataPredicate;
 		this.filter = filter;
 	}

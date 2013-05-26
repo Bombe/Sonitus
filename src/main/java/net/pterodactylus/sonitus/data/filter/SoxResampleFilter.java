@@ -49,6 +49,7 @@ public class SoxResampleFilter extends ExternalFilter {
 	 * 		The new sampling rate
 	 */
 	public SoxResampleFilter(String binary, int rate) {
+		super(String.format("Resample to %s kHz", rate / 1000.0));
 		this.binary = binary;
 		this.rate = rate;
 	}

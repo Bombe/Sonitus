@@ -64,7 +64,7 @@ public class MainWindow extends JFrame {
 			return;
 		}
 		ControlledPane controlledPane = new ControlledPane(controlled);
-		tabbedPane.addTab(controlled.toString(), controlledPane);
+		tabbedPane.addTab(controlled.name(), controlledPane);
 	}
 
 }

@@ -41,6 +41,7 @@ public class FlacDecoder extends ExternalFilter {
 	 * 		The location of the binary
 	 */
 	public FlacDecoder(String binary) {
+		super("FLAC Decoder");
 		this.binary = binary;
 	}
 

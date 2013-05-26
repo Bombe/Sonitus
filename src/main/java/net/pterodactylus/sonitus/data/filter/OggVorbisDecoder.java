@@ -47,6 +47,7 @@ public class OggVorbisDecoder extends ExternalFilter {
 	 * 		The location of the binary
 	 */
 	public OggVorbisDecoder(String binary) {
+		super("Ogg Vorbis Decoder");
 		this.binary = binary;
 	}
 

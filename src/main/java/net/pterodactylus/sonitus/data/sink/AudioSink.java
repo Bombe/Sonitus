@@ -85,7 +85,6 @@ public class AudioSink implements Sink {
 
 	/** Creates a new audio sink. */
 	public AudioSink() {
-		super();
 		volumeFader = new Fader("Volume") {
 
 			@Override
@@ -118,6 +117,11 @@ public class AudioSink implements Sink {
 	//
 	// CONTROLLED METHODS
 	//
+
+	@Override
+	public String name() {
+		return "Audio Output";
+	}
 
 	@Override
 	public List<Controller<?>> controllers() {

@@ -33,6 +33,16 @@ import net.pterodactylus.sonitus.data.Metadata;
  */
 public abstract class ExternalMp3Decoder extends ExternalFilter {
 
+	/**
+	 * Creates a new external MP3 decoder.
+	 *
+	 * @param name
+	 * 		The name of the filter
+	 */
+	protected ExternalMp3Decoder(String name) {
+		super(name);
+	}
+
 	@Override
 	public Metadata metadata() {
 		return super.metadata().encoding("PCM");

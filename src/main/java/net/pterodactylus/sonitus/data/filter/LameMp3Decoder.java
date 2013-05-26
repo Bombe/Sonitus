@@ -41,6 +41,7 @@ public class LameMp3Decoder extends ExternalMp3Decoder {
 	 * 		The location of the binary
 	 */
 	public LameMp3Decoder(String binary) {
+		super("LAME Decoder");
 		this.binary = binary;
 	}
 

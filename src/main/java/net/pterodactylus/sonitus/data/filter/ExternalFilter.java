@@ -42,6 +42,16 @@ public abstract class ExternalFilter extends DummyFilter {
 	/** The external process. */
 	private Process process;
 
+	/**
+	 * Creates a new external filter with the given name.
+	 *
+	 * @param name
+	 * 		The name of the filter
+	 */
+	protected ExternalFilter(String name) {
+		super(name);
+	}
+
 	//
 	// FILTER METHODS
 	//

@@ -98,6 +98,7 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	 * 		The bitrate to encode to (in kbps)
 	 */
 	private LameMp3Encoder(String binary, Preset preset, int bitrate) {
+		super("LAME Encoder");
 		this.binary = binary;
 		this.preset = Optional.fromNullable(preset);
 		this.bitrate = (bitrate < 0) ? Optional.<Integer>absent() : Optional.<Integer>of(bitrate);
