@@ -34,6 +34,7 @@ import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.controller.Fader;
+import net.pterodactylus.sonitus.data.controller.Switch;
 
 import com.google.common.base.Preconditions;
 
@@ -50,6 +51,9 @@ public class AudioSink implements Sink {
 
 	/** The volume fader. */
 	private final Fader volumeFader;
+
+	/** The “mute” switch. */
+	private final Switch muteSwitch;
 
 	/** The current metadata. */
 	private Metadata metadata;
@@ -70,6 +74,23 @@ public class AudioSink implements Sink {
 				}
 			}
 		};
+		muteSwitch = new Switch() {
+
+			private float previousValue;
+
+			@Override
+			protected void valueSet(int value) {
+				if (sourceDataLine != null) {
+					FloatControl volumeControl = (FloatControl) sourceDataLine.getControl(VOLUME);
+					if (value == 1) {
+						previousValue = volumeControl.getValue();
+						volumeControl.setValue(0);
+					} else {
+						volumeControl.setValue(previousValue);
+					}
+				}
+			}
+		};
 	}
 
 	//
@@ -78,7 +99,7 @@ public class AudioSink implements Sink {
 
 	@Override
 	public List<Controller> controllers() {
-		return Arrays.<Controller>asList(volumeFader);
+		return Arrays.<Controller>asList(volumeFader, muteSwitch);
 	}
 
 	//
