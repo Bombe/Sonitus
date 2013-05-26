@@ -115,7 +115,7 @@ public class Icecast2Sink implements Sink {
 	//
 
 	@Override
-	public List<Controller> controllers() {
+	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
 

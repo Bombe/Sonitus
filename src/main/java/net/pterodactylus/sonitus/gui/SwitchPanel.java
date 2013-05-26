@@ -56,7 +56,7 @@ public class SwitchPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				switchController.value(((JCheckBox) actionEvent.getSource()).isSelected() ? 1 : 0);
+				switchController.value(((JCheckBox) actionEvent.getSource()).isSelected());
 			}
 		});
 		add(checkBox, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

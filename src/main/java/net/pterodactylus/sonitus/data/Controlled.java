@@ -31,6 +31,6 @@ public interface Controlled {
 	 *
 	 * @return The controllers of this component
 	 */
-	public List<Controller> controllers();
+	public List<Controller<?>> controllers();
 
 }

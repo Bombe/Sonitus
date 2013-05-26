@@ -54,7 +54,7 @@ public class DummyFilter implements Filter {
 	//
 
 	@Override
-	public List<Controller> controllers() {
+	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
 

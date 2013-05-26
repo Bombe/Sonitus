@@ -22,7 +22,7 @@ package net.pterodactylus.sonitus.data.controller;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class Switch extends AbstractController {
+public abstract class Switch extends AbstractController<Boolean> {
 
 	/** Creates a new switch that is off. */
 	public Switch() {
@@ -36,7 +36,7 @@ public abstract class Switch extends AbstractController {
 	 * 		The state of the switch
 	 */
 	public Switch(boolean active) {
-		super(0, 1, false, active ? 1 : 0);
+		super(false, true, false, active);
 	}
 
 }

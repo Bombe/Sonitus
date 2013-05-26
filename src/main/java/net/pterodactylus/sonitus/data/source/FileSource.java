@@ -78,7 +78,7 @@ public class FileSource implements Source {
 	//
 
 	@Override
-	public List<Controller> controllers() {
+	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
 

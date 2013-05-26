@@ -28,19 +28,19 @@ import net.pterodactylus.sonitus.data.Controller;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class AbstractController implements Controller {
+public abstract class AbstractController<V extends Comparable<V>> implements Controller<V> {
 
 	/** The minimum value of this controller. */
-	private final int minimum;
+	private final V minimum;
 
 	/** The maximum value of this controller. */
-	private final int maximum;
+	private final V maximum;
 
 	/** Whether this controller has a “center” position. */
 	private final boolean centered;
 
 	/** The current value of this controller. */
-	private int value;
+	private V value;
 
 	/**
 	 * Creates a new abstract controller.
@@ -55,7 +55,7 @@ public abstract class AbstractController implements Controller {
 	 * @param currentValue
 	 * 		The current value of this controller
 	 */
-	public AbstractController(int minimum, int maximum, boolean centered, int currentValue) {
+	public AbstractController(V minimum, V maximum, boolean centered, V currentValue) {
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.centered = centered;
@@ -67,12 +67,12 @@ public abstract class AbstractController implements Controller {
 	//
 
 	@Override
-	public int minimum() {
+	public V minimum() {
 		return minimum;
 	}
 
 	@Override
-	public int maximum() {
+	public V maximum() {
 		return maximum;
 	}
 
@@ -82,14 +82,14 @@ public abstract class AbstractController implements Controller {
 	}
 
 	@Override
-	public int value() {
+	public V value() {
 		return value;
 	}
 
 	@Override
-	public void value(int value) {
-		int newValue = Math.min(maximum, Math.max(minimum, value));
-		if (newValue != this.value) {
+	public void value(V value) {
+		V newValue = (value.compareTo(minimum) < 0) ? minimum : ((value.compareTo(maximum) > 0) ? maximum : value);
+		if (newValue.compareTo(this.value) != 0) {
 			this.value = newValue;
 			valueSet(newValue);
 		}
@@ -100,13 +100,13 @@ public abstract class AbstractController implements Controller {
 	//
 
 	/**
-	 * Adjusts the controller. This method is called from {@link #value(int)} if
-	 * the new value is different from the current value. Also, the value is
-	 * clamped to fit within the range of this controller.
+	 * Adjusts the controller. This method is called from {@link
+	 * #value(Comparable)} if the new value is different from the current value.
+	 * Also, the value is clamped to fit within the range of this controller.
 	 *
 	 * @param value
 	 * 		The new value
 	 */
-	protected abstract void valueSet(int value);
+	protected abstract void valueSet(V value);
 
 }

@@ -22,21 +22,21 @@ package net.pterodactylus.sonitus.data;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface Controller {
+public interface Controller<V extends Comparable<V>> {
 
 	/**
 	 * Returns the minimum value of this controller.
 	 *
 	 * @return The minimum value of this controller
 	 */
-	int minimum();
+	V minimum();
 
 	/**
 	 * Returns the maximum value of this controller.
 	 *
 	 * @return The maximum value of this controller
 	 */
-	int maximum();
+	V maximum();
 
 	/**
 	 * Returns whether this control has a “center” position.
@@ -51,7 +51,7 @@ public interface Controller {
 	 *
 	 * @return The current value of this controller
 	 */
-	int value();
+	V value();
 
 	/**
 	 * Sets the current value of this controller.
@@ -59,6 +59,6 @@ public interface Controller {
 	 * @param value
 	 * 		The current value of this controller
 	 */
-	void value(int value);
+	void value(V value);
 
 }

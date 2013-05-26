@@ -56,12 +56,12 @@ public class FaderPanel extends JPanel {
 		add(new JLabel("0"), new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 6, 0, 0), 0, 0));
 
 		/* create fader. */
-		JSlider slider = new JSlider(new DefaultBoundedRangeModel(fader.value(), 0, fader.minimum(), fader.maximum()));
+		JSlider slider = new JSlider(new DefaultBoundedRangeModel((int) (fader.value() * Integer.MAX_VALUE), 0, 0, Integer.MAX_VALUE));
 		slider.addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent changeEvent) {
-				fader.value(((JSlider) changeEvent.getSource()).getValue());
+				fader.value(((JSlider) changeEvent.getSource()).getValue() / (double) Integer.MAX_VALUE);
 			}
 		});
 		add(slider, new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

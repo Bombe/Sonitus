@@ -24,7 +24,7 @@ import net.pterodactylus.sonitus.data.Controller;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class Fader extends AbstractController {
+public abstract class Fader extends AbstractController<Double> {
 
 	/** Creates a new fader that is at maximum position. */
 	public Fader() {
@@ -37,8 +37,8 @@ public abstract class Fader extends AbstractController {
 	 * @param currentValue
 	 * 		The current value of the fader (from {@code 0.0} to {@code 1.0})
 	 */
-	public Fader(double currentValue) {
-		super(0, Integer.MAX_VALUE, false, (int) (Math.max(0, Math.min(1, currentValue)) * Integer.MAX_VALUE));
+	public Fader(Double currentValue) {
+		super(0.0, 1.0, false, currentValue);
 	}
 
 }

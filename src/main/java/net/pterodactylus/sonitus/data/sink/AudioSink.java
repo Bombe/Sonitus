@@ -67,10 +67,10 @@ public class AudioSink implements Sink {
 		volumeFader = new Fader() {
 
 			@Override
-			protected void valueSet(int value) {
+			protected void valueSet(Double value) {
 				if (sourceDataLine != null) {
 					FloatControl volumeControl = (FloatControl) sourceDataLine.getControl(VOLUME);
-					volumeControl.setValue(value * volumeControl.getMaximum() / (float) maximum());
+					volumeControl.setValue((float) (value * volumeControl.getMaximum()));
 				}
 			}
 		};
@@ -79,10 +79,10 @@ public class AudioSink implements Sink {
 			private float previousValue;
 
 			@Override
-			protected void valueSet(int value) {
+			protected void valueSet(Boolean value) {
 				if (sourceDataLine != null) {
 					FloatControl volumeControl = (FloatControl) sourceDataLine.getControl(VOLUME);
-					if (value == 1) {
+					if (value) {
 						previousValue = volumeControl.getValue();
 						volumeControl.setValue(0);
 					} else {
@@ -98,8 +98,8 @@ public class AudioSink implements Sink {
 	//
 
 	@Override
-	public List<Controller> controllers() {
-		return Arrays.<Controller>asList(volumeFader, muteSwitch);
+	public List<Controller<?>> controllers() {
+		return Arrays.<Controller<?>>asList(volumeFader, muteSwitch);
 	}
 
 	//

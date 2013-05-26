@@ -121,7 +121,7 @@ public class StreamSource implements Source {
 	//
 
 	@Override
-	public List<Controller> controllers() {
+	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
 

@@ -59,7 +59,7 @@ public class MainWindow extends JFrame {
 	 * 		The controlled to add
 	 */
 	public void addControllers(Controlled controlled) {
-		List<Controller> controllers = controlled.controllers();
+		List<Controller<?>> controllers = controlled.controllers();
 		if (controllers.isEmpty()) {
 			return;
 		}
