@@ -19,7 +19,6 @@ package net.pterodactylus.sonitus.gui;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JPanel;
 
 import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Controller;
@@ -32,7 +31,7 @@ import net.pterodactylus.sonitus.data.controller.Switch;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class ControlledPane extends JPanel {
+public class ControlledPane extends Box {
 
 	/**
 	 * Creates a new controlled pane.
@@ -41,7 +40,7 @@ public class ControlledPane extends JPanel {
 	 * 		The controlled whose controllers to display
 	 */
 	public ControlledPane(Controlled controlled) {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		super(BoxLayout.Y_AXIS);
 		for (Controller controller : controlled.controllers()) {
 			if (controller instanceof Fader) {
 				add(new FaderPanel((Fader) controller));
