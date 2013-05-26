@@ -24,7 +24,7 @@ import net.pterodactylus.sonitus.data.Controller;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class Fader extends AbstractController<Double> {
+public class Fader extends AbstractController<Double> {
 
 	/**
 	 * Creates a new fader that is at maximum position.

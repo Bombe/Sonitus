@@ -113,10 +113,14 @@ public abstract class AbstractController<V extends Comparable<V>> implements Con
 	 * Adjusts the controller. This method is called from {@link
 	 * #value(Comparable)} if the new value is different from the current value.
 	 * Also, the value is clamped to fit within the range of this controller.
+	 * <p/>
+	 * This implementation does nothing.
 	 *
 	 * @param value
 	 * 		The new value
 	 */
-	protected abstract void valueSet(V value);
+	protected void valueSet(V value) {
+		/* do nothing. */
+	}
 
 }
