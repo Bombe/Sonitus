@@ -17,6 +17,7 @@
 
 package net.pterodactylus.sonitus.data.sink;
 
+import static javax.sound.sampled.BooleanControl.Type.MUTE;
 import static javax.sound.sampled.FloatControl.Type.VOLUME;
 
 import java.io.IOException;
@@ -26,6 +27,9 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.BooleanControl;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
@@ -100,28 +104,45 @@ public class AudioSink implements Sink {
 
 			@Override
 			protected void valueSet(Double value) {
-				if (sourceDataLine != null) {
-					FloatControl volumeControl = (FloatControl) sourceDataLine.getControl(VOLUME);
-					volumeControl.setValue((float) (value * volumeControl.getMaximum()));
+				/* search for preferred volume control. */
+				FloatControl volumeControl = getVolumeControl(sourceDataLine);
+				if (volumeControl == null) {
+					/* could not find volume control! */
+					return;
 				}
+
+				volumeControl.setValue((float) (value * volumeControl.getMaximum()));
 			}
 		};
 		muteSwitch = new Switch("Mute") {
 
+			/** The previous value in case we have to emulate the mute control. */
 			private float previousValue;
 
 			@Override
 			protected void valueSet(Boolean value) {
-				if (sourceDataLine != null) {
-					FloatControl volumeControl = (FloatControl) sourceDataLine.getControl(VOLUME);
-					if (value) {
-						previousValue = volumeControl.getValue();
-						volumeControl.setValue(0);
-					} else {
-						volumeControl.setValue(previousValue);
-					}
+				/* search for mute control. */
+				BooleanControl muteControl = getMuteControl(sourceDataLine);
+				if (muteControl != null) {
+					muteControl.setValue(value);
+					return;
+				}
+
+				/* could not find mute control, use volume control! */
+				FloatControl volumeControl = getVolumeControl(sourceDataLine);
+				if (volumeControl == null) {
+					/* no volume control, either? */
+					return;
+				}
+
+				if (value) {
+					previousValue = volumeControl.getValue();
+					volumeControl.setValue(0);
+				} else {
+					volumeControl.setValue(previousValue);
 				}
 			}
+
 		};
 	}
 
@@ -180,6 +201,59 @@ public class AudioSink implements Sink {
 	public void process(byte[] buffer) throws IOException {
 		sourceDataLineOutputStream.write(buffer);
 		logger.finest(String.format("AudioSink: Wrote %d Bytes.", buffer.length));
+	}
+
+	//
+	// PRIVATE METHODS
+	//
+
+	/**
+	 * Returns the {@link FloatControl.Type.VOLUME} control.
+	 *
+	 * @param dataLine
+	 * 		The data line to search for the control
+	 * @return The control, or {@code null} if no volume control could be found
+	 */
+	private static FloatControl getVolumeControl(DataLine dataLine) {
+		return getControl(dataLine, VOLUME, FloatControl.class);
+	}
+
+	/**
+	 * Returns the {@link BooleanControl.Type.MUTE} control.
+	 *
+	 * @param dataLine
+	 * 		The data line to search for the control
+	 * @return The control, or {@code null} if no mute control could be found
+	 */
+	private static BooleanControl getMuteControl(DataLine dataLine) {
+		return getControl(dataLine, MUTE, BooleanControl.class);
+	}
+
+	/**
+	 * Searches the given data line for a control of the given type and returns it.
+	 * If the given data line is {@code null}, {@code null} is returned.
+	 *
+	 * @param dataLine
+	 * 		The data line to search for a control
+	 * @param controlType
+	 * 		The type of the control to search
+	 * @param controlClass
+	 * 		The class of the control
+	 * @param <T>
+	 * 		The class of the control
+	 * @return The control, or {@code null} if no control could be found
+	 */
+	private static <T> T getControl(DataLine dataLine, Control.Type controlType, Class<T> controlClass) {
+		if (dataLine == null) {
+			return null;
+		}
+		Control[] controls = dataLine.getControls();
+		for (Control control : controls) {
+			if (control.getType().equals(controlType)) {
+				return (T) control;
+			}
+		}
+		return null;
 	}
 
 }
