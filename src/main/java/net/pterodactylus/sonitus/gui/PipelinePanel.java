@@ -22,10 +22,14 @@ import static javax.swing.BorderFactory.createEtchedBorder;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.EventListener;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.EventListenerList;
 
 import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Filter;
@@ -45,6 +49,9 @@ public class PipelinePanel extends JPanel {
 	/** The pipeline being displayed. */
 	private final Pipeline pipeline;
 
+	/** The component hover listeners. */
+	private final EventListenerList componentHoverListeners = new EventListenerList();
+
 	/**
 	 * Creates a new pipeline panel displaying the given pipeline.
 	 *
@@ -55,6 +62,20 @@ public class PipelinePanel extends JPanel {
 		super(new GridBagLayout());
 		this.pipeline = pipeline;
 		updatePanel();
+	}
+
+	//
+	// LISTENER MANAGEMENT
+	//
+
+	/**
+	 * Adds the given component hover listener to this panel.
+	 *
+	 * @param componentHoverListener
+	 * 		The component hover listener to add
+	 */
+	public void addComponentHoverListener(ComponentHoverListener componentHoverListener) {
+		componentHoverListeners.add(ComponentHoverListener.class, componentHoverListener);
 	}
 
 	//
@@ -103,10 +124,19 @@ public class PipelinePanel extends JPanel {
 	 * @param width
 	 * 		The width of the component in grid cells
 	 */
-	private void addControlled(Controlled controlled, int level, int position, int width) {
+	private void addControlled(final Controlled controlled, int level, int position, int width) {
 		/* create a GUI component that displays the component. */
 		JLabel sourceLabel = new JLabel(controlled.name());
 		sourceLabel.setBorder(createEtchedBorder());
+		sourceLabel.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseEntered(MouseEvent mouseEvent) {
+				for (ComponentHoverListener componentHoverListener : componentHoverListeners.getListeners(ComponentHoverListener.class)) {
+					componentHoverListener.componentEntered(controlled);
+				}
+			}
+		});
 
 		/* show component. */
 		add(sourceLabel, new GridBagConstraints(position, level, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -125,6 +155,25 @@ public class PipelinePanel extends JPanel {
 			addControlled(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth);
 			sinkIndex++;
 		}
+	}
+
+	/**
+	 * Interface for objects that want to be notified if the user moves the mouse
+	 * cursor over a controlled component.
+	 *
+	 * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
+	 */
+	public static interface ComponentHoverListener extends EventListener {
+
+		/**
+		 * Notifies the listener that the mouse is now over the given controlled
+		 * component.
+		 *
+		 * @param controlled
+		 * 		The controlled component now under the mouse
+		 */
+		void componentEntered(Controlled controlled);
+
 	}
 
 }
