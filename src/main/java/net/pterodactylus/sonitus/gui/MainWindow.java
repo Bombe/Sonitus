@@ -27,6 +27,7 @@ import javax.swing.WindowConstants;
 
 import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.Pipeline;
 import net.pterodactylus.sonitus.main.Version;
 
 import com.google.common.eventbus.EventBus;
@@ -41,6 +42,9 @@ public class MainWindow extends JFrame {
 	/** The event bus. */
 	private final EventBus eventBus;
 
+	/** The pipeline to display. */
+	private final Pipeline pipeline;
+
 	/** The tabbed pane displaying all controlled components. */
 	private final JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -49,11 +53,15 @@ public class MainWindow extends JFrame {
 	 *
 	 * @param eventBus
 	 * 		The event bus
+	 * @param pipeline
+	 * 		The pipeline to display
 	 */
-	public MainWindow(EventBus eventBus) {
+	public MainWindow(EventBus eventBus, Pipeline pipeline) {
 		super(String.format("Sonitus %s", Version.version()));
 		this.eventBus = eventBus;
+		this.pipeline = pipeline;
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+		tabbedPane.add("Pipeline", new PipelinePanel(pipeline));
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSize(new Dimension(800, 450));
 
