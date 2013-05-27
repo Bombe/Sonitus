@@ -20,6 +20,7 @@ package net.pterodactylus.sonitus.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
@@ -41,6 +42,7 @@ public class MainWindow extends JFrame {
 	/** Creates a new main window. */
 	public MainWindow() {
 		super(String.format("Sonitus %s", Version.version()));
+		tabbedPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSize(new Dimension(800, 450));
 
