@@ -18,19 +18,25 @@
 package net.pterodactylus.sonitus.gui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
 import net.pterodactylus.sonitus.data.Controlled;
-import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Pipeline;
+import net.pterodactylus.sonitus.gui.PipelinePanel.ComponentHoverListener;
 import net.pterodactylus.sonitus.main.Version;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 /**
  * Sonitus main window.
@@ -39,50 +45,70 @@ import com.google.common.eventbus.EventBus;
  */
 public class MainWindow extends JFrame {
 
-	/** The event bus. */
-	private final EventBus eventBus;
-
 	/** The pipeline to display. */
 	private final Pipeline pipeline;
 
 	/** The tabbed pane displaying all controlled components. */
 	private final JTabbedPane tabbedPane = new JTabbedPane();
 
+	/** The info panel card layout. */
+	private final CardLayout infoPanelCardLayout = new CardLayout();
+
+	/** The info panel. */
+	private final JPanel infoPanel = new JPanel(infoPanelCardLayout);
+
+	/** The mapping from controlled components to info panels. */
+	private final Map<Controlled, ComponentInfoPanel> controlledInfoPanels = Maps.newHashMap();
+
 	/**
 	 * Creates a new main window.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param pipeline
 	 * 		The pipeline to display
 	 */
-	public MainWindow(EventBus eventBus, Pipeline pipeline) {
+	public MainWindow(Pipeline pipeline) {
 		super(String.format("Sonitus %s", Version.version()));
-		this.eventBus = eventBus;
 		this.pipeline = pipeline;
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-		tabbedPane.add("Pipeline", new PipelinePanel(pipeline));
+		final JPanel pipelineInfoPanel = new JPanel(new BorderLayout(12, 12));
+		PipelinePanel pipelinePanel = new PipelinePanel(pipeline);
+		pipelinePanel.addComponentHoverListener(new ComponentHoverListener() {
+
+			@Override
+			public void componentEntered(Controlled controlled) {
+				infoPanelCardLayout.show(infoPanel, controlled.name());
+			}
+		});
+		pipelineInfoPanel.add(pipelinePanel, BorderLayout.CENTER);
+		pipelineInfoPanel.add(infoPanel, BorderLayout.EAST);
+		tabbedPane.add("Pipeline", pipelineInfoPanel);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSize(new Dimension(800, 450));
 
+		/* create info panels for all components. */
+		for (Controlled controlled : pipeline) {
+			ComponentInfoPanel componentInfoPanel = new ComponentInfoPanel(controlled);
+			infoPanel.add(componentInfoPanel, controlled.name());
+			controlledInfoPanels.put(controlled, componentInfoPanel);
+		}
+
+		Timer timer = new Timer(250, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				/* update all info panels. */
+				for (Controlled controlled : MainWindow.this.pipeline) {
+					ComponentInfoPanel componentInfoPanel = controlledInfoPanels.get(controlled);
+					componentInfoPanel.input(MainWindow.this.pipeline.trafficCounter(controlled).input());
+					componentInfoPanel.output(MainWindow.this.pipeline.trafficCounter(controlled).output());
+					componentInfoPanel.format(Optional.of(controlled.metadata().format()));
+				}
+			}
+		});
+		timer.start();
+
 		/* FIXME - shut everything down properly. */
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	}
-
-	//
-	// ACTIONS
-	//
-
-	/**
-	 * Adds the given controlled to this main window.
-	 *
-	 * @param controlled
-	 * 		The controlled to add
-	 */
-	public void addControllers(Controlled controlled) {
-		List<Controller<?>> controllers = controlled.controllers();
-		ControlledPane controlledPane = new ControlledPane(eventBus, controlled);
-		tabbedPane.addTab(controlled.name(), controlledPane);
 	}
 
 }
