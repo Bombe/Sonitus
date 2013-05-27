@@ -180,6 +180,7 @@ public class AudioSink implements Sink {
 			metadataUpdated(metadata);
 		} catch (LineUnavailableException e) {
 			/* TODO */
+			sourceDataLine = null;
 			throw new IOException(e);
 		}
 	}
