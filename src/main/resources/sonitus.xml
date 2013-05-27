@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sonitus>
+
+	<executables>
+		<lame>/path/to/lame</lame>
+		<oggdec>/path/to/oggdec</oggdec>
+		<oggenc>/path/to/oggenc</oggenc>
+		<flac>/path/to/flac</flac>
+		<sox>/path/to/sox</sox>
+	</executables>
+
+</sonitus>
