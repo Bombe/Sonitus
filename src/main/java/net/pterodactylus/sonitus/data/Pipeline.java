@@ -71,6 +71,32 @@ public class Pipeline {
 	}
 
 	//
+	// ACCESSORS
+	//
+
+	/**
+	 * Expose this pipeline’s source.
+	 *
+	 * @return This pipeline’s source
+	 */
+	public Source source() {
+		return source;
+	}
+
+	/**
+	 * Returns all {@link Sink}s (or {@link Filter}s, really) that are connected to
+	 * the given source.
+	 *
+	 * @param source
+	 * 		The source to get the sinks for
+	 * @return The sinks connected to the given source, or an empty list if the
+	 *         source does not exist in this pipeline
+	 */
+	public Collection<Sink> sinks(Source source) {
+		return sinks.get(source);
+	}
+
+	//
 	// ACTIONS
 	//
 
