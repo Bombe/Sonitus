@@ -124,6 +124,11 @@ public class AudioSink implements Sink {
 	}
 
 	@Override
+	public Metadata metadata() {
+		return metadata;
+	}
+
+	@Override
 	public List<Controller<?>> controllers() {
 		return Arrays.<Controller<?>>asList(volumeFader, muteSwitch);
 	}
@@ -155,6 +160,7 @@ public class AudioSink implements Sink {
 	@Override
 	public void metadataUpdated(Metadata metadata) {
 		logger.info(String.format("Now playing %s.", metadata));
+		this.metadata = metadata;
 	}
 
 	@Override

@@ -43,6 +43,9 @@ public class FileSink implements Sink {
 
 	private FileOutputStream fileOutputStream;
 
+	/** The current metadata. */
+	private Metadata metadata;
+
 	/**
 	 * Creates a new file sink that will write to the given path.
 	 *
@@ -63,6 +66,11 @@ public class FileSink implements Sink {
 	}
 
 	@Override
+	public Metadata metadata() {
+		return metadata;
+	}
+
+	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
@@ -74,6 +82,7 @@ public class FileSink implements Sink {
 	@Override
 	public void open(Metadata metadata) throws IOException {
 		fileOutputStream = new FileOutputStream(path);
+		metadataUpdated(metadata);
 	}
 
 	@Override
@@ -87,7 +96,7 @@ public class FileSink implements Sink {
 
 	@Override
 	public void metadataUpdated(Metadata metadata) {
-		/* ignore. */
+		this.metadata = metadata;
 	}
 
 	@Override

@@ -34,6 +34,13 @@ public interface Controlled {
 	public String name();
 
 	/**
+	 * Returns the current metadata of this component.
+	 *
+	 * @return The current metadata of this component
+	 */
+	public Metadata metadata();
+
+	/**
 	 * Returns the controllers offered by this component.
 	 *
 	 * @return The controllers of this component

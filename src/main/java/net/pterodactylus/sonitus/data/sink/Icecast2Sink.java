@@ -78,6 +78,9 @@ public class Icecast2Sink implements Sink {
 
 	private OutputStream socketOutputStream;
 
+	/** The current metadata. */
+	private Metadata metadata;
+
 	/**
 	 * Creates a new Icecast2 sink.
 	 *
@@ -117,6 +120,11 @@ public class Icecast2Sink implements Sink {
 	@Override
 	public String name() {
 		return String.format("icecast://%s:%d/%s", server, port, mountPoint);
+	}
+
+	@Override
+	public Metadata metadata() {
+		return metadata;
 	}
 
 	@Override
@@ -162,6 +170,7 @@ public class Icecast2Sink implements Sink {
 
 	@Override
 	public void metadataUpdated(final Metadata metadata) {
+		this.metadata = metadata;
 		new Thread(new Runnable() {
 
 			@Override

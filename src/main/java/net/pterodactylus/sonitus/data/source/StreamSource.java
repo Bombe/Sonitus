@@ -144,7 +144,8 @@ public class StreamSource implements Source {
 		if (!streamMetadata.isPresent()) {
 			return metadata;
 		}
-		return metadata = metadata.title(streamMetadata.get().title());
+		metadata = metadata.title(streamMetadata.get().title());
+		return metadata;
 	}
 
 	@Override
