@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
+import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 
 import com.google.common.eventbus.EventBus;
 
@@ -105,6 +106,7 @@ public class FileSink implements Sink {
 	@Override
 	public void metadataUpdated(Metadata metadata) {
 		this.metadata = metadata;
+		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
+import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
 import com.google.common.base.Function;
@@ -218,6 +219,7 @@ public class Icecast2Sink implements Sink {
 				}
 			}
 		}).start();
+		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override

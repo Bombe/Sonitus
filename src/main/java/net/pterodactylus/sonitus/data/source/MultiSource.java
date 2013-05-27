@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
+import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
 
 import com.google.common.eventbus.EventBus;
@@ -79,6 +80,7 @@ public class MultiSource implements Source {
 				sourceChanged = true;
 				this.source.notifyAll();
 			}
+			eventBus.post(new MetadataUpdated(this, source.metadata()));
 			logger.info(String.format("Next Source set: %s", source));
 		}
 	}

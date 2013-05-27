@@ -30,6 +30,7 @@ import java.util.List;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
+import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.Closeables;
@@ -89,7 +90,7 @@ public class DummyFilter implements Filter {
 
 	@Override
 	public void open(Metadata metadata) throws IOException {
-		this.metadata = metadata;
+		metadataUpdated(metadata);
 		inputStream = createInputStream();
 		outputStream = createOutputStream();
 	}
@@ -112,6 +113,7 @@ public class DummyFilter implements Filter {
 	@Override
 	public void metadataUpdated(Metadata metadata) {
 		this.metadata = metadata;
+		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override

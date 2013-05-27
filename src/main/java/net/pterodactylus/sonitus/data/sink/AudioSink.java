@@ -36,6 +36,7 @@ import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.controller.Fader;
 import net.pterodactylus.sonitus.data.controller.Switch;
+import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.io.IntegralWriteOutputStream;
 
 import com.google.common.base.Preconditions;
@@ -155,6 +156,7 @@ public class AudioSink implements Sink {
 			sourceDataLine = AudioSystem.getSourceDataLine(audioFormat);
 			sourceDataLine.open(audioFormat);
 			sourceDataLine.start();
+			metadataUpdated(metadata);
 		} catch (LineUnavailableException e) {
 			/* TODO */
 			throw new IOException(e);
@@ -171,6 +173,7 @@ public class AudioSink implements Sink {
 	public void metadataUpdated(Metadata metadata) {
 		logger.info(String.format("Now playing %s.", metadata));
 		this.metadata = metadata;
+		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override
