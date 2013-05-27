@@ -59,6 +59,24 @@ public class Metadata {
 	//
 
 	/**
+	 * Returns the embedded format metadata.
+	 *
+	 * @return The format metadata
+	 */
+	public FormatMetadata format() {
+		return formatMetadata;
+	}
+
+	/**
+	 * Returns the embedded content metadata.
+	 *
+	 * @return The content metadata
+	 */
+	public ContentMetadata content() {
+		return contentMetadata;
+	}
+
+	/**
 	 * Returns the number of channels of this metadata.
 	 *
 	 * @return The number of channels of this metadata
