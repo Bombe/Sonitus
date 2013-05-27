@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
+import com.google.common.eventbus.EventBus;
+
 /**
  * {@link Filter} implementation that uses the number of bytes that have been
  * {@link #process(byte[]) processed} together with the {@link Metadata} to
@@ -42,24 +44,28 @@ public class TimeCounterFilter extends DummyFilter {
 	 * Creates a new time counter filter that automatically resets the counter when
 	 * the metadata is {@link #metadataUpdated(Metadata) updated}.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 */
-	public TimeCounterFilter(String name) {
-		this(name, true);
+	public TimeCounterFilter(EventBus eventBus, String name) {
+		this(eventBus, name, true);
 	}
 
 	/**
 	 * Creates a new time counter filter.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 * @param resetOnMetadataUpdate
 	 * 		{@code true} if the counter should automatically be reset if the metadata
 	 * 		is updated, {@code false} otherwise
 	 */
-	public TimeCounterFilter(String name, boolean resetOnMetadataUpdate) {
-		super(name);
+	public TimeCounterFilter(EventBus eventBus, String name, boolean resetOnMetadataUpdate) {
+		super(eventBus, name);
 		this.resetOnMetadataUpdate = resetOnMetadataUpdate;
 	}
 

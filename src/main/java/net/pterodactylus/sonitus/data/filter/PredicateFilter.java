@@ -26,6 +26,7 @@ import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Predicate;
+import com.google.common.eventbus.EventBus;
 
 /**
  * {@link Filter} implementation that uses a {@link Predicate} to determine
@@ -47,13 +48,15 @@ public class PredicateFilter extends DummyFilter {
 	/**
 	 * Creates a new predicate filter.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param metadataPredicate
 	 * 		The predicate to evaluate every time the metadata changes
 	 * @param filter
 	 * 		The filter to use if the predicate matches the metadata
 	 */
-	public PredicateFilter(Predicate<Metadata> metadataPredicate, Filter filter) {
-		super(String.format("%s (maybe)", filter.name()));
+	public PredicateFilter(EventBus eventBus, Predicate<Metadata> metadataPredicate, Filter filter) {
+		super(eventBus, String.format("%s (maybe)", filter.name()));
 		this.metadataPredicate = metadataPredicate;
 		this.filter = filter;
 	}

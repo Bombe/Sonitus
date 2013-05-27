@@ -38,6 +38,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
+import com.google.common.eventbus.EventBus;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.Closeables;
 
@@ -51,6 +52,9 @@ public class Icecast2Sink implements Sink {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(Icecast2Sink.class.getName());
+
+	/** The event bus. */
+	private final EventBus eventBus;
 
 	/** The server name. */
 	private final String server;
@@ -84,6 +88,8 @@ public class Icecast2Sink implements Sink {
 	/**
 	 * Creates a new Icecast2 sink.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param server
 	 * 		The hostname of the server
 	 * @param port
@@ -102,7 +108,8 @@ public class Icecast2Sink implements Sink {
 	 * 		{@code true} to publish the server in a public directory, {@code false} to
 	 * 		not publish it
 	 */
-	public Icecast2Sink(String server, int port, String password, String mountPoint, String serverName, String serverDescription, String genre, boolean publishServer) {
+	public Icecast2Sink(EventBus eventBus, String server, int port, String password, String mountPoint, String serverName, String serverDescription, String genre, boolean publishServer) {
+		this.eventBus = eventBus;
 		this.server = server;
 		this.port = port;
 		this.password = password;

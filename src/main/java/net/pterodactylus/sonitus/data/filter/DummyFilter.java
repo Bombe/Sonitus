@@ -31,6 +31,7 @@ import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.io.Closeables;
 
 /**
@@ -42,6 +43,9 @@ public class DummyFilter implements Filter {
 
 	/** The name of this filter. */
 	private final String name;
+
+	/** The event bus. */
+	private final EventBus eventBus;
 
 	/** The input stream from which to read. */
 	private InputStream inputStream;
@@ -55,10 +59,13 @@ public class DummyFilter implements Filter {
 	/**
 	 * Creates a new dummy filter with the given name.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 */
-	public DummyFilter(String name) {
+	public DummyFilter(EventBus eventBus, String name) {
+		this.eventBus = eventBus;
 		this.name = name;
 	}
 

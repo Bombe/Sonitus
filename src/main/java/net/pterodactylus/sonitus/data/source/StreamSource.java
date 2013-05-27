@@ -35,6 +35,7 @@ import net.pterodactylus.sonitus.io.MetadataStream;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import com.google.common.eventbus.EventBus;
 import com.google.common.primitives.Ints;
 
 /**
@@ -46,6 +47,9 @@ import com.google.common.primitives.Ints;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class StreamSource implements Source {
+
+	/** The event bus. */
+	private final EventBus eventBus;
 
 	/** The URL of the stream. */
 	private final String streamUrl;
@@ -64,12 +68,15 @@ public class StreamSource implements Source {
 	 * the response header for vital information (sampling frequency, number of
 	 * channels, etc.).
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param streamUrl
 	 * 		The URL of the stream
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
-	public StreamSource(String streamUrl) throws IOException {
+	public StreamSource(EventBus eventBus, String streamUrl) throws IOException {
+		this.eventBus = eventBus;
 		this.streamUrl = streamUrl;
 		URL url = new URL(streamUrl);
 

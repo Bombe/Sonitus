@@ -39,6 +39,7 @@ import net.pterodactylus.sonitus.data.controller.Switch;
 import net.pterodactylus.sonitus.io.IntegralWriteOutputStream;
 
 import com.google.common.base.Preconditions;
+import com.google.common.eventbus.EventBus;
 
 /**
  * {@link Sink} implementation that uses the JDK’s {@link AudioSystem} to play
@@ -50,6 +51,9 @@ public class AudioSink implements Sink {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(AudioSink.class.getName());
+
+	/** The event bus. */
+	private final EventBus eventBus;
 
 	/** The volume fader. */
 	private final Fader volumeFader;
@@ -83,8 +87,14 @@ public class AudioSink implements Sink {
 		}
 	}, 1024);
 
-	/** Creates a new audio sink. */
-	public AudioSink() {
+	/**
+	 * Creates a new audio sink.
+	 *
+	 * @param eventBus
+	 * 		The event bus
+	 */
+	public AudioSink(EventBus eventBus) {
+		this.eventBus = eventBus;
 		volumeFader = new Fader("Volume") {
 
 			@Override

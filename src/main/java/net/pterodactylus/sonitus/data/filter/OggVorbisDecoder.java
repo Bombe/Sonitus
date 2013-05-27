@@ -25,6 +25,7 @@ import java.io.IOException;
 import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 
 /**
  * Ogg Vorbis decoder that uses {@code oggdec} (from the {@code vorbis-tools}
@@ -43,11 +44,13 @@ public class OggVorbisDecoder extends ExternalFilter {
 	/**
 	 * Creates a new Ogg Vorbis decoder.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 */
-	public OggVorbisDecoder(String binary) {
-		super("Ogg Vorbis Decoder");
+	public OggVorbisDecoder(EventBus eventBus, String binary) {
+		super(eventBus, "Ogg Vorbis Decoder");
 		this.binary = binary;
 	}
 

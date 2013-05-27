@@ -27,6 +27,8 @@ import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
 
+import com.google.common.eventbus.EventBus;
+
 /**
  * {@link net.pterodactylus.sonitus.data.Sink} that writes all received data
  * into a file.
@@ -37,6 +39,9 @@ public class FileSink implements Sink {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(FileSink.class.getName());
+
+	/** The event bus. */
+	private final EventBus eventBus;
 
 	/** The path of the file to write to. */
 	private final String path;
@@ -49,10 +54,13 @@ public class FileSink implements Sink {
 	/**
 	 * Creates a new file sink that will write to the given path.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param path
 	 * 		The path of the file to write to
 	 */
-	public FileSink(String path) {
+	public FileSink(EventBus eventBus, String path) {
+		this.eventBus = eventBus;
 		this.path = path;
 	}
 

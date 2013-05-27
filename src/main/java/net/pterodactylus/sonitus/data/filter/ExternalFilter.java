@@ -27,6 +27,7 @@ import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
 
 /**
  * {@link net.pterodactylus.sonitus.data.Filter} implementation that runs its
@@ -45,11 +46,13 @@ public abstract class ExternalFilter extends DummyFilter {
 	/**
 	 * Creates a new external filter with the given name.
 	 *
+	 * @param eventBus
+	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 */
-	protected ExternalFilter(String name) {
-		super(name);
+	protected ExternalFilter(EventBus eventBus, String name) {
+		super(eventBus, name);
 	}
 
 	//
