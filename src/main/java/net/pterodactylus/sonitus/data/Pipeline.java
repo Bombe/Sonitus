@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.FluentIterable;
@@ -96,6 +97,27 @@ public class Pipeline implements Iterable<Controlled> {
 	 */
 	public Collection<Sink> sinks(Source source) {
 		return sinks.get(source);
+	}
+
+	/**
+	 * Returns the traffic counters of the given controlled component.
+	 *
+	 * @param controlled
+	 * 		The controlled component to get the traffic counters for
+	 * @return The traffic counters for the given controlled component
+	 */
+	public TrafficCounter trafficCounter(Controlled controlled) {
+		long input = -1;
+		long output = -1;
+		for (Connection connection : connections) {
+			/* the connection where the source matches knows the output. */
+			if (connection.source.equals(controlled)) {
+				output = connection.counter();
+			} else if (connection.sinks.contains(controlled)) {
+				input = connection.counter();
+			}
+		}
+		return new TrafficCounter(input, output);
 	}
 
 	//
@@ -365,6 +387,60 @@ public class Pipeline implements Iterable<Controlled> {
 					break;
 				}
 			}
+		}
+
+	}
+
+	/**
+	 * Container for input and output counters.
+	 *
+	 * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
+	 */
+	public static class TrafficCounter {
+
+		/** The number of input bytes. */
+		private final long input;
+
+		/** The number of output bytes. */
+		private final long output;
+
+		/**
+		 * Creates a new traffic counter.
+		 *
+		 * @param input
+		 * 		The number of input bytes (may be {@code -1} to signify non-available
+		 * 		input)
+		 * @param output
+		 * 		The number of output bytes (may be {@code -1} to signify non-available
+		 * 		output)
+		 */
+		public TrafficCounter(long input, long output) {
+			this.input = input;
+			this.output = output;
+		}
+
+		//
+		// ACCESSORS
+		//
+
+		/**
+		 * Returns the number of input bytes.
+		 *
+		 * @return The number of input bytes, or {@link Optional#absent()} if the
+		 *         component can not receive input
+		 */
+		public Optional<Long> input() {
+			return (input == -1) ? Optional.<Long>absent() : Optional.of(input);
+		}
+
+		/**
+		 * Returns the number of output bytes.
+		 *
+		 * @return The number of output bytes, or {@link Optional#absent()} if the
+		 *         component can not send output
+		 */
+		public Optional<Long> output() {
+			return (output == -1) ? Optional.<Long>absent() : Optional.of(output);
 		}
 
 	}
