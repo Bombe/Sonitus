@@ -17,10 +17,15 @@
 
 package net.pterodactylus.sonitus.gui;
 
+import static javax.swing.BorderFactory.createEtchedBorder;
+import static javax.swing.BorderFactory.createTitledBorder;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -48,19 +53,39 @@ public class ControlledPane extends JPanel {
 		super(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(6, 12, 12, 12));
 
+		add(createControllerPanel(controlled), new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
+		add(Box.createVerticalGlue(), new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(6, 0, 0, 0), 0, 0));
+	}
+
+	//
+	// PRIVATE METHODS
+	//
+
+	/**
+	 * Creates the controller panel for the given component.
+	 *
+	 * @param controlled
+	 * 		The component whose controllers to display
+	 * @return The created controller panel
+	 */
+	private JComponent createControllerPanel(Controlled controlled) {
+		JPanel controllerPanel = new JPanel(new GridBagLayout());
+		controllerPanel.setBorder(createTitledBorder(createEtchedBorder(), "Controller"));
+
 		int controllerIndex = 0;
 		for (Controller controller : controlled.controllers()) {
-			add(new JLabel(controller.name()), new GridBagConstraints(0, controllerIndex, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 0, 6), 0, 0));
+			controllerPanel.add(new JLabel(controller.name()), new GridBagConstraints(0, controllerIndex, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 0, 6), 0, 0));
 			if (controller instanceof Fader) {
-				add(new FaderPanel((Fader) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
+				controllerPanel.add(new FaderPanel((Fader) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			} else if (controller instanceof Switch) {
-				add(new SwitchPanel((Switch) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
+				controllerPanel.add(new SwitchPanel((Switch) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			} else if (controller instanceof Knob) {
-				add(new KnobPanel((Knob) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
+				controllerPanel.add(new KnobPanel((Knob) controller), new GridBagConstraints(1, controllerIndex, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
 			}
 			++controllerIndex;
 		}
-		add(new JPanel(), new GridBagConstraints(0, controllerIndex, 2, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(6, 0, 0, 0), 0, 0));
+
+		return controllerPanel;
 	}
 
 }
