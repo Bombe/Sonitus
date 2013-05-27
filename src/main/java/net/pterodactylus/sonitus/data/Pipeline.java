@@ -19,6 +19,7 @@ package net.pterodactylus.sonitus.data;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +34,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -43,7 +45,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class Pipeline {
+public class Pipeline implements Iterable<Controlled> {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(Pipeline.class.getName());
@@ -140,6 +142,15 @@ public class Pipeline {
 		for (Feeder feeder : feeders) {
 			feeder.stop();
 		}
+	}
+
+	//
+	// ITERABLE METHODS
+	//
+
+	@Override
+	public Iterator<Controlled> iterator() {
+		return ImmutableSet.<Controlled>builder().add(source).addAll(sinks.values()).build().iterator();
 	}
 
 	//
