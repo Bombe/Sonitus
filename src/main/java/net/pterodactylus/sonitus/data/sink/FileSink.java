@@ -47,6 +47,7 @@ public class FileSink implements Sink {
 	/** The path of the file to write to. */
 	private final String path;
 
+	/** The output stream writing to the file. */
 	private FileOutputStream fileOutputStream;
 
 	/** The current metadata. */

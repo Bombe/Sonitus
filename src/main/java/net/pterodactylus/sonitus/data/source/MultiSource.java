@@ -56,6 +56,12 @@ public class MultiSource implements Source {
 	/** Whether the source was changed. */
 	private boolean sourceChanged;
 
+	/**
+	 * Creates a new multi source.
+	 *
+	 * @param eventBus
+	 * 		The event bus
+	 */
 	@Inject
 	public MultiSource(EventBus eventBus) {
 		this.eventBus = eventBus;

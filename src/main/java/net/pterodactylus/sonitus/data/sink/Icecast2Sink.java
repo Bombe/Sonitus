@@ -81,6 +81,7 @@ public class Icecast2Sink implements Sink {
 	/** Whether to publish the server. */
 	private final boolean publishServer;
 
+	/** The output stream to the server. */
 	private OutputStream socketOutputStream;
 
 	/** The current metadata. */
