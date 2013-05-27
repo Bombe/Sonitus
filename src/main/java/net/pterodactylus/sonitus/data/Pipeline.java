@@ -56,8 +56,8 @@ public class Pipeline implements Iterable<Controlled> {
 	/** The sinks for each source. */
 	private final Multimap<Source, Sink> sinks;
 
-	/** All started feeders. */
-	private final List<Feeder> feeders = Lists.newArrayList();
+	/** All started connections. */
+	private final List<Connection> connections = Lists.newArrayList();
 
 	/**
 	 * Creates a new pipeline.
@@ -111,7 +111,7 @@ public class Pipeline implements Iterable<Controlled> {
 	 * 		if the pipeline is already running
 	 */
 	public void start() throws IOException, IllegalStateException {
-		if (!feeders.isEmpty()) {
+		if (!connections.isEmpty()) {
 			throw new IllegalStateException("Pipeline is already running!");
 		}
 		List<Source> sources = Lists.newArrayList();
@@ -120,7 +120,7 @@ public class Pipeline implements Iterable<Controlled> {
 		while (!sources.isEmpty()) {
 			Source source = sources.remove(0);
 			Collection<Sink> sinks = this.sinks.get(source);
-			feeders.add(new Feeder(source, sinks));
+			connections.add(new Connection(source, sinks));
 			for (Sink sink : sinks) {
 				sink.open(source.metadata());
 				if (sink instanceof Filter) {
@@ -128,19 +128,19 @@ public class Pipeline implements Iterable<Controlled> {
 				}
 			}
 		}
-		for (Feeder feeder : feeders) {
-			logger.info(String.format("Starting Feeder from %s to %s.", feeder.source, feeder.sinks));
-			new Thread(feeder).start();
+		for (Connection connection : connections) {
+			logger.info(String.format("Starting Connection from %s to %s.", connection.source, connection.sinks));
+			new Thread(connection).start();
 		}
 	}
 
 	public void stop() {
-		if (!feeders.isEmpty()) {
+		if (!connections.isEmpty()) {
 			/* pipeline is not running. */
 			return;
 		}
-		for (Feeder feeder : feeders) {
-			feeder.stop();
+		for (Connection connection : connections) {
+			connection.stop();
 		}
 	}
 
@@ -240,13 +240,13 @@ public class Pipeline implements Iterable<Controlled> {
 	}
 
 	/**
-	 * A feeder is responsible for streaming audio from one {@link Source} to an
-	 * arbitrary number of {@link Sink}s it is connected to. A feeder is started by
-	 * creating a {@link Thread} wrapping it and starting said thread.
+	 * A connection is responsible for streaming audio from one {@link Source} to
+	 * an arbitrary number of {@link Sink}s it is connected to. A connection is
+	 * started by creating a {@link Thread} wrapping it and starting said thread.
 	 *
 	 * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
 	 */
-	private class Feeder implements Runnable {
+	public class Connection implements Runnable {
 
 		/** The source. */
 		private final Source source;
@@ -261,14 +261,14 @@ public class Pipeline implements Iterable<Controlled> {
 		private final ExecutorService executorService;
 
 		/**
-		 * Creates a new feeder.
+		 * Creates a new connection.
 		 *
 		 * @param source
 		 * 		The source of the stream
 		 * @param sinks
 		 * 		The sinks to which to stream
 		 */
-		public Feeder(Source source, Collection<Sink> sinks) {
+		public Connection(Source source, Collection<Sink> sinks) {
 			this.source = source;
 			this.sinks = sinks;
 			if (sinks.size() == 1) {
@@ -282,7 +282,7 @@ public class Pipeline implements Iterable<Controlled> {
 		// ACTIONS
 		//
 
-		/** Stops this feeder. */
+		/** Stops this connection. */
 		public void stop() {
 			stopped.set(true);
 		}
