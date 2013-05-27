@@ -29,6 +29,8 @@ import net.pterodactylus.sonitus.data.Controlled;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.main.Version;
 
+import com.google.common.eventbus.EventBus;
+
 /**
  * Sonitus main window.
  *
@@ -36,12 +38,21 @@ import net.pterodactylus.sonitus.main.Version;
  */
 public class MainWindow extends JFrame {
 
+	/** The event bus. */
+	private final EventBus eventBus;
+
 	/** The tabbed pane displaying all controlled components. */
 	private final JTabbedPane tabbedPane = new JTabbedPane();
 
-	/** Creates a new main window. */
-	public MainWindow() {
+	/**
+	 * Creates a new main window.
+	 *
+	 * @param eventBus
+	 * 		The event bus
+	 */
+	public MainWindow(EventBus eventBus) {
 		super(String.format("Sonitus %s", Version.version()));
+		this.eventBus = eventBus;
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSize(new Dimension(800, 450));
@@ -62,10 +73,7 @@ public class MainWindow extends JFrame {
 	 */
 	public void addControllers(Controlled controlled) {
 		List<Controller<?>> controllers = controlled.controllers();
-		if (controllers.isEmpty()) {
-			return;
-		}
-		ControlledPane controlledPane = new ControlledPane(controlled);
+		ControlledPane controlledPane = new ControlledPane(eventBus, controlled);
 		tabbedPane.addTab(controlled.name(), controlledPane);
 	}
 
