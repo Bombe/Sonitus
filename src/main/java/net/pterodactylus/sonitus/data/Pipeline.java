@@ -260,6 +260,9 @@ public class Pipeline implements Iterable<Controlled> {
 		/** The executor service. */
 		private final ExecutorService executorService;
 
+		/** The number of copied bytes. */
+		private long counter;
+
 		/**
 		 * Creates a new connection.
 		 *
@@ -276,6 +279,20 @@ public class Pipeline implements Iterable<Controlled> {
 			} else {
 				executorService = Executors.newCachedThreadPool();
 			}
+		}
+
+		//
+		// ACCESSORS
+		//
+
+		/**
+		 * Returns the number of bytes that this connection has received from its
+		 * source during its lifetime.
+		 *
+		 * @return The number of processed input bytes
+		 */
+		public long counter() {
+			return counter;
 		}
 
 		//
@@ -333,6 +350,7 @@ public class Pipeline implements Iterable<Controlled> {
 					for (Future<Void> future : futures) {
 						future.get();
 					}
+					counter += buffer.length;
 				} catch (IOException e) {
 					/* TODO */
 					e.printStackTrace();
