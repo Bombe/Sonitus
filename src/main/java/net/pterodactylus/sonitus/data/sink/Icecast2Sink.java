@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,10 +34,6 @@ import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.Closeables;
@@ -184,13 +179,7 @@ public class Icecast2Sink implements Sink {
 
 			@Override
 			public void run() {
-				String metadataString = String.format("%s (%s)", Joiner.on(" - ").skipNulls().join(FluentIterable.from(Arrays.asList(metadata.artist(), metadata.name())).transform(new Function<Optional<String>, Object>() {
-
-					@Override
-					public Object apply(Optional<String> input) {
-						return input.orNull();
-					}
-				})), "Sonitus");
+				String metadataString = String.format("%s (%s)", metadata.title(), "Sonitus");
 				logger.info(String.format("Updating metadata to %s", metadataString));
 
 				Socket socket = null;
