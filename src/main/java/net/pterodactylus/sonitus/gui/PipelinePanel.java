@@ -22,6 +22,8 @@ import static javax.swing.BorderFactory.createEmptyBorder;
 import static javax.swing.BorderFactory.createEtchedBorder;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,8 +32,10 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.event.EventListenerList;
 
 import net.pterodactylus.sonitus.data.ControlledComponent;
@@ -56,6 +60,9 @@ public class PipelinePanel extends JPanel {
 
 	/** The component hover listeners. */
 	private final EventListenerList componentSelectionListeners = new EventListenerList();
+
+	/** The currently selected component. */
+	private JComponent selectedComponent;
 
 	/**
 	 * Creates a new pipeline panel displaying the given pipeline.
@@ -136,10 +143,28 @@ public class PipelinePanel extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				for (Component component : getComponents()) {
+					component.setBackground(UIManager.getColor("Panel.background"));
+				}
 				for (ComponentSelectionListener componentSelectionListener : componentSelectionListeners.getListeners(ComponentSelectionListener.class)) {
+					componentPanel.setBackground(Color.LIGHT_GRAY);
 					componentSelectionListener.componentSelected(controlledComponent);
 				}
 				selectedComponent = componentPanel;
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent mouseEvent) {
+				if (componentPanel != selectedComponent) {
+					componentPanel.setBackground(Color.white);
+				}
+			}
+
+			@Override
+			public void mouseExited(MouseEvent mouseEvent) {
+				if (componentPanel != selectedComponent) {
+					componentPanel.setBackground(UIManager.getColor("Panel.background"));
+				}
 			}
 		});
 
