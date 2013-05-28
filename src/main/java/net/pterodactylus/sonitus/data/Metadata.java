@@ -222,7 +222,7 @@ public class Metadata {
 
 	@Override
 	public String toString() {
-		return String.format("%s: %s", formatMetadata, contentMetadata);
+		return String.format("%s%s%s", formatMetadata, contentMetadata.toString().length() > 0 ? ": " : "", contentMetadata);
 	}
 
 }
