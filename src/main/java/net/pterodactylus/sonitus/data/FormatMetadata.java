@@ -156,7 +156,7 @@ public class FormatMetadata {
 
 	@Override
 	public String toString() {
-		return String.format("%d Channel%s, %d Hz, %s", channels(), channels() != 1 ? "s" : "", frequency(), encoding());
+		return String.format("%s kHz, %d Channel%s, %s", frequency() / 1000.0, channels(), channels() != 1 ? "s" : "", encoding());
 	}
 
 }
