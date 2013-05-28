@@ -106,7 +106,6 @@ public class PipelinePanel extends JPanel {
 				sinkCount++;
 			}
 		}
-		System.out.println(sinkCount);
 
 		/* get number of maximum horizontal grid cells. */
 		int gridCellCount = 1;
