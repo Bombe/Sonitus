@@ -147,7 +147,7 @@ public class PipelinePanel extends JPanel {
 
 		/* if the component does not have connected sinks, exit here. */
 		if (!(controlledComponent instanceof Source)) {
-			add(new JPanel(), new GridBagConstraints(position, level + 1, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+			add(new JPanel(), new GridBagConstraints(position, 999, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 			return;
 		}
 
