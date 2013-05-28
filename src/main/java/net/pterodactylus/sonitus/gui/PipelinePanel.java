@@ -175,11 +175,11 @@ public class PipelinePanel extends JPanel {
 		JPanel componentPanel = new JPanel(new BorderLayout(12, 12));
 		componentPanel.setBorder(createCompoundBorder(createEtchedBorder(), createEmptyBorder(0, 4, 0, 3)));
 		componentPanel.add(new JLabel(controlledComponent.name()), BorderLayout.WEST);
-		final JLabel titleLabel = new JLabel(controlledComponent.metadata().title());
+		final JLabel titleLabel = new JLabel(controlledComponent.metadata().fullTitle());
 		titleLabel.setFont(titleLabel.getFont().deriveFont(titleLabel.getFont().getSize2D() * 0.8f));
 		componentPanel.add(titleLabel, BorderLayout.EAST);
 		if (parentComponent != null) {
-			titleLabel.setVisible(!parentComponent.metadata().title().equals(controlledComponent.metadata().title()));
+			titleLabel.setVisible(!parentComponent.metadata().fullTitle().equals(controlledComponent.metadata().fullTitle()));
 			parentComponent.addMetadataListener(new MetadataListener() {
 
 				@Override
@@ -193,8 +193,8 @@ public class PipelinePanel extends JPanel {
 
 			@Override
 			public void metadataUpdated(ControlledComponent component, Metadata metadata) {
-				titleLabel.setText(metadata.title());
-				titleLabel.setVisible((parentComponent == null) || !parentComponent.metadata().title().equals(metadata.title()));
+				titleLabel.setText(metadata.fullTitle());
+				titleLabel.setVisible((parentComponent == null) || !parentComponent.metadata().fullTitle().equals(metadata.fullTitle()));
 			}
 		});
 		return componentPanel;
