@@ -104,14 +104,14 @@ public class TimeCounterFilter extends DummyFilter {
 		if (resetOnMetadataUpdate) {
 			reset();
 		}
-		updateTimestamp();
+		updateTimestamp(true);
 	}
 
 	@Override
 	public void process(byte[] buffer) throws IOException {
 		super.process(buffer);
 		counter.getAndAdd(buffer.length);
-		updateTimestamp();
+		updateTimestamp(false);
 	}
 
 	//
@@ -119,9 +119,9 @@ public class TimeCounterFilter extends DummyFilter {
 	//
 
 	/** Updates the timestamp in the metadata. */
-	private void updateTimestamp() {
+	private void updateTimestamp(boolean now) {
 		long timestamp = getMillis() / 1000;
-		if (lastTimestamp.get() != timestamp) {
+		if (now || (lastTimestamp.get() != timestamp)) {
 			super.metadataUpdated(parentMetadata.get().comment(String.format("%02d:%02d", timestamp / 60, timestamp % 60)));
 			lastTimestamp.set(timestamp);
 		}
