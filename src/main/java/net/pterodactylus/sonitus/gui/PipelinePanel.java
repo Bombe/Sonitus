@@ -180,14 +180,6 @@ public class PipelinePanel extends JPanel {
 		componentPanel.add(titleLabel, BorderLayout.EAST);
 		if (parentComponent != null) {
 			titleLabel.setVisible(!parentComponent.metadata().fullTitle().equals(controlledComponent.metadata().fullTitle()));
-			parentComponent.addMetadataListener(new MetadataListener() {
-
-				@Override
-				public void metadataUpdated(ControlledComponent component, Metadata metadata) {
-					titleLabel.setText(metadata.title());
-					titleLabel.setVisible(!controlledComponent.metadata().title().equals(metadata.title()));
-				}
-			});
 		}
 		controlledComponent.addMetadataListener(new MetadataListener() {
 
