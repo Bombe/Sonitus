@@ -30,7 +30,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
-import net.pterodactylus.sonitus.data.Controlled;
+import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Pipeline;
 import net.pterodactylus.sonitus.gui.PipelinePanel.ComponentHoverListener;
 import net.pterodactylus.sonitus.main.Version;
@@ -58,7 +58,7 @@ public class MainWindow extends JFrame {
 	private final JPanel infoPanel = new JPanel(infoPanelCardLayout);
 
 	/** The mapping from controlled components to info panels. */
-	private final Map<Controlled, ComponentInfoPanel> controlledInfoPanels = Maps.newHashMap();
+	private final Map<ControlledComponent, ComponentInfoPanel> controlledInfoPanels = Maps.newHashMap();
 
 	/**
 	 * Creates a new main window.
@@ -75,8 +75,8 @@ public class MainWindow extends JFrame {
 		pipelinePanel.addComponentHoverListener(new ComponentHoverListener() {
 
 			@Override
-			public void componentEntered(Controlled controlled) {
-				infoPanelCardLayout.show(infoPanel, controlled.name());
+			public void componentEntered(ControlledComponent controlledComponent) {
+				infoPanelCardLayout.show(infoPanel, controlledComponent.name());
 			}
 		});
 		pipelineInfoPanel.add(pipelinePanel, BorderLayout.CENTER);
@@ -86,10 +86,10 @@ public class MainWindow extends JFrame {
 		setSize(new Dimension(800, 450));
 
 		/* create info panels for all components. */
-		for (Controlled controlled : pipeline) {
-			ComponentInfoPanel componentInfoPanel = new ComponentInfoPanel(controlled);
-			infoPanel.add(componentInfoPanel, controlled.name());
-			controlledInfoPanels.put(controlled, componentInfoPanel);
+		for (ControlledComponent controlledComponent : pipeline) {
+			ComponentInfoPanel componentInfoPanel = new ComponentInfoPanel(controlledComponent);
+			infoPanel.add(componentInfoPanel, controlledComponent.name());
+			controlledInfoPanels.put(controlledComponent, componentInfoPanel);
 		}
 
 		Timer timer = new Timer(250, new ActionListener() {
@@ -97,7 +97,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				/* update all info panels. */
-				for (Controlled controlled : MainWindow.this.pipeline) {
+				for (ControlledComponent controlled : MainWindow.this.pipeline) {
 					ComponentInfoPanel componentInfoPanel = controlledInfoPanels.get(controlled);
 					componentInfoPanel.input(MainWindow.this.pipeline.trafficCounter(controlled).input());
 					componentInfoPanel.output(MainWindow.this.pipeline.trafficCounter(controlled).output());

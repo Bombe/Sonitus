@@ -46,7 +46,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class Pipeline implements Iterable<Controlled> {
+public class Pipeline implements Iterable<ControlledComponent> {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(Pipeline.class.getName());
@@ -102,18 +102,18 @@ public class Pipeline implements Iterable<Controlled> {
 	/**
 	 * Returns the traffic counters of the given controlled component.
 	 *
-	 * @param controlled
+	 * @param controlledComponent
 	 * 		The controlled component to get the traffic counters for
 	 * @return The traffic counters for the given controlled component
 	 */
-	public TrafficCounter trafficCounter(Controlled controlled) {
+	public TrafficCounter trafficCounter(ControlledComponent controlledComponent) {
 		long input = -1;
 		long output = -1;
 		for (Connection connection : connections) {
 			/* the connection where the source matches knows the output. */
-			if (connection.source.equals(controlled)) {
+			if (connection.source.equals(controlledComponent)) {
 				output = connection.counter();
-			} else if (connection.sinks.contains(controlled)) {
+			} else if (connection.sinks.contains(controlledComponent)) {
 				input = connection.counter();
 			}
 		}
@@ -171,8 +171,8 @@ public class Pipeline implements Iterable<Controlled> {
 	//
 
 	@Override
-	public Iterator<Controlled> iterator() {
-		return ImmutableSet.<Controlled>builder().add(source).addAll(sinks.values()).build().iterator();
+	public Iterator<ControlledComponent> iterator() {
+		return ImmutableSet.<ControlledComponent>builder().add(source).addAll(sinks.values()).build().iterator();
 	}
 
 	//

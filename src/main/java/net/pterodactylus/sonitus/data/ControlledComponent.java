@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface Controlled {
+public interface ControlledComponent {
 
 	/**
 	 * Returns the name of this controlled component.

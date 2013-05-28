@@ -8,7 +8,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public interface Sink extends Controlled {
+public interface Sink extends ControlledComponent {
 
 	/**
 	 * Opens this sink using the format parameters of the given metadata.

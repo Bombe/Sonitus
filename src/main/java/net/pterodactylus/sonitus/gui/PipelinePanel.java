@@ -31,7 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 
-import net.pterodactylus.sonitus.data.Controlled;
+import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Pipeline;
 import net.pterodactylus.sonitus.data.Sink;
@@ -115,7 +115,7 @@ public class PipelinePanel extends JPanel {
 	/**
 	 * Displays the given component.
 	 *
-	 * @param controlled
+	 * @param controlledComponent
 	 * 		The component to add this panel.
 	 * @param level
 	 * 		The level at which to show the component (the source is level {@code 0})
@@ -124,16 +124,16 @@ public class PipelinePanel extends JPanel {
 	 * @param width
 	 * 		The width of the component in grid cells
 	 */
-	private void addControlled(final Controlled controlled, int level, int position, int width) {
+	private void addControlled(final ControlledComponent controlledComponent, int level, int position, int width) {
 		/* create a GUI component that displays the component. */
-		JLabel sourceLabel = new JLabel(controlled.name());
+		JLabel sourceLabel = new JLabel(controlledComponent.name());
 		sourceLabel.setBorder(createEtchedBorder());
 		sourceLabel.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseEntered(MouseEvent mouseEvent) {
 				for (ComponentHoverListener componentHoverListener : componentHoverListeners.getListeners(ComponentHoverListener.class)) {
-					componentHoverListener.componentEntered(controlled);
+					componentHoverListener.componentEntered(controlledComponent);
 				}
 			}
 		});
@@ -142,12 +142,12 @@ public class PipelinePanel extends JPanel {
 		add(sourceLabel, new GridBagConstraints(position, level, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		/* if the component does not have connected sinks, exit here. */
-		if (!(controlled instanceof Source)) {
+		if (!(controlledComponent instanceof Source)) {
 			return;
 		}
 
 		/* iterate over the component’s sinks. */
-		Collection<Sink> sinks = pipeline.sinks((Source) controlled);
+		Collection<Sink> sinks = pipeline.sinks((Source) controlledComponent);
 		int sinkWidth = width / sinks.size();
 		int sinkIndex = 0;
 		for (Sink connectedSink : sinks) {
@@ -169,10 +169,10 @@ public class PipelinePanel extends JPanel {
 		 * Notifies the listener that the mouse is now over the given controlled
 		 * component.
 		 *
-		 * @param controlled
+		 * @param controlledComponent
 		 * 		The controlled component now under the mouse
 		 */
-		void componentEntered(Controlled controlled);
+		void componentEntered(ControlledComponent controlledComponent);
 
 	}
 

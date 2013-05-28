@@ -17,19 +17,19 @@
 
 package net.pterodactylus.sonitus.data.event;
 
-import net.pterodactylus.sonitus.data.Controlled;
+import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Metadata;
 
 /**
  * Event that notifies all listeners that the {@link Metadata} of a {@link
- * Controlled} component was changed.
+ * ControlledComponent} component was changed.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class MetadataUpdated {
 
 	/** The controlled component. */
-	private final Controlled controlled;
+	private final ControlledComponent controlledComponent;
 
 	/** The new metadata. */
 	private final Metadata metadata;
@@ -37,13 +37,13 @@ public class MetadataUpdated {
 	/**
 	 * Creates a new metadata updated event.
 	 *
-	 * @param controlled
+	 * @param controlledComponent
 	 * 		The controlled component
 	 * @param metadata
 	 * 		The new metadata
 	 */
-	public MetadataUpdated(Controlled controlled, Metadata metadata) {
-		this.controlled = controlled;
+	public MetadataUpdated(ControlledComponent controlledComponent, Metadata metadata) {
+		this.controlledComponent = controlledComponent;
 		this.metadata = metadata;
 	}
 
@@ -56,8 +56,8 @@ public class MetadataUpdated {
 	 *
 	 * @return The controlled component
 	 */
-	public Controlled controlled() {
-		return controlled;
+	public ControlledComponent controlled() {
+		return controlledComponent;
 	}
 
 	/**

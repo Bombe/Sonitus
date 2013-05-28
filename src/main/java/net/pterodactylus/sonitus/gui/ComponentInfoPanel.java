@@ -27,7 +27,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.pterodactylus.sonitus.data.Controlled;
+import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.controller.Fader;
@@ -37,7 +37,7 @@ import net.pterodactylus.sonitus.data.controller.Switch;
 import com.google.common.base.Optional;
 
 /**
- * Panel that shows information about a {@link Controlled} component.
+ * Panel that shows information about a {@link ControlledComponent}.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -58,14 +58,14 @@ public class ComponentInfoPanel extends JPanel {
 	/**
 	 * Creates a new component info panel.
 	 *
-	 * @param controlled
+	 * @param controlledComponent
 	 * 		The component to display
 	 */
-	public ComponentInfoPanel(Controlled controlled) {
+	public ComponentInfoPanel(ControlledComponent controlledComponent) {
 		super(new GridBagLayout());
 
 		setPreferredSize(new Dimension(400, 0));
-		createPanel(controlled);
+		createPanel(controlledComponent);
 	}
 
 	//
@@ -127,13 +127,13 @@ public class ComponentInfoPanel extends JPanel {
 	/**
 	 * Creates the panel for the given controlled component.
 	 *
-	 * @param controlled
+	 * @param controlledComponent
 	 * 		The controlled component
 	 */
-	private void createPanel(Controlled controlled) {
+	private void createPanel(ControlledComponent controlledComponent) {
 		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-		headerLabel.setText(controlled.name());
+		headerLabel.setText(controlledComponent.name());
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
 
 		int line = 0;
@@ -146,7 +146,7 @@ public class ComponentInfoPanel extends JPanel {
 		add(formatLabel, new GridBagConstraints(1, line++, 1, 1, 1.0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 6, 0, 0), 0, 0));
 
 		/* add the controllers. */
-		for (Controller<?> controller : controlled.controllers()) {
+		for (Controller<?> controller : controlledComponent.controllers()) {
 			add(new JLabel(controller.name()), new GridBagConstraints(0, line, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 0, 6), 0, 0));
 			if (controller instanceof Fader) {
 				add(new FaderPanel((Fader) controller), new GridBagConstraints(1, line++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));
