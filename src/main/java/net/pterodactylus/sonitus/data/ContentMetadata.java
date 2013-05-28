@@ -46,6 +46,9 @@ public class ContentMetadata {
 	/** The all-in-one title. */
 	private final String title;
 
+	/** The comment. */
+	private final Optional<String> comment;
+
 	/** Creates empty content metadata. */
 	public ContentMetadata() {
 		this("");
@@ -60,7 +63,7 @@ public class ContentMetadata {
 	 * 		if {@code title} is {@code null}
 	 */
 	public ContentMetadata(String title) throws NullPointerException {
-		this(null, null, title);
+		this(null, null, title, null);
 	}
 
 	/**
@@ -72,7 +75,7 @@ public class ContentMetadata {
 	 * 		The name of the track
 	 */
 	public ContentMetadata(String artist, String name) {
-		this(artist, name, joinStrings(artist, name));
+		this(artist, name, joinStrings(artist, name), null);
 	}
 
 	/**
@@ -84,13 +87,16 @@ public class ContentMetadata {
 	 * 		The name of the track (may be null)
 	 * @param title
 	 * 		The title of the track
+	 * @param comment
+	 * 		The comment of the track
 	 * @throws NullPointerException
 	 * 		if {@code title} is {@code null}
 	 */
-	private ContentMetadata(String artist, String name, String title) throws NullPointerException {
+	private ContentMetadata(String artist, String name, String title, String comment) throws NullPointerException {
 		this.artist = Optional.fromNullable(artist);
 		this.name = Optional.fromNullable(name);
 		this.title = Preconditions.checkNotNull(title, "title must not be null");
+		this.comment = Optional.fromNullable(comment);
 	}
 
 	//
@@ -124,6 +130,15 @@ public class ContentMetadata {
 		return title;
 	}
 
+	/**
+	 * Returns the comment of the track, if it has been set.
+	 *
+	 * @return The comment of the track
+	 */
+	public Optional<String> comment() {
+		return comment;
+	}
+
 	//
 	// ACTIONS
 	//
@@ -138,7 +153,7 @@ public class ContentMetadata {
 	 * @return The new content metadata
 	 */
 	public ContentMetadata artist(String artist) {
-		return new ContentMetadata(artist, name().orNull(), joinStrings(artist, name().orNull()));
+		return new ContentMetadata(artist, name().orNull(), joinStrings(artist, name().orNull()), comment.orNull());
 	}
 
 	/**
@@ -151,7 +166,7 @@ public class ContentMetadata {
 	 * @return The new content metadata
 	 */
 	public ContentMetadata name(String name) {
-		return new ContentMetadata(artist().orNull(), name, joinStrings(artist().orNull(), name));
+		return new ContentMetadata(artist().orNull(), name, joinStrings(artist().orNull(), name), comment.orNull());
 	}
 
 	/**
@@ -163,7 +178,19 @@ public class ContentMetadata {
 	 * @return The new content metadata
 	 */
 	public ContentMetadata title(String title) {
-		return new ContentMetadata(artist().orNull(), name().orNull(), title);
+		return new ContentMetadata(artist().orNull(), name().orNull(), title, comment.orNull());
+	}
+
+	/**
+	 * Creates new content metadata that is a copy of this content metadata but
+	 * with the comment changed.
+	 *
+	 * @param comment
+	 * 		The comment
+	 * @return The new content metadata
+	 */
+	public ContentMetadata comment(String comment) {
+		return new ContentMetadata(artist().orNull(), name().orNull(), title(), comment);
 	}
 
 	//
@@ -172,7 +199,7 @@ public class ContentMetadata {
 
 	@Override
 	public int hashCode() {
-		return artist().hashCode() ^ name().hashCode() ^ title().hashCode();
+		return artist().hashCode() ^ name().hashCode() ^ title().hashCode() ^ comment().hashCode();
 	}
 
 	@Override
@@ -181,12 +208,12 @@ public class ContentMetadata {
 			return false;
 		}
 		ContentMetadata contentMetadata = (ContentMetadata) object;
-		return artist().equals(contentMetadata.artist()) && name().equals(contentMetadata.name()) && title().equals(contentMetadata.title());
+		return artist().equals(contentMetadata.artist()) && name().equals(contentMetadata.name()) && title().equals(contentMetadata.title()) && comment().equals(contentMetadata.comment());
 	}
 
 	@Override
 	public String toString() {
-		return title;
+		return String.format("%s%s", title(), comment().isPresent() ? String.format(" (%s)", comment().get()) : "");
 	}
 
 	//

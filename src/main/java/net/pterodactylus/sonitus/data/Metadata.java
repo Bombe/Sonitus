@@ -202,6 +202,37 @@ public class Metadata {
 		return new Metadata(formatMetadata, contentMetadata.title(title));
 	}
 
+	/**
+	 * Returns the comment of the content, if any.
+	 *
+	 * @return The comment of the content
+	 */
+	public Optional<String> comment() {
+		return contentMetadata.comment();
+	}
+
+	/**
+	 * Returns new metadata with the same attributes as this metadata but with the
+	 * comment changed to the given comment.
+	 *
+	 * @param comment
+	 * 		The new comment
+	 * @return The new metadata
+	 */
+	public Metadata comment(String comment) {
+		return new Metadata(formatMetadata, contentMetadata.comment(comment));
+	}
+
+	/**
+	 * Returns the title with the comment appended in parantheses, if a comment has
+	 * been set.
+	 *
+	 * @return The title with the comment appended
+	 */
+	public String fullTitle() {
+		return String.format("%s%s", title(), comment().isPresent() ? String.format(" (%s)", comment().get()) : "");
+	}
+
 	//
 	// OBJECT METHODS
 	//
