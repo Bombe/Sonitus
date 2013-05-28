@@ -64,7 +64,7 @@ public class ComponentInfoPanel extends JPanel {
 	public ComponentInfoPanel(ControlledComponent controlledComponent) {
 		super(new GridBagLayout());
 
-		setPreferredSize(new Dimension(400, 0));
+		setPreferredSize(new Dimension(300, 0));
 		createPanel(controlledComponent);
 	}
 
