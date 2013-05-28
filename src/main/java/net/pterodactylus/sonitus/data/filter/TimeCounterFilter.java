@@ -122,7 +122,7 @@ public class TimeCounterFilter extends DummyFilter {
 	private void updateTimestamp() {
 		long timestamp = getMillis() / 1000;
 		if (lastTimestamp.get() != timestamp) {
-			super.metadataUpdated(parentMetadata.get().title(String.format("%s (%02d:%02d)", parentMetadata.get().title(), timestamp / 60, timestamp % 60)));
+			super.metadataUpdated(parentMetadata.get().comment(String.format("%02d:%02d", timestamp / 60, timestamp % 60)));
 			lastTimestamp.set(timestamp);
 		}
 	}
