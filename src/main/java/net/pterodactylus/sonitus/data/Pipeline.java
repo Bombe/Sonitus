@@ -72,7 +72,7 @@ public class Pipeline implements Iterable<ControlledComponent> {
 		this.source = Preconditions.checkNotNull(source, "source must not be null");
 		this.sinks = Preconditions.checkNotNull(sinks, "sinks must not be null");
 		for (ControlledComponent component : Lists.reverse(components())) {
-			logger.finest(String.format("Adding Listener to %s.", component));
+			logger.finest(String.format("Adding Listener to %s.", component.name()));
 			component.addMetadataListener(new MetadataListener() {
 				@Override
 				public void metadataUpdated(ControlledComponent component, Metadata metadata) {
@@ -80,7 +80,7 @@ public class Pipeline implements Iterable<ControlledComponent> {
 						return;
 					}
 					for (ControlledComponent controlledComponent : sinks((Source) component)) {
-						logger.fine(String.format("Updating Metadata from %s to %s.", component, controlledComponent));
+						logger.fine(String.format("Updating Metadata from %s to %s as %s.", component.name(), controlledComponent.name(), metadata));
 						controlledComponent.metadataUpdated(metadata);
 					}
 				}
@@ -159,6 +159,7 @@ public class Pipeline implements Iterable<ControlledComponent> {
 			Collection<Sink> sinks = this.sinks.get(source);
 			connections.add(new Connection(source, sinks));
 			for (Sink sink : sinks) {
+				logger.info(String.format("Opening %s with %s...", sink.name(), source.metadata()));
 				sink.open(source.metadata());
 				if (sink instanceof Filter) {
 					sources.add((Source) sink);
@@ -166,7 +167,12 @@ public class Pipeline implements Iterable<ControlledComponent> {
 			}
 		}
 		for (Connection connection : connections) {
-			logger.info(String.format("Starting Connection from %s to %s.", connection.source, connection.sinks));
+			logger.info(String.format("Starting Connection from %s to %s.", connection.source.name(), FluentIterable.from(connection.sinks).transform(new Function<Sink, String>() {
+				@Override
+				public String apply(Sink sink) {
+					return sink.name();
+				}
+			})));
 			new Thread(connection).start();
 		}
 	}
