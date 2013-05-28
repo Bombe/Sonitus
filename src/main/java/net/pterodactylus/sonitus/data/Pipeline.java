@@ -330,6 +330,9 @@ public class Pipeline implements Iterable<ControlledComponent> {
 		/** The executor service. */
 		private final ExecutorService executorService;
 
+		/** The time the connection was started. */
+		private long startTime;
+
 		/** The number of copied bytes. */
 		private long counter;
 
@@ -356,6 +359,16 @@ public class Pipeline implements Iterable<ControlledComponent> {
 		//
 
 		/**
+		 * Returns the time this connection was started.
+		 *
+		 * @return The time this connection was started (in milliseconds since Jan 1,
+		 *         1970 UTC)
+		 */
+		public long startTime() {
+			return startTime;
+		}
+
+		/**
 		 * Returns the number of bytes that this connection has received from its
 		 * source during its lifetime.
 		 *
@@ -380,7 +393,7 @@ public class Pipeline implements Iterable<ControlledComponent> {
 
 		@Override
 		public void run() {
-			Metadata firstMetadata = null;
+			startTime = System.currentTimeMillis();
 			while (!stopped.get()) {
 				try {
 					final byte[] buffer;
