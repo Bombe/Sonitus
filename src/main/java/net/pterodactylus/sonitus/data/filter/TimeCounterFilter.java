@@ -100,20 +100,30 @@ public class TimeCounterFilter extends DummyFilter {
 
 	@Override
 	public void metadataUpdated(Metadata metadata) {
-		super.metadataUpdated(metadata);
 		parentMetadata.set(metadata);
 		if (resetOnMetadataUpdate) {
 			reset();
 		}
+		updateTimestamp();
 	}
 
 	@Override
 	public void process(byte[] buffer) throws IOException {
 		super.process(buffer);
 		counter.getAndAdd(buffer.length);
+		updateTimestamp();
+	}
+
+	//
+	// PRIVATE METHODS
+	//
+
+	/** Updates the timestamp in the metadata. */
+	private void updateTimestamp() {
 		long timestamp = getMillis() / 1000;
 		if (lastTimestamp.get() != timestamp) {
 			super.metadataUpdated(parentMetadata.get().title(String.format("%s (%02d:%02d)", parentMetadata.get().title(), timestamp / 60, timestamp % 60)));
+			lastTimestamp.set(timestamp);
 		}
 	}
 
