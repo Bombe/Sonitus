@@ -37,7 +37,7 @@ public abstract class AbstractControlledComponent implements ControlledComponent
 	private final List<MetadataListener> metadataListeners = Lists.newCopyOnWriteArrayList();
 
 	/** The current metadata. */
-	private AtomicReference<Metadata> metadata = new AtomicReference<Metadata>();
+	private final AtomicReference<Metadata> metadata = new AtomicReference<Metadata>();
 
 	/**
 	 * Creates a new abstract controlled component.
