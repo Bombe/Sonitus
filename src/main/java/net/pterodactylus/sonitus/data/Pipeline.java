@@ -347,7 +347,7 @@ public class Pipeline implements Iterable<ControlledComponent> {
 		public Connection(Source source, Collection<Sink> sinks) {
 			this.source = source;
 			this.sinks = sinks;
-			if (sinks.size() == 1) {
+			if (sinks.size() < 2) {
 				executorService = MoreExecutors.sameThreadExecutor();
 			} else {
 				executorService = Executors.newCachedThreadPool();
