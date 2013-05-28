@@ -44,16 +44,11 @@ public abstract class ExternalMp3Encoder extends ExternalFilter {
 	}
 
 	@Override
-	public Metadata metadata() {
-		return super.metadata().encoding("MP3");
-	}
-
-	@Override
 	public void open(Metadata metadata) throws IOException {
 		checkNotNull(metadata, "metadata must not be null");
 		checkState(metadata.encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
 
-		super.open(metadata);
+		super.open(metadata.encoding("MP3"));
 	}
 
 }
