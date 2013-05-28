@@ -55,7 +55,7 @@ public class PipelinePanel extends JPanel {
 	private final Pipeline pipeline;
 
 	/** The component hover listeners. */
-	private final EventListenerList componentHoverListeners = new EventListenerList();
+	private final EventListenerList componentSelectionListeners = new EventListenerList();
 
 	/**
 	 * Creates a new pipeline panel displaying the given pipeline.
@@ -74,13 +74,13 @@ public class PipelinePanel extends JPanel {
 	//
 
 	/**
-	 * Adds the given component hover listener to this panel.
+	 * Adds the given component selection listener to this panel.
 	 *
-	 * @param componentHoverListener
-	 * 		The component hover listener to add
+	 * @param componentSelectionListener
+	 * 		The component selection listener to add
 	 */
-	public void addComponentHoverListener(ComponentHoverListener componentHoverListener) {
-		componentHoverListeners.add(ComponentHoverListener.class, componentHoverListener);
+	public void addComponentHoverListener(ComponentSelectionListener componentSelectionListener) {
+		componentSelectionListeners.add(ComponentSelectionListener.class, componentSelectionListener);
 	}
 
 	//
@@ -131,14 +131,15 @@ public class PipelinePanel extends JPanel {
 	 */
 	private void addControlled(final ControlledComponent controlledComponent, int level, int position, int width, ControlledComponent parentComponent) {
 		/* create a GUI component that displays the component. */
-		JPanel componentPanel = createComponentPanel(controlledComponent, parentComponent);
+		final JPanel componentPanel = createComponentPanel(controlledComponent, parentComponent);
 		componentPanel.addMouseListener(new MouseAdapter() {
 
 			@Override
-			public void mouseEntered(MouseEvent mouseEvent) {
-				for (ComponentHoverListener componentHoverListener : componentHoverListeners.getListeners(ComponentHoverListener.class)) {
-					componentHoverListener.componentEntered(controlledComponent);
+			public void mouseClicked(MouseEvent e) {
+				for (ComponentSelectionListener componentSelectionListener : componentSelectionListeners.getListeners(ComponentSelectionListener.class)) {
+					componentSelectionListener.componentSelected(controlledComponent);
 				}
+				selectedComponent = componentPanel;
 			}
 		});
 
@@ -198,7 +199,7 @@ public class PipelinePanel extends JPanel {
 	 *
 	 * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
 	 */
-	public static interface ComponentHoverListener extends EventListener {
+	public static interface ComponentSelectionListener extends EventListener {
 
 		/**
 		 * Notifies the listener that the mouse is now over the given controlled
@@ -207,7 +208,7 @@ public class PipelinePanel extends JPanel {
 		 * @param controlledComponent
 		 * 		The controlled component now under the mouse
 		 */
-		void componentEntered(ControlledComponent controlledComponent);
+		void componentSelected(ControlledComponent controlledComponent);
 
 	}
 

@@ -32,7 +32,7 @@ import javax.swing.WindowConstants;
 
 import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Pipeline;
-import net.pterodactylus.sonitus.gui.PipelinePanel.ComponentHoverListener;
+import net.pterodactylus.sonitus.gui.PipelinePanel.ComponentSelectionListener;
 import net.pterodactylus.sonitus.main.Version;
 
 import com.google.common.base.Optional;
@@ -72,10 +72,10 @@ public class MainWindow extends JFrame {
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 		final JPanel pipelineInfoPanel = new JPanel(new BorderLayout(12, 12));
 		PipelinePanel pipelinePanel = new PipelinePanel(pipeline);
-		pipelinePanel.addComponentHoverListener(new ComponentHoverListener() {
+		pipelinePanel.addComponentHoverListener(new ComponentSelectionListener() {
 
 			@Override
-			public void componentEntered(ControlledComponent controlledComponent) {
+			public void componentSelected(ControlledComponent controlledComponent) {
 				infoPanelCardLayout.show(infoPanel, controlledComponent.name());
 			}
 		});
