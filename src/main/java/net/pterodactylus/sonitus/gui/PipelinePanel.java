@@ -17,8 +17,11 @@
 
 package net.pterodactylus.sonitus.gui;
 
+import static javax.swing.BorderFactory.createCompoundBorder;
+import static javax.swing.BorderFactory.createEmptyBorder;
 import static javax.swing.BorderFactory.createEtchedBorder;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,6 +36,8 @@ import javax.swing.event.EventListenerList;
 
 import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Filter;
+import net.pterodactylus.sonitus.data.Metadata;
+import net.pterodactylus.sonitus.data.MetadataListener;
 import net.pterodactylus.sonitus.data.Pipeline;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
@@ -109,7 +114,7 @@ public class PipelinePanel extends JPanel {
 		}
 
 		/* paint all components recursively. */
-		addControlled(pipeline.source(), 0, 0, gridCellCount);
+		addControlled(pipeline.source(), 0, 0, gridCellCount, null);
 	}
 
 	/**
@@ -124,11 +129,10 @@ public class PipelinePanel extends JPanel {
 	 * @param width
 	 * 		The width of the component in grid cells
 	 */
-	private void addControlled(final ControlledComponent controlledComponent, int level, int position, int width) {
+	private void addControlled(final ControlledComponent controlledComponent, int level, int position, int width, ControlledComponent parentComponent) {
 		/* create a GUI component that displays the component. */
-		JLabel sourceLabel = new JLabel(controlledComponent.name());
-		sourceLabel.setBorder(createEtchedBorder());
-		sourceLabel.addMouseListener(new MouseAdapter() {
+		JPanel componentPanel = createComponentPanel(controlledComponent, parentComponent);
+		componentPanel.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseEntered(MouseEvent mouseEvent) {
@@ -139,10 +143,11 @@ public class PipelinePanel extends JPanel {
 		});
 
 		/* show component. */
-		add(sourceLabel, new GridBagConstraints(position, level, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		add(componentPanel, new GridBagConstraints(position, level, width, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		/* if the component does not have connected sinks, exit here. */
 		if (!(controlledComponent instanceof Source)) {
+			add(new JPanel(), new GridBagConstraints(position, level + 1, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 			return;
 		}
 
@@ -152,9 +157,45 @@ public class PipelinePanel extends JPanel {
 		int sinkIndex = 0;
 		for (Sink connectedSink : sinks) {
 			/* distribute all sinks evenly below this source. */
-			addControlled(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth);
+			addControlled(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth, controlledComponent);
 			sinkIndex++;
 		}
+	}
+
+	/**
+	 * Creates a panel displaying a single component.
+	 *
+	 * @param controlledComponent
+	 * 		The component to display
+	 * @return The created panel
+	 */
+	private static JPanel createComponentPanel(final ControlledComponent controlledComponent, final ControlledComponent parentComponent) {
+		JPanel componentPanel = new JPanel(new BorderLayout(12, 12));
+		componentPanel.setBorder(createCompoundBorder(createEtchedBorder(), createEmptyBorder(0, 4, 0, 3)));
+		componentPanel.add(new JLabel(controlledComponent.name()), BorderLayout.WEST);
+		final JLabel titleLabel = new JLabel(controlledComponent.metadata().title());
+		titleLabel.setFont(titleLabel.getFont().deriveFont(titleLabel.getFont().getSize2D() * 0.8f));
+		componentPanel.add(titleLabel, BorderLayout.EAST);
+		if (parentComponent != null) {
+			titleLabel.setVisible(!parentComponent.metadata().title().equals(controlledComponent.metadata().title()));
+			parentComponent.addMetadataListener(new MetadataListener() {
+
+				@Override
+				public void metadataUpdated(ControlledComponent component, Metadata metadata) {
+					titleLabel.setText(metadata.title());
+					titleLabel.setVisible(!controlledComponent.metadata().title().equals(metadata.title()));
+				}
+			});
+		}
+		controlledComponent.addMetadataListener(new MetadataListener() {
+
+			@Override
+			public void metadataUpdated(ControlledComponent component, Metadata metadata) {
+				titleLabel.setText(metadata.title());
+				titleLabel.setVisible((parentComponent == null) || !parentComponent.metadata().title().equals(metadata.title()));
+			}
+		});
+		return componentPanel;
 	}
 
 	/**
