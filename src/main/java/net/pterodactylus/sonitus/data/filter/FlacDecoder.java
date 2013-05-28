@@ -20,7 +20,6 @@ package net.pterodactylus.sonitus.data.filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 
 /**
  * Decoder {@link net.pterodactylus.sonitus.data.Filter} for FLAC files.
@@ -38,13 +37,11 @@ public class FlacDecoder extends ExternalFilter {
 	/**
 	 * Creates a new FLAC decoder.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 */
-	public FlacDecoder(EventBus eventBus, String binary) {
-		super(eventBus, "FLAC Decoder");
+	public FlacDecoder(String binary) {
+		super("FLAC Decoder");
 		this.binary = binary;
 	}
 

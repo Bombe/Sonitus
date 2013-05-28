@@ -28,9 +28,7 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
-import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
-import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
 
 import com.google.common.eventbus.EventBus;
@@ -59,12 +57,10 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 
 	/**
 	 * Creates a new multi source.
-	 *
-	 * @param eventBus
-	 * 		The event bus
 	 */
 	@Inject
 	public MultiSource(EventBus eventBus) {
+		super("Multisource");
 		this.eventBus = eventBus;
 	}
 
@@ -87,8 +83,7 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 				sourceChanged = true;
 				this.source.notifyAll();
 			}
-			fireMetadataUpdated(source.metadata());
-			eventBus.post(new MetadataUpdated(this, source.metadata()));
+			metadataUpdated(source.metadata());
 			logger.info(String.format("Next Source set: %s", source));
 		}
 	}
@@ -98,11 +93,6 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	//
 
 	@Override
-	public String name() {
-		return "Multisource";
-	}
-
-	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
@@ -110,11 +100,6 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	//
 	// SOURCE METHODS
 	//
-
-	@Override
-	public Metadata metadata() {
-		return source.get().metadata();
-	}
 
 	@Override
 	public byte[] get(int bufferSize) throws EOFException, IOException {

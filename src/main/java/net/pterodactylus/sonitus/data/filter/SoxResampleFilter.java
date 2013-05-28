@@ -25,7 +25,6 @@ import java.io.IOException;
 import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 
 /**
  * {@link net.pterodactylus.sonitus.data.Filter} implementation that uses {@code
@@ -44,15 +43,12 @@ public class SoxResampleFilter extends ExternalFilter {
 	/**
 	 * Creates a new resample filter.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 * @param rate
-	 * 		The new sampling rate
 	 */
-	public SoxResampleFilter(EventBus eventBus, String binary, int rate) {
-		super(eventBus, String.format("Resample to %s kHz", rate / 1000.0));
+	public SoxResampleFilter(String binary, int rate) {
+		super(String.format("Resample to %s kHz", rate / 1000.0));
 		this.binary = binary;
 		this.rate = rate;
 	}

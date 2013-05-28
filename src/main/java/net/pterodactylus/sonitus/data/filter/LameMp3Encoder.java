@@ -23,7 +23,6 @@ import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 
 /**
  * {@link ExternalMp3Encoder} implementation that uses LAME to encode MP3s.
@@ -67,45 +66,36 @@ public class LameMp3Encoder extends ExternalMp3Encoder {
 	/**
 	 * Creates a new LAME MP3 encoder.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 * @param preset
-	 * 		The preset to use
 	 */
-	public LameMp3Encoder(EventBus eventBus, String binary, Preset preset) {
-		this(eventBus, binary, preset, -1);
+	public LameMp3Encoder(String binary, Preset preset) {
+		this(binary, preset, -1);
 	}
 
 	/**
 	 * Creates a new LAME MP3 encoder.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 * @param bitrate
-	 * 		The bitrate to encode to (in kbps)
 	 */
-	public LameMp3Encoder(EventBus eventBus, String binary, int bitrate) {
-		this(eventBus, binary, null, bitrate);
+	public LameMp3Encoder(String binary, int bitrate) {
+		this(binary, null, bitrate);
 	}
 
 	/**
 	 * Creates a new LAME MP3 encoder.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 * @param preset
 	 * 		The preset to use
 	 * @param bitrate
-	 * 		The bitrate to encode to (in kbps)
 	 */
-	private LameMp3Encoder(EventBus eventBus, String binary, Preset preset, int bitrate) {
-		super(eventBus, "LAME Encoder");
+	private LameMp3Encoder(String binary, Preset preset, int bitrate) {
+		super("LAME Encoder");
 		this.binary = binary;
 		this.preset = Optional.fromNullable(preset);
 		this.bitrate = (bitrate < 0) ? Optional.<Integer>absent() : Optional.<Integer>of(bitrate);

@@ -41,11 +41,9 @@ import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.controller.Fader;
 import net.pterodactylus.sonitus.data.controller.Switch;
-import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.io.IntegralWriteOutputStream;
 
 import com.google.common.base.Preconditions;
-import com.google.common.eventbus.EventBus;
 
 /**
  * {@link Sink} implementation that uses the JDK’s {@link AudioSystem} to play
@@ -58,17 +56,11 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(AudioSink.class.getName());
 
-	/** The event bus. */
-	private final EventBus eventBus;
-
 	/** The volume fader. */
 	private final Fader volumeFader;
 
 	/** The “mute” switch. */
 	private final Switch muteSwitch;
-
-	/** The current metadata. */
-	private Metadata metadata;
 
 	/** The audio output. */
 	private SourceDataLine sourceDataLine;
@@ -93,14 +85,9 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 		}
 	}, 1024);
 
-	/**
-	 * Creates a new audio sink.
-	 *
-	 * @param eventBus
-	 * 		The event bus
-	 */
-	public AudioSink(EventBus eventBus) {
-		this.eventBus = eventBus;
+	/** Creates a new audio sink. */
+	public AudioSink() {
+		super("Audio Output");
 		volumeFader = new Fader("Volume") {
 
 			@Override
@@ -152,16 +139,6 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 	//
 
 	@Override
-	public String name() {
-		return "Audio Output";
-	}
-
-	@Override
-	public Metadata metadata() {
-		return metadata;
-	}
-
-	@Override
 	public List<Controller<?>> controllers() {
 		return Arrays.<Controller<?>>asList(volumeFader, muteSwitch);
 	}
@@ -194,10 +171,8 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 
 	@Override
 	public void metadataUpdated(Metadata metadata) {
-		logger.info(String.format("Now playing %s.", metadata));
-		this.metadata = metadata;
-		fireMetadataUpdated(metadata);
-		eventBus.post(new MetadataUpdated(this, metadata));
+		super.metadataUpdated(metadata);
+		logger.fine(String.format("Now playing %s.", metadata));
 	}
 
 	@Override

@@ -23,8 +23,6 @@ import java.io.OutputStream;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.io.ProcessingOutputStream;
 
-import com.google.common.eventbus.EventBus;
-
 /**
  * {@link Filter} implementation that can process audio samples internally.
  *
@@ -35,13 +33,11 @@ public abstract class AudioProcessingFilter extends DummyFilter {
 	/**
 	 * Creates a new audio processing filter with the given name.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 */
-	protected AudioProcessingFilter(EventBus eventBus, String name) {
-		super(eventBus, name);
+	protected AudioProcessingFilter(String name) {
+		super(name);
 	}
 
 	//

@@ -46,9 +46,6 @@ public class FileSource extends AbstractControlledComponent implements Source {
 	/** The path of the file. */
 	private final String path;
 
-	/** The identified metadata of the file. */
-	private final Metadata metadata;
-
 	/** The input stream. */
 	private InputStream fileInputStream;
 
@@ -61,27 +58,23 @@ public class FileSource extends AbstractControlledComponent implements Source {
 	 * 		if the file can not be found, or an I/O error occurs
 	 */
 	public FileSource(String path) throws IOException {
+		super(path);
 		this.path = checkNotNull(path, "path must not be null");
 		fileInputStream = new FileInputStream(path);
 
 		/* identify file type. */
 		Optional<IdentifyingInputStream> identifyingInputStream = IdentifyingInputStream.create(new FileInputStream(path));
 		if (identifyingInputStream.isPresent()) {
-			metadata = identifyingInputStream.get().metadata();
+			metadataUpdated(identifyingInputStream.get().metadata());
 		} else {
 			/* fallback. */
-			metadata = new Metadata().name(path);
+			metadataUpdated(new Metadata().name(path));
 		}
 	}
 
 	//
 	// CONTROLLED METHODS
 	//
-
-	@Override
-	public String name() {
-		return path;
-	}
 
 	@Override
 	public List<Controller<?>> controllers() {
@@ -102,18 +95,13 @@ public class FileSource extends AbstractControlledComponent implements Source {
 		return Arrays.copyOf(buffer, read);
 	}
 
-	@Override
-	public Metadata metadata() {
-		return metadata;
-	}
-
 	//
 	// OBJECT METHODS
 	//
 
 	@Override
 	public String toString() {
-		return String.format("%s (%s)", path, metadata);
+		return String.format("%s (%s)", path, metadata());
 	}
 
 }

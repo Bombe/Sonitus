@@ -32,10 +32,8 @@ import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
-import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.Closeables;
 
@@ -49,9 +47,6 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(Icecast2Sink.class.getName());
-
-	/** The event bus. */
-	private final EventBus eventBus;
 
 	/** The server name. */
 	private final String server;
@@ -80,9 +75,6 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 	/** The output stream to the server. */
 	private OutputStream socketOutputStream;
 
-	/** The current metadata. */
-	private Metadata metadata;
-
 	/**
 	 * Creates a new Icecast2 sink.
 	 *
@@ -106,8 +98,8 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 	 * 		{@code true} to publish the server in a public directory, {@code false} to
 	 * 		not publish it
 	 */
-	public Icecast2Sink(EventBus eventBus, String server, int port, String password, String mountPoint, String serverName, String serverDescription, String genre, boolean publishServer) {
-		this.eventBus = eventBus;
+	public Icecast2Sink(String server, int port, String password, String mountPoint, String serverName, String serverDescription, String genre, boolean publishServer) {
+		super(String.format("icecast://%s:%d/%s", server, port, mountPoint));
 		this.server = server;
 		this.port = port;
 		this.password = password;
@@ -121,16 +113,6 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 	//
 	// CONTROLLED METHODS
 	//
-
-	@Override
-	public String name() {
-		return String.format("icecast://%s:%d/%s", server, port, mountPoint);
-	}
-
-	@Override
-	public Metadata metadata() {
-		return metadata;
-	}
 
 	@Override
 	public List<Controller<?>> controllers() {
@@ -175,7 +157,7 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 
 	@Override
 	public void metadataUpdated(final Metadata metadata) {
-		this.metadata = metadata;
+		super.metadataUpdated(metadata);
 		new Thread(new Runnable() {
 
 			@Override
@@ -210,8 +192,6 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 				}
 			}
 		}).start();
-		fireMetadataUpdated(metadata);
-		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override

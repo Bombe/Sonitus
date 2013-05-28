@@ -31,9 +31,7 @@ import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.io.Closeables;
 
 /**
@@ -43,42 +41,25 @@ import com.google.common.io.Closeables;
  */
 public class DummyFilter extends AbstractControlledComponent implements Filter {
 
-	/** The name of this filter. */
-	private final String name;
-
-	/** The event bus. */
-	private final EventBus eventBus;
-
 	/** The input stream from which to read. */
 	private InputStream inputStream;
 
 	/** The output stream to which to write. */
 	private OutputStream outputStream;
 
-	/** The current metadata. */
-	private Metadata metadata;
-
 	/**
 	 * Creates a new dummy filter with the given name.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 */
-	public DummyFilter(EventBus eventBus, String name) {
-		this.eventBus = eventBus;
-		this.name = name;
+	public DummyFilter(String name) {
+		super(name);
 	}
 
 	//
 	// CONTROLLED METHODS
 	//
-
-	@Override
-	public String name() {
-		return name;
-	}
 
 	@Override
 	public List<Controller<?>> controllers() {
@@ -104,18 +85,6 @@ public class DummyFilter extends AbstractControlledComponent implements Filter {
 		} catch (IOException e) {
 			/* won’t throw. */
 		}
-	}
-
-	@Override
-	public Metadata metadata() {
-		return metadata;
-	}
-
-	@Override
-	public void metadataUpdated(Metadata metadata) {
-		this.metadata = metadata;
-		fireMetadataUpdated(metadata);
-		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override

@@ -24,8 +24,6 @@ import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.controller.Knob;
 
-import com.google.common.eventbus.EventBus;
-
 /**
  * {@link Filter} implementation that can reduce the stereo width of a signal,
  * or even reverse the channels.
@@ -37,14 +35,9 @@ public class StereoSeparationFilter extends AudioProcessingFilter {
 	/** The separation knob. */
 	private final Knob separationKnob;
 
-	/**
-	 * Creates a new stereo separation filter.
-	 *
-	 * @param eventBus
-	 * 		The event bus
-	 */
-	public StereoSeparationFilter(EventBus eventBus) {
-		super(eventBus, "Stereo Separation");
+	/** Creates a new stereo separation filter. */
+	public StereoSeparationFilter() {
+		super("Stereo Separation");
 		separationKnob = new Knob("Separation", 1.0);
 	}
 

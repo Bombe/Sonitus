@@ -20,7 +20,6 @@ package net.pterodactylus.sonitus.data.filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 
 /**
  * {@link ExternalMp3Decoder} implementation that uses LAME to decode an MP3.
@@ -38,13 +37,11 @@ public class LameMp3Decoder extends ExternalMp3Decoder {
 	/**
 	 * Creates a new LAME MP3 decoder.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param binary
 	 * 		The location of the binary
 	 */
-	public LameMp3Decoder(EventBus eventBus, String binary) {
-		super(eventBus, "LAME Decoder");
+	public LameMp3Decoder(String binary) {
+		super("LAME Decoder");
 		this.binary = binary;
 	}
 

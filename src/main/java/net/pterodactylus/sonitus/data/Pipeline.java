@@ -335,8 +335,6 @@ public class Pipeline implements Iterable<ControlledComponent> {
 			Metadata firstMetadata = null;
 			while (!stopped.get()) {
 				try {
-					final Metadata lastMetadata = firstMetadata;
-					final Metadata metadata = firstMetadata = source.metadata();
 					final byte[] buffer;
 					try {
 						logger.finest(String.format("Getting %d bytes from %s...", 4096, source));
@@ -353,9 +351,6 @@ public class Pipeline implements Iterable<ControlledComponent> {
 
 								@Override
 								public Void call() throws Exception {
-									if (!metadata.equals(lastMetadata)) {
-										sink.metadataUpdated(metadata);
-									}
 									try {
 										logger.finest(String.format("Sending %d bytes to %s.", buffer.length, sink));
 										sink.process(buffer);

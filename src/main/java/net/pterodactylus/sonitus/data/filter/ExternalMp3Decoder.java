@@ -24,8 +24,6 @@ import java.io.IOException;
 
 import net.pterodactylus.sonitus.data.Metadata;
 
-import com.google.common.eventbus.EventBus;
-
 /**
  * Basic {@link net.pterodactylus.sonitus.data.filter.ExternalFilter}
  * implementation that verifies that the connected source is MP3-encoded and
@@ -38,13 +36,11 @@ public abstract class ExternalMp3Decoder extends ExternalFilter {
 	/**
 	 * Creates a new external MP3 decoder.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 */
-	protected ExternalMp3Decoder(EventBus eventBus, String name) {
-		super(eventBus, name);
+	protected ExternalMp3Decoder(String name) {
+		super(name);
 	}
 
 	@Override

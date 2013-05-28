@@ -32,12 +32,10 @@ import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
-import net.pterodactylus.sonitus.data.event.MetadataUpdated;
 import net.pterodactylus.sonitus.io.MetadataStream;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import com.google.common.eventbus.EventBus;
 import com.google.common.primitives.Ints;
 
 /**
@@ -50,9 +48,6 @@ import com.google.common.primitives.Ints;
  */
 public class StreamSource extends AbstractControlledComponent implements Source {
 
-	/** The event bus. */
-	private final EventBus eventBus;
-
 	/** The URL of the stream. */
 	private final String streamUrl;
 
@@ -61,9 +56,6 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 
 	/** The metadata stream. */
 	private final MetadataStream metadataStream;
-
-	/** The current metadata. */
-	private Metadata metadata;
 
 	/**
 	 * Creates a new stream source. This will also connect to the server and parse
@@ -77,8 +69,8 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
-	public StreamSource(EventBus eventBus, String streamUrl) throws IOException {
-		this.eventBus = eventBus;
+	public StreamSource(String streamUrl) throws IOException {
+		super(null);
 		this.streamUrl = streamUrl;
 		URL url = new URL(streamUrl);
 
@@ -124,7 +116,7 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 			throw new IllegalArgumentException(String.format("Invalid Metadata Interval header: %s", metadataIntervalHeader));
 		}
 
-		metadata = new Metadata(new FormatMetadata(audioParameters.get("ice-channels"), audioParameters.get("ice-samplerate"), "MP3"), new ContentMetadata());
+		metadataUpdated(new Metadata(new FormatMetadata(audioParameters.get("ice-channels"), audioParameters.get("ice-samplerate"), "MP3"), new ContentMetadata()));
 		metadataStream = new MetadataStream(new BufferedInputStream(httpUrlConnection.getInputStream()), metadataInterval);
 		streamName = httpUrlConnection.getHeaderField("ICY-Name");
 	}
@@ -151,12 +143,10 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 	public Metadata metadata() {
 		Optional<ContentMetadata> streamMetadata = metadataStream.getContentMetadata();
 		if (!streamMetadata.isPresent()) {
-			return metadata;
+			return super.metadata();
 		}
-		metadata = metadata.title(streamMetadata.get().title());
-		fireMetadataUpdated(metadata);
-		eventBus.post(new MetadataUpdated(this, metadata));
-		return metadata;
+		metadataUpdated(super.metadata().title(streamMetadata.get().title()));
+		return super.metadata();
 	}
 
 	@Override
@@ -172,7 +162,7 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 
 	@Override
 	public String toString() {
-		return String.format("StreamSource(%s,%s)", streamUrl, metadata);
+		return String.format("StreamSource(%s,%s)", streamUrl, metadata());
 	}
 
 }

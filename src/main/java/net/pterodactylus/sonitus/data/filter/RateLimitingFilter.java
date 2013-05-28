@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.Metadata;
 
-import com.google.common.eventbus.EventBus;
-
 /**
  * Rate limiting filter that only passes a specified amount of data per second
  * from its {@link net.pterodactylus.sonitus.data.Source} to its {@link
@@ -48,32 +46,26 @@ public class RateLimitingFilter extends DummyFilter {
 	/**
 	 * Creates a new rate limiting filter.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 * @param rate
-	 * 		The limiting rate (in bytes/second)
 	 */
-	public RateLimitingFilter(EventBus eventBus, String name, int rate) {
-		this(eventBus, name, rate, 0);
+	public RateLimitingFilter(String name, int rate) {
+		this(name, rate, 0);
 	}
 
 	/**
 	 * Creates a new rate limiting filter.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param name
 	 * 		The name of the filter
 	 * @param rate
 	 * 		The limiting rate (in bytes/second)
 	 * @param fastStartTime
 	 * 		The amount of time at the start of the filtering during which no delay
-	 * 		will occur (in milliseconds)
 	 */
-	public RateLimitingFilter(EventBus eventBus, String name, int rate, long fastStartTime) {
-		super(eventBus, name);
+	public RateLimitingFilter(String name, int rate, long fastStartTime) {
+		super(name);
 		this.rate = rate;
 		this.counter = (long) (-rate * (fastStartTime / 1000.0));
 	}

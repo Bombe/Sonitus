@@ -63,4 +63,14 @@ public interface ControlledComponent {
 	 */
 	public List<Controller<?>> controllers();
 
+	/**
+	 * Notifies the sink that the metadata of the audio stream has changed. This
+	 * method should return as fast as possible, i.e. every heavy lifting should be
+	 * done from another thread.
+	 *
+	 * @param metadata
+	 * 		The new metadata
+	 */
+	void metadataUpdated(Metadata metadata);
+
 }

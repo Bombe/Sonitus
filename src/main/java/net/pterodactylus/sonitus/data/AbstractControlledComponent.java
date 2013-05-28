@@ -18,6 +18,7 @@
 package net.pterodactylus.sonitus.data;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.collect.Lists;
 
@@ -29,8 +30,24 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractControlledComponent implements ControlledComponent {
 
+	/** The name of this filter. */
+	private final String name;
+
 	/** The list of metadata listeners. */
-	private final List<MetadataListener> metadataListeners = Lists.newArrayList();
+	private final List<MetadataListener> metadataListeners = Lists.newCopyOnWriteArrayList();
+
+	/** The current metadata. */
+	private AtomicReference<Metadata> metadata = new AtomicReference<Metadata>();
+
+	/**
+	 * Creates a new abstract controlled component.
+	 *
+	 * @param name
+	 * 		The name of the component
+	 */
+	protected AbstractControlledComponent(String name) {
+		this.name = name;
+	}
 
 	//
 	// LISTENER MANAGEMENT
@@ -44,6 +61,29 @@ public abstract class AbstractControlledComponent implements ControlledComponent
 	@Override
 	public void removeMetadataListener(MetadataListener metadataListener) {
 		metadataListeners.remove(metadataListener);
+	}
+
+	//
+	// CONTROLLEDCOMPONENT METHODS
+	//
+
+	@Override
+	public String name() {
+		return name;
+	}
+
+	@Override
+	public Metadata metadata() {
+		return metadata.get();
+	}
+
+	@Override
+	public void metadataUpdated(Metadata metadata) {
+		if (metadata.equals(this.metadata.get())) {
+			return;
+		}
+		this.metadata.set(metadata);
+		fireMetadataUpdated(metadata);
 	}
 
 	//

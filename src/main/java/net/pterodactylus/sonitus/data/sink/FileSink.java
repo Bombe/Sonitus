@@ -27,9 +27,6 @@ import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
-import net.pterodactylus.sonitus.data.event.MetadataUpdated;
-
-import com.google.common.eventbus.EventBus;
 
 /**
  * {@link net.pterodactylus.sonitus.data.Sink} that writes all received data
@@ -42,44 +39,26 @@ public class FileSink extends AbstractControlledComponent implements Sink {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(FileSink.class.getName());
 
-	/** The event bus. */
-	private final EventBus eventBus;
-
 	/** The path of the file to write to. */
 	private final String path;
 
 	/** The output stream writing to the file. */
 	private FileOutputStream fileOutputStream;
 
-	/** The current metadata. */
-	private Metadata metadata;
-
 	/**
 	 * Creates a new file sink that will write to the given path.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param path
 	 * 		The path of the file to write to
 	 */
-	public FileSink(EventBus eventBus, String path) {
-		this.eventBus = eventBus;
+	public FileSink(String path) {
+		super(path);
 		this.path = path;
 	}
 
 	//
 	// CONTROLLED METHODS
 	//
-
-	@Override
-	public String name() {
-		return path;
-	}
-
-	@Override
-	public Metadata metadata() {
-		return metadata;
-	}
 
 	@Override
 	public List<Controller<?>> controllers() {
@@ -103,13 +82,6 @@ public class FileSink extends AbstractControlledComponent implements Sink {
 		} catch (IOException e) {
 			/* ignore. */
 		}
-	}
-
-	@Override
-	public void metadataUpdated(Metadata metadata) {
-		this.metadata = metadata;
-		fireMetadataUpdated(metadata);
-		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
 	@Override

@@ -25,8 +25,6 @@ import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.controller.Fader;
 import net.pterodactylus.sonitus.data.controller.Switch;
 
-import com.google.common.eventbus.EventBus;
-
 /**
  * Internal {@link Filter} implementation that can reduce the volume of the
  * signal.
@@ -41,14 +39,9 @@ public class VolumeFilter extends AudioProcessingFilter {
 	/** The mute switch. */
 	private final Switch muteSwitch;
 
-	/**
-	 * Creates a new volume filter.
-	 *
-	 * @param eventBus
-	 * 		The event bus
-	 */
-	public VolumeFilter(EventBus eventBus) {
-		super(eventBus, "Volume");
+	/** Creates a new volume filter. */
+	public VolumeFilter() {
+		super("Volume");
 		volumeFader = new Fader("Volume", 1.0);
 		muteSwitch = new Switch("Mute", false);
 	}
