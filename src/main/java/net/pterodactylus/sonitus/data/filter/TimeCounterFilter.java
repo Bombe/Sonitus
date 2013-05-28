@@ -19,6 +19,7 @@ package net.pterodactylus.sonitus.data.filter;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
@@ -35,8 +36,14 @@ public class TimeCounterFilter extends DummyFilter {
 	/** The byte counter. */
 	private final AtomicLong counter = new AtomicLong();
 
+	/** The parent’s metdata. */
+	private final AtomicReference<Metadata> parentMetadata = new AtomicReference<Metadata>();
+
 	/** Whether to reset the counter on a metadata update. */
 	private final boolean resetOnMetadataUpdate;
+
+	/** The last displayed timestamp. */
+	private final AtomicLong lastTimestamp = new AtomicLong(0);
 
 	/**
 	 * Creates a new time counter filter that automatically resets the counter when
@@ -94,6 +101,7 @@ public class TimeCounterFilter extends DummyFilter {
 	@Override
 	public void metadataUpdated(Metadata metadata) {
 		super.metadataUpdated(metadata);
+		parentMetadata.set(metadata);
 		if (resetOnMetadataUpdate) {
 			reset();
 		}
@@ -103,6 +111,10 @@ public class TimeCounterFilter extends DummyFilter {
 	public void process(byte[] buffer) throws IOException {
 		super.process(buffer);
 		counter.getAndAdd(buffer.length);
+		long timestamp = getMillis() / 1000;
+		if (lastTimestamp.get() != timestamp) {
+			super.metadataUpdated(parentMetadata.get().title(String.format("%s (%02d:%02d)", parentMetadata.get().title(), timestamp / 60, timestamp % 60)));
+		}
 	}
 
 }
