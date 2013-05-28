@@ -29,20 +29,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.EventListener;
-import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 
 import net.pterodactylus.sonitus.data.ControlledComponent;
-import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.MetadataListener;
 import net.pterodactylus.sonitus.data.Pipeline;
 import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.data.Source;
-
-import com.google.common.collect.Lists;
 
 /**
  * {@link JPanel} that displays all components of a {@link Pipeline}.
@@ -50,6 +47,9 @@ import com.google.common.collect.Lists;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class PipelinePanel extends JPanel {
+
+	/** The logger. */
+	private static final Logger logger = Logger.getLogger(PipelinePanel.class.getName());
 
 	/** The pipeline being displayed. */
 	private final Pipeline pipeline;
@@ -94,18 +94,19 @@ public class PipelinePanel extends JPanel {
 
 		/* count all sinks. */
 		int sinkCount = 0;
-		List<Source> sources = Lists.newArrayList(pipeline.source());
-		while (!sources.isEmpty()) {
-			Collection<Sink> sinks = pipeline.sinks(sources.remove(0));
-			for (Sink sink : sinks) {
-				/* only count real sinks, everything else is filter. */
-				if (sink instanceof Filter) {
-					sources.add((Filter) sink);
-				} else {
-					sinkCount++;
-				}
+		for (ControlledComponent component : pipeline.components()) {
+			if (!(component instanceof Source)) {
+				logger.finest(String.format("%s is not a Source, skipping.", component.name()));
+				sinkCount++;
+				continue;
+			}
+			Collection<Sink> sinks = pipeline.sinks((Source) component);
+			logger.finest(String.format("%s has %d sinks: %s", component.name(), sinks.size(), sinks));
+			if (sinks.isEmpty()) {
+				sinkCount++;
 			}
 		}
+		System.out.println(sinkCount);
 
 		/* get number of maximum horizontal grid cells. */
 		int gridCellCount = 1;
@@ -153,12 +154,14 @@ public class PipelinePanel extends JPanel {
 
 		/* iterate over the component’s sinks. */
 		Collection<Sink> sinks = pipeline.sinks((Source) controlledComponent);
-		int sinkWidth = width / sinks.size();
-		int sinkIndex = 0;
-		for (Sink connectedSink : sinks) {
-			/* distribute all sinks evenly below this source. */
-			addControlled(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth, controlledComponent);
-			sinkIndex++;
+		if (!sinks.isEmpty()) {
+			int sinkWidth = width / sinks.size();
+			int sinkIndex = 0;
+			for (Sink connectedSink : sinks) {
+				/* distribute all sinks evenly below this source. */
+				addControlled(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth, controlledComponent);
+				sinkIndex++;
+			}
 		}
 	}
 
