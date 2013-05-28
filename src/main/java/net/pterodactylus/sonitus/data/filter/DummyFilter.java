@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
@@ -40,7 +41,7 @@ import com.google.common.io.Closeables;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class DummyFilter implements Filter {
+public class DummyFilter extends AbstractControlledComponent implements Filter {
 
 	/** The name of this filter. */
 	private final String name;
@@ -113,6 +114,7 @@ public class DummyFilter implements Filter {
 	@Override
 	public void metadataUpdated(Metadata metadata) {
 		this.metadata = metadata;
+		fireMetadataUpdated(metadata);
 		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 

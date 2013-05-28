@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
@@ -36,7 +37,7 @@ import com.google.common.eventbus.EventBus;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class FileSink implements Sink {
+public class FileSink extends AbstractControlledComponent implements Sink {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(FileSink.class.getName());
@@ -107,6 +108,7 @@ public class FileSink implements Sink {
 	@Override
 	public void metadataUpdated(Metadata metadata) {
 		this.metadata = metadata;
+		fireMetadataUpdated(metadata);
 		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 

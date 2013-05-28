@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.ContentMetadata;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.FormatMetadata;
@@ -47,7 +48,7 @@ import com.google.common.primitives.Ints;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class StreamSource implements Source {
+public class StreamSource extends AbstractControlledComponent implements Source {
 
 	/** The event bus. */
 	private final EventBus eventBus;
@@ -153,6 +154,7 @@ public class StreamSource implements Source {
 			return metadata;
 		}
 		metadata = metadata.title(streamMetadata.get().title());
+		fireMetadataUpdated(metadata);
 		eventBus.post(new MetadataUpdated(this, metadata));
 		return metadata;
 	}

@@ -27,6 +27,22 @@ import java.util.List;
 public interface ControlledComponent {
 
 	/**
+	 * Adds the given listener to the list of registered listeners.
+	 *
+	 * @param metadataListener
+	 * 		The metadata listener to add
+	 */
+	void addMetadataListener(MetadataListener metadataListener);
+
+	/**
+	 * Removes the given listener from the list of registered listeners.
+	 *
+	 * @param metadataListener
+	 * 		The metadata listener to remove
+	 */
+	void removeMetadataListener(MetadataListener metadataListener);
+
+	/**
 	 * Returns the name of this controlled component.
 	 *
 	 * @return The name of this controlled component

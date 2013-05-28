@@ -34,6 +34,7 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Sink;
@@ -52,7 +53,7 @@ import com.google.common.eventbus.EventBus;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class AudioSink implements Sink {
+public class AudioSink extends AbstractControlledComponent implements Sink {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(AudioSink.class.getName());
@@ -195,6 +196,7 @@ public class AudioSink implements Sink {
 	public void metadataUpdated(Metadata metadata) {
 		logger.info(String.format("Now playing %s.", metadata));
 		this.metadata = metadata;
+		fireMetadataUpdated(metadata);
 		eventBus.post(new MetadataUpdated(this, metadata));
 	}
 
