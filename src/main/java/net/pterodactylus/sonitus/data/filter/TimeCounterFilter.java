@@ -43,7 +43,7 @@ public class TimeCounterFilter extends DummyFilter {
 	private final boolean resetOnMetadataUpdate;
 
 	/** The last displayed timestamp. */
-	private final AtomicLong lastTimestamp = new AtomicLong(0);
+	private final AtomicLong lastTimestamp = new AtomicLong(-1);
 
 	/**
 	 * Creates a new time counter filter that automatically resets the counter when
