@@ -25,6 +25,7 @@ import java.net.URLConnection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.ContentMetadata;
@@ -47,6 +48,9 @@ import com.google.common.primitives.Ints;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class StreamSource extends AbstractControlledComponent implements Source {
+
+	/** The logger. */
+	private static final Logger logger = Logger.getLogger(StreamSource.class.getName());
 
 	/** The URL of the stream. */
 	private final String streamUrl;
@@ -83,6 +87,7 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 		httpUrlConnection.setRequestProperty("ICY-Metadata", "1");
 
 		/* connect. */
+		logger.info(String.format("Connecting to %s...", streamUrl));
 		httpUrlConnection.connect();
 
 		/* check content type. */
