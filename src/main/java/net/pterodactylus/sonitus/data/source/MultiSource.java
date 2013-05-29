@@ -25,13 +25,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
+import javax.swing.event.EventListenerList;
 
 import net.pterodactylus.sonitus.data.AbstractControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Source;
-import net.pterodactylus.sonitus.data.event.SourceFinishedEvent;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 /**
@@ -46,8 +46,8 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(MultiSource.class.getName());
 
-	/** The event bus. */
-	private final EventBus eventBus;
+	/** The source finished listeners. */
+	private final EventListenerList sourceFinishedListeners = new EventListenerList();
 
 	/** The current source. */
 	private final AtomicReference<Source> source = new AtomicReference<Source>();
@@ -55,13 +55,34 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	/** Whether the source was changed. */
 	private boolean sourceChanged;
 
-	/**
-	 * Creates a new multi source.
-	 */
+	/** Creates a new multi source. */
 	@Inject
-	public MultiSource(EventBus eventBus) {
+	public MultiSource() {
 		super("Multisource");
-		this.eventBus = eventBus;
+	}
+
+	//
+	// LISTENER MANAGEMENT
+	//
+
+	/**
+	 * Adds a source finished listener to the list of registered listeners.
+	 *
+	 * @param sourceFinishedListener
+	 * 		The source finished listener to add
+	 */
+	public void addSourceFinishedListener(SourceFinishedListener sourceFinishedListener) {
+		sourceFinishedListeners.add(SourceFinishedListener.class, sourceFinishedListener);
+	}
+
+	/**
+	 * Removes a source finished listener from the list of registered listeners.
+	 *
+	 * @param sourceFinishedListener
+	 * 		The source finished listener to remove
+	 */
+	public void removeSourceFinishedListener(SourceFinishedListener sourceFinishedListener) {
+		sourceFinishedListeners.remove(SourceFinishedListener.class, sourceFinishedListener);
 	}
 
 	//
@@ -78,13 +99,29 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 		checkNotNull(source, "source must not be null");
 
 		Source oldSource = this.source.getAndSet(source);
-		if (oldSource != null) {
+		if (!source.equals(oldSource)) {
 			synchronized (this.source) {
 				sourceChanged = true;
 				this.source.notifyAll();
 			}
 			metadataUpdated(source.metadata());
 			logger.info(String.format("Next Source set: %s", source));
+		}
+	}
+
+	//
+	// EVENT METHODS
+	//
+
+	/**
+	 * Notifies all registered listeners that the current source finished playing
+	 * and that a new source should be {@link #setSource(Source) set}.
+	 *
+	 * @see SourceFinishedListener
+	 */
+	private void fireSourceFinished() {
+		for (SourceFinishedListener sourceFinishedListener : sourceFinishedListeners.getListeners(SourceFinishedListener.class)) {
+			sourceFinishedListener.sourceFinished(this);
 		}
 	}
 
@@ -97,6 +134,16 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public Metadata metadata() {
+		if (super.metadata() == null) {
+			/* no metadata yet, wait for it. */
+			waitForNewSource();
+			sourceChanged = false;
+		}
+		return super.metadata();
+	}
+
 	//
 	// SOURCE METHODS
 	//
@@ -107,21 +154,30 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 			try {
 				return source.get().get(bufferSize);
 			} catch (EOFException eofe1) {
-				eventBus.post(new SourceFinishedEvent(source.get()));
-				synchronized (source) {
-					while (!sourceChanged) {
-						try {
-							logger.info("Waiting for next Source...");
-							source.wait();
-							logger.info("Was notified.");
-						} catch (InterruptedException ioe1) {
-							/* ignore: we’ll end up here again if we were interrupted. */
-						}
-					}
-				}
+				waitForNewSource();
 			} finally {
 				synchronized (source) {
 					sourceChanged = false;
+				}
+			}
+		}
+	}
+
+	//
+	// PRIVATE METHODS
+	//
+
+	/** Waits for a new source to be {@link #setSource(Source) set}. */
+	private void waitForNewSource() {
+		fireSourceFinished();
+		synchronized (source) {
+			while (!sourceChanged) {
+				try {
+					logger.info("Waiting for next Source...");
+					source.wait();
+					logger.info("Was notified.");
+				} catch (InterruptedException ioe1) {
+					/* ignore: we’ll end up here again if we were interrupted. */
 				}
 			}
 		}
