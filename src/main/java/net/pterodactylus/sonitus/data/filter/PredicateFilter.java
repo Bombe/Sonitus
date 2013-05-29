@@ -83,6 +83,14 @@ public class PredicateFilter extends DummyFilter {
 	}
 
 	@Override
+	public Metadata metadata() {
+		if (metadataMatches.get()) {
+			return filter.metadata();
+		}
+		return super.metadata();
+	}
+
+	@Override
 	public void metadataUpdated(Metadata metadata) {
 		metadataMatches.set(metadataPredicate.apply(metadata));
 		if (metadataMatches.get()) {
