@@ -400,11 +400,11 @@ public class Pipeline implements Iterable<ControlledComponent> {
 				try {
 					final byte[] buffer;
 					try {
-						logger.finest(String.format("Getting %d bytes from %s...", 4096, source));
+						logger.finest(String.format("Getting %d bytes from %s...", 4096, source.name()));
 						buffer = source.get(4096);
-						logger.finest(String.format("Got %d bytes from %s.", buffer.length, source));
+						logger.finest(String.format("Got %d bytes from %s.", buffer.length, source.name()));
 					} catch (IOException ioe1) {
-						throw new IOException(String.format("I/O error while reading from %s.", source), ioe1);
+						throw new IOException(String.format("I/O error while reading from %s.", source.name()), ioe1);
 					}
 					List<Future<Void>> futures = executorService.invokeAll(FluentIterable.from(sinks).transform(new Function<Sink, Callable<Void>>() {
 
@@ -415,11 +415,11 @@ public class Pipeline implements Iterable<ControlledComponent> {
 								@Override
 								public Void call() throws Exception {
 									try {
-										logger.finest(String.format("Sending %d bytes to %s.", buffer.length, sink));
+										logger.finest(String.format("Sending %d bytes to %s.", buffer.length, sink.name()));
 										sink.process(buffer);
-										logger.finest(String.format("Sent %d bytes to %s.", buffer.length, sink));
+										logger.finest(String.format("Sent %d bytes to %s.", buffer.length, sink.name()));
 									} catch (IOException ioe1) {
-										throw new IOException(String.format("I/O error while writing to %s", sink), ioe1);
+										throw new IOException(String.format("I/O error while writing to %s", sink.name()), ioe1);
 									}
 									return null;
 								}
