@@ -167,13 +167,15 @@ public class Pipeline implements Iterable<ControlledComponent> {
 			}
 		}
 		for (Connection connection : connections) {
-			logger.info(String.format("Starting Connection from %s to %s.", connection.source.name(), FluentIterable.from(connection.sinks).transform(new Function<Sink, String>() {
+			String threadName = String.format("%s → %s.", connection.source.name(), FluentIterable.from(connection.sinks).transform(new Function<Sink, String>() {
+
 				@Override
 				public String apply(Sink sink) {
 					return sink.name();
 				}
-			})));
-			new Thread(connection).start();
+			}));
+			logger.info(String.format("Starting Thread: %s", threadName));
+			new Thread(connection, threadName).start();
 		}
 	}
 
