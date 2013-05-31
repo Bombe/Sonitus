@@ -186,7 +186,7 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 	//
 
 	/**
-	 * Returns the {@link FloatControl.Type.VOLUME} control.
+	 * Returns the {@link FloatControl.Type#VOLUME} control.
 	 *
 	 * @param dataLine
 	 * 		The data line to search for the control
@@ -197,7 +197,7 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 	}
 
 	/**
-	 * Returns the {@link BooleanControl.Type.MUTE} control.
+	 * Returns the {@link BooleanControl.Type#MUTE} control.
 	 *
 	 * @param dataLine
 	 * 		The data line to search for the control
