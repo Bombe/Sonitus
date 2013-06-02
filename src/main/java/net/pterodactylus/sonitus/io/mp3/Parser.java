@@ -53,16 +53,16 @@ public class Parser {
 	 */
 	public Parser(InputStream inputStream) throws IOException {
 		this.inputStream = inputStream;
-		readFully(inputStream, buffer, 0, 3);
-		if ((buffer[0] == 'I') && (buffer[1] == 'D') && (buffer[2] == '3')) {
-			readFully(inputStream, buffer, 0, 3);
+		readFully(inputStream, buffer, 1, 3);
+		if ((buffer[1] == 'I') && (buffer[2] == 'D') && (buffer[3] == '3')) {
+			readFully(inputStream, buffer, 1, 3);
 			byte[] lengthBuffer = new byte[4];
 			readFully(inputStream, lengthBuffer, 0, 4);
 			int headerLength = (lengthBuffer[0] << 21) | (lengthBuffer[1] << 14) | (lengthBuffer[2] << 7) | lengthBuffer[3];
 			id3Tag = new byte[headerLength + 10];
-			System.arraycopy(new byte[] { 'I', 'D', '3', buffer[0], buffer[1], buffer[2], lengthBuffer[0], lengthBuffer[1], lengthBuffer[2], lengthBuffer[3] }, 0, id3Tag, 0, 10);
+			System.arraycopy(new byte[] { 'I', 'D', '3', buffer[1], buffer[2], buffer[3], lengthBuffer[0], lengthBuffer[1], lengthBuffer[2], lengthBuffer[3] }, 0, id3Tag, 0, 10);
 			readFully(inputStream, id3Tag, 10, headerLength);
-			readFully(inputStream, buffer, 0, 3);
+			readFully(inputStream, buffer, 1, 3);
 		} else {
 			id3Tag = null;
 		}
