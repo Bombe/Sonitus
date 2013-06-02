@@ -17,6 +17,7 @@
 
 package net.pterodactylus.sonitus.io.mp3;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import com.google.common.base.Optional;
@@ -215,6 +216,9 @@ public class Frame {
 	/** The decoded emphasis mode. */
 	private final int emphasis;
 
+	/** The content of the frame. */
+	private final byte[] content;
+
 	/**
 	 * Creates a new frame from the given values.
 	 *
@@ -243,7 +247,7 @@ public class Frame {
 	 * @param emphasis
 	 * 		The emphasis
 	 */
-	private Frame(int mpegAudioVersionId, int layerDescription, int protectionBit, int bitrateIndex, int samplingRateFrequencyIndex, int paddingBit, int privateBit, int channelMode, int modeExtension, int copyrightBit, int originalBit, int emphasis) {
+	private Frame(int mpegAudioVersionId, int layerDescription, int protectionBit, int bitrateIndex, int samplingRateFrequencyIndex, int paddingBit, int privateBit, int channelMode, int modeExtension, int copyrightBit, int originalBit, int emphasis, byte[] content) {
 		this.mpegAudioVersionId = mpegAudioVersionId;
 		this.layerDescription = layerDescription;
 		this.protectionBit = protectionBit;
@@ -256,6 +260,7 @@ public class Frame {
 		this.copyrightBit = copyrightBit;
 		this.originalBit = originalBit;
 		this.emphasis = emphasis;
+		this.content = content;
 	}
 
 	//
@@ -363,6 +368,15 @@ public class Frame {
 		return Emphasis.values()[emphasis];
 	}
 
+	/**
+	 * Returns the content of this frame.
+	 *
+	 * @return The content of this frame
+	 */
+	public byte[] content() {
+		return content;
+	}
+
 	//
 	// STATIC METHODS
 	//
@@ -381,6 +395,33 @@ public class Frame {
 	 */
 	public static boolean isFrame(byte[] buffer, int offset, int length) {
 		return (length > 3) && (((buffer[offset] & 0xff) == 0xff) && ((buffer[offset + 1] & 0xe0) == 0xe0));
+	}
+
+	/**
+	 * Calculates the frame length in bytes for the frame starting at the given
+	 * offset in the given buffer. This method should only be called for a buffer
+	 * and an offset for which {@link #isFrame(byte[], int, int)} returns {@code
+	 * true}.
+	 *
+	 * @param buffer
+	 * 		The buffer storing the frame
+	 * @param offset
+	 * 		The offset of the frame
+	 * @return The length of the frame in bytes, or {@code -1} if the frame length
+	 *         can not be calculated
+	 */
+	public static int getFrameLength(byte[] buffer, int offset) {
+		MpegAudioVersion mpegAudioVersion = MpegAudioVersion.values()[(buffer[offset + 1] & 0x18) >>> 3];
+		LayerDescription layerDescription = LayerDescription.values()[(buffer[offset + 1] & 0x06) >>> 1];
+		int bitrate = bitrateSupplier.get().get(mpegAudioVersion).get(layerDescription).get((buffer[offset + 2] & 0xf0) >>> 4) * 1000;
+		int samplingRate = samplingRateSupplier.get().get(mpegAudioVersion).get((buffer[offset + 2] & 0x0c) >>> 2);
+		int paddingBit = (buffer[offset + 2] & 0x02) >>> 1;
+		if (layerDescription == LayerDescription.LAYER_1) {
+			return (12 * bitrate / samplingRate + paddingBit) * 4;
+		} else if ((layerDescription == LayerDescription.LAYER_2) || (layerDescription == LayerDescription.LAYER_3)) {
+			return 144 * bitrate / samplingRate + paddingBit;
+		}
+		return -1;
 	}
 
 	/**
@@ -409,7 +450,8 @@ public class Frame {
 			int copyright = (buffer[offset + 3] & 0x08) >> 3;
 			int original = (buffer[offset + 3] & 0x04) >> 2;
 			int emphasis = buffer[offset + 3] & 0x03;
-			return Optional.of(new Frame(mpegAudioVersionId, layerDescription, protectionBit, bitrateIndex, samplingRateFrequencyIndex, paddingBit, privateBit, channelMode, modeExtension, copyright, original, emphasis));
+			int frameLength = getFrameLength(buffer, offset);
+			return Optional.of(new Frame(mpegAudioVersionId, layerDescription, protectionBit, bitrateIndex, samplingRateFrequencyIndex, paddingBit, privateBit, channelMode, modeExtension, copyright, original, emphasis, Arrays.copyOfRange(buffer, 4, frameLength)));
 		}
 		return Optional.absent();
 	}

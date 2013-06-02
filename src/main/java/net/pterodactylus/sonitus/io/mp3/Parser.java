@@ -93,9 +93,17 @@ public class Parser {
 			}
 			System.arraycopy(buffer, 1, buffer, 0, 3);
 			buffer[3] = (byte) r;
-			Optional<Frame> frame = Frame.create(buffer, 0, 4);
-			if (frame.isPresent()) {
-				return frame.get();
+			if (Frame.isFrame(buffer, 0, 4)) {
+				int frameLength = Frame.getFrameLength(buffer, 0);
+				if (frameLength != -1) {
+					byte[] content = new byte[frameLength + 4];
+					readFully(inputStream, content, 4, frameLength);
+					System.arraycopy(buffer, 0, content, 0, 4);
+					Optional<Frame> frame = Frame.create(content, 0, frameLength + 4);
+					if (frame.isPresent()) {
+						return frame.get();
+					}
+				}
 			}
 		}
 	}
