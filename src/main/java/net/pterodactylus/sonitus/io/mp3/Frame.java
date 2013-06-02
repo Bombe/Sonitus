@@ -22,7 +22,6 @@ import java.util.Map;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -132,7 +131,7 @@ public class Frame {
 			mpegAudioVersionMapBuilder.put(MpegAudioVersion.VERSION_1, mpeg1Builder.build());
 
 			/* MPEG 2 & 2.5. */
-			ImmutableBiMap.Builder<LayerDescription, Map<Integer, Integer>> mpeg2Builder = ImmutableBiMap.builder();
+			ImmutableMap.Builder<LayerDescription, Map<Integer, Integer>> mpeg2Builder = ImmutableMap.builder();
 
 			/* Layer 1. */
 			bitrates = ImmutableMap.builder();
