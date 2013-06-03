@@ -33,7 +33,7 @@ public abstract class ProcessingOutputStream extends FilterOutputStream {
 	private final int channels;
 
 	/** The current sample’s channel values. */
-	private int[] currentSamples;
+	private final int[] currentSamples;
 
 	/** The index of the current channel. */
 	private int currentSampleIndex;
