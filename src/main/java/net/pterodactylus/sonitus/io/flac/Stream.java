@@ -22,7 +22,6 @@ import static com.google.common.io.ByteStreams.readFully;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.Optional;
@@ -62,7 +61,7 @@ public class Stream {
 	 * 		The block type to get all metadata blocks for
 	 * @return The metadata blocks of the given block type
 	 */
-	public Collection<MetadataBlock> metadataBlocks(final BlockType blockType) {
+	public List<MetadataBlock> metadataBlocks(final BlockType blockType) {
 		return FluentIterable.from(metadataBlocks).filter(new Predicate<MetadataBlock>() {
 
 			@Override
