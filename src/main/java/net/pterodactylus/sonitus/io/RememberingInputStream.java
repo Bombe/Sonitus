@@ -81,11 +81,7 @@ public class RememberingInputStream extends FilterInputStream {
 
 	@Override
 	public int read(byte[] bytes) throws IOException {
-		int read = super.read(bytes);
-		if (read != -1) {
-			rememberBuffer.write(bytes, 0, read);
-		}
-		return read;
+		return read(bytes, 0, bytes.length);
 	}
 
 	@Override
