@@ -84,8 +84,19 @@ public class IdentifyingInputStream extends FilterInputStream {
 		/* remember everything we read here. */
 		RememberingInputStream rememberingInputStream = new RememberingInputStream(inputStream);
 
-		/* try Ogg Vorbis first. */
+		/* first, try formats with unambiguous layouts. */
 		try {
+			Optional<Metadata> metadata = FlacIdentifier.identify(rememberingInputStream);
+			if (metadata.isPresent()) {
+				return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
+			}
+		} catch (EOFException eofe1) {
+			/* ignore. */
+		}
+
+		/* try Ogg Vorbis next. */
+		try {
+			rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
 			Optional<Metadata> metadata = OggVorbisIdentifier.identify(rememberingInputStream);
 			if (metadata.isPresent()) {
 				return Optional.of(new IdentifyingInputStream(rememberingInputStream.remembered(), metadata.get()));
@@ -94,7 +105,7 @@ public class IdentifyingInputStream extends FilterInputStream {
 			/* ignore. */
 		}
 
-		/* try MP3 now. */
+		/* finally, try MP3. */
 		try {
 			rememberingInputStream = new RememberingInputStream(rememberingInputStream.remembered());
 			InputStream limitedInputStream = ByteStreams.limit(rememberingInputStream, 1048576);
