@@ -29,7 +29,7 @@ import net.pterodactylus.sonitus.data.Metadata;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class RateLimitingFilter extends DummyFilter {
+public class RateLimitingFilter extends BasicFilter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(RateLimitingFilter.class.getName());

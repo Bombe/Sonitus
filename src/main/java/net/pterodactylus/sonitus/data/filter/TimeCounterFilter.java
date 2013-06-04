@@ -31,7 +31,7 @@ import net.pterodactylus.sonitus.data.Metadata;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class TimeCounterFilter extends DummyFilter {
+public class TimeCounterFilter extends BasicFilter {
 
 	/** The byte counter. */
 	private final AtomicLong counter = new AtomicLong();
@@ -95,7 +95,7 @@ public class TimeCounterFilter extends DummyFilter {
 	}
 
 	//
-	// DUMMYFILTER METHODS
+	// BASICFILTER METHODS
 	//
 
 	@Override

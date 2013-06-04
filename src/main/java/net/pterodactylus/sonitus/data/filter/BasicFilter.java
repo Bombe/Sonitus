@@ -35,11 +35,11 @@ import net.pterodactylus.sonitus.data.Metadata;
 import com.google.common.io.Closeables;
 
 /**
- * Dummy {@link Filter} implementation that pipes its input to its output.
+ * Basic {@link Filter} implementation that pipes its input to its output.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class DummyFilter extends AbstractControlledComponent implements Filter {
+public class BasicFilter extends AbstractControlledComponent implements Filter {
 
 	/** The input stream from which to read. */
 	private InputStream inputStream;
@@ -53,7 +53,7 @@ public class DummyFilter extends AbstractControlledComponent implements Filter {
 	 * @param name
 	 * 		The name of the filter
 	 */
-	public DummyFilter(String name) {
+	public BasicFilter(String name) {
 		super(name);
 	}
 

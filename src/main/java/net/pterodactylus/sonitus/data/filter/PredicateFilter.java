@@ -33,7 +33,7 @@ import com.google.common.base.Predicate;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class PredicateFilter extends DummyFilter {
+public class PredicateFilter extends BasicFilter {
 
 	/** The predicate. */
 	private final Predicate<Metadata> metadataPredicate;

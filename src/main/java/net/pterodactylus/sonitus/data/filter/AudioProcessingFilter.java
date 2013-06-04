@@ -28,7 +28,7 @@ import net.pterodactylus.sonitus.io.ProcessingOutputStream;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class AudioProcessingFilter extends DummyFilter {
+public abstract class AudioProcessingFilter extends BasicFilter {
 
 	/**
 	 * Creates a new audio processing filter with the given name.
@@ -41,7 +41,7 @@ public abstract class AudioProcessingFilter extends DummyFilter {
 	}
 
 	//
-	// DUMMYFILTER METHODS
+	// BASICFILTER METHODS
 	//
 
 	@Override

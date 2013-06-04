@@ -34,7 +34,7 @@ import com.google.common.collect.Iterables;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class ExternalFilter extends DummyFilter {
+public abstract class ExternalFilter extends BasicFilter {
 
 	/** The logger. */
 	private final Logger logger = Logger.getLogger(getClass().getName());
@@ -70,7 +70,7 @@ public abstract class ExternalFilter extends DummyFilter {
 	}
 
 	//
-	// DUMMYFILTER METHODS
+	// BASICFILTER METHODS
 	//
 
 	@Override
