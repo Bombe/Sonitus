@@ -123,7 +123,7 @@ public class TimeCounterFilter extends AbstractFilter implements Filter {
 	private void updateTimestamp(boolean now) {
 		long timestamp = getMillis() / 1000;
 		if (now || (lastTimestamp.get() != timestamp)) {
-			super.metadataUpdated(parentMetadata.get().comment(String.format("%02d:%02d", timestamp / 60, timestamp % 60)));
+			super.metadataUpdated(parentMetadata.get().comment(String.format("%s%02d:%02d", (timestamp >= 3600) ? String.format("%d:", timestamp / 3600) : "" , (timestamp % 3600) / 60, timestamp % 60)));
 			lastTimestamp.set(timestamp);
 		}
 	}
