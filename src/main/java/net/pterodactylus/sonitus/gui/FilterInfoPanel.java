@@ -1,5 +1,5 @@
 /*
- * Sonitus - ComponentInfoPanel.java - Copyright © 2013 David Roden
+ * Sonitus - FilterInfoPanel.java - Copyright © 2013 David Roden
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.pterodactylus.sonitus.data.ControlledComponent;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.controller.Fader;
 import net.pterodactylus.sonitus.data.controller.Knob;
@@ -37,13 +37,13 @@ import net.pterodactylus.sonitus.data.controller.Switch;
 import com.google.common.base.Optional;
 
 /**
- * Panel that shows information about a {@link ControlledComponent}.
+ * Panel that shows information about a {@link Filter}.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class ComponentInfoPanel extends JPanel {
+public class FilterInfoPanel extends JPanel {
 
-	/** The name of the component. */
+	/** The name of the filter. */
 	private final JLabel headerLabel = new JLabel();
 
 	/** The number of received input bytes. */
@@ -56,16 +56,16 @@ public class ComponentInfoPanel extends JPanel {
 	private final JLabel formatLabel = new JLabel();
 
 	/**
-	 * Creates a new component info panel.
+	 * Creates a new filter info panel.
 	 *
-	 * @param controlledComponent
-	 * 		The component to display
+	 * @param filter
+	 * 		The filter to display
 	 */
-	public ComponentInfoPanel(ControlledComponent controlledComponent) {
+	public FilterInfoPanel(Filter filter) {
 		super(new GridBagLayout());
 
 		setPreferredSize(new Dimension(300, 0));
-		createPanel(controlledComponent);
+		createPanel(filter);
 	}
 
 	//
@@ -79,7 +79,7 @@ public class ComponentInfoPanel extends JPanel {
 	 * 		The number of received input bytes
 	 * @return This panel
 	 */
-	public ComponentInfoPanel input(Optional<Long> input) {
+	public FilterInfoPanel input(Optional<Long> input) {
 		if (input.isPresent()) {
 			inputLabel.setText(format(input.get()));
 		} else {
@@ -95,7 +95,7 @@ public class ComponentInfoPanel extends JPanel {
 	 * 		The number of sent output input bytes
 	 * @return This panel
 	 */
-	public ComponentInfoPanel output(Optional<Long> output) {
+	public FilterInfoPanel output(Optional<Long> output) {
 		if (output.isPresent()) {
 			outputLabel.setText(format(output.get()));
 		} else {
@@ -111,7 +111,7 @@ public class ComponentInfoPanel extends JPanel {
 	 * 		The format metadata
 	 * @return This panel
 	 */
-	public ComponentInfoPanel format(Optional<FormatMetadata> metadata) {
+	public FilterInfoPanel format(Optional<FormatMetadata> metadata) {
 		if (metadata.isPresent()) {
 			formatLabel.setText(metadata.get().toString());
 		} else {
@@ -125,15 +125,15 @@ public class ComponentInfoPanel extends JPanel {
 	//
 
 	/**
-	 * Creates the panel for the given controlled component.
+	 * Creates the panel for the given filter.
 	 *
-	 * @param controlledComponent
-	 * 		The controlled component
+	 * @param filter
+	 * 		The filter to create a panel for
 	 */
-	private void createPanel(ControlledComponent controlledComponent) {
+	private void createPanel(Filter filter) {
 		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-		headerLabel.setText(controlledComponent.name());
+		headerLabel.setText(filter.name());
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
 
 		int line = 0;
@@ -146,7 +146,7 @@ public class ComponentInfoPanel extends JPanel {
 		add(formatLabel, new GridBagConstraints(1, line++, 1, 1, 1.0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 6, 0, 0), 0, 0));
 
 		/* add the controllers. */
-		for (Controller<?> controller : controlledComponent.controllers()) {
+		for (Controller<?> controller : filter.controllers()) {
 			add(new JLabel(controller.name()), new GridBagConstraints(0, line, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(6, 0, 0, 6), 0, 0));
 			if (controller instanceof Fader) {
 				add(new FaderPanel((Fader) controller), new GridBagConstraints(1, line++, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(6, 0, 0, 0), 0, 0));

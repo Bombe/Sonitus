@@ -27,12 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.ContentMetadata;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.MetadataStream;
 
 import com.google.common.base.Optional;
@@ -47,7 +46,7 @@ import com.google.common.primitives.Ints;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class StreamSource extends AbstractControlledComponent implements Source {
+public class StreamSource extends AbstractFilter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(StreamSource.class.getName());
@@ -127,7 +126,7 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
@@ -139,10 +138,6 @@ public class StreamSource extends AbstractControlledComponent implements Source 
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
-
-	//
-	// SOURCE METHODS
-	//
 
 	@Override
 	public Metadata metadata() {

@@ -27,21 +27,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.io.IdentifyingInputStream;
 
 import com.google.common.base.Optional;
 
 /**
- * A {@link net.pterodactylus.sonitus.data.Source} that is read from the local
- * file system.
+ * A {@link Filter} that reads a file from the local file system and does not
+ * expect any input.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class FileSource extends AbstractControlledComponent implements Source {
+public class FileSource extends AbstractFilter {
 
 	/** The path of the file. */
 	private final String path;
@@ -73,17 +73,13 @@ public class FileSource extends AbstractControlledComponent implements Source {
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
-
-	//
-	// SOURCE METHODS
-	//
 
 	@Override
 	public byte[] get(int bufferSize) throws IOException {

@@ -19,8 +19,6 @@ package net.pterodactylus.sonitus.data.source;
 
 import java.util.EventListener;
 
-import net.pterodactylus.sonitus.data.Source;
-
 /**
  * Interface for {@link MultiSource} notifications if a source is finished
  * playing.

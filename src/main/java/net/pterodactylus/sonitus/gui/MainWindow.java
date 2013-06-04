@@ -30,9 +30,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
-import net.pterodactylus.sonitus.data.ControlledComponent;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Pipeline;
-import net.pterodactylus.sonitus.gui.PipelinePanel.ComponentSelectionListener;
+import net.pterodactylus.sonitus.gui.PipelinePanel.FilterSelectionListener;
 import net.pterodactylus.sonitus.main.Version;
 
 import com.google.common.base.Optional;
@@ -48,7 +48,7 @@ public class MainWindow extends JFrame {
 	/** The pipeline to display. */
 	private final Pipeline pipeline;
 
-	/** The tabbed pane displaying all controlled components. */
+	/** The tabbed pane displaying all pipelines. */
 	private final JTabbedPane tabbedPane = new JTabbedPane();
 
 	/** The info panel card layout. */
@@ -57,8 +57,8 @@ public class MainWindow extends JFrame {
 	/** The info panel. */
 	private final JPanel infoPanel = new JPanel(infoPanelCardLayout);
 
-	/** The mapping from controlled components to info panels. */
-	private final Map<ControlledComponent, ComponentInfoPanel> controlledInfoPanels = Maps.newHashMap();
+	/** The mapping from filters to info panels. */
+	private final Map<Filter, FilterInfoPanel> filterInfoPanels = Maps.newHashMap();
 
 	/**
 	 * Creates a new main window.
@@ -72,11 +72,11 @@ public class MainWindow extends JFrame {
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 		final JPanel pipelineInfoPanel = new JPanel(new BorderLayout(12, 12));
 		PipelinePanel pipelinePanel = new PipelinePanel(pipeline);
-		pipelinePanel.addComponentHoverListener(new ComponentSelectionListener() {
+		pipelinePanel.addFilterSelectionListener(new FilterSelectionListener() {
 
 			@Override
-			public void componentSelected(ControlledComponent controlledComponent) {
-				infoPanelCardLayout.show(infoPanel, controlledComponent.name());
+			public void filterSelected(Filter filter) {
+				infoPanelCardLayout.show(infoPanel, filter.name());
 			}
 		});
 		pipelineInfoPanel.add(pipelinePanel, BorderLayout.CENTER);
@@ -85,11 +85,11 @@ public class MainWindow extends JFrame {
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSize(new Dimension(800, 450));
 
-		/* create info panels for all components. */
-		for (ControlledComponent controlledComponent : pipeline) {
-			ComponentInfoPanel componentInfoPanel = new ComponentInfoPanel(controlledComponent);
-			infoPanel.add(componentInfoPanel, controlledComponent.name());
-			controlledInfoPanels.put(controlledComponent, componentInfoPanel);
+		/* create info panels for all filters. */
+		for (Filter fliter : pipeline) {
+			FilterInfoPanel filterInfoPanel = new FilterInfoPanel(fliter);
+			infoPanel.add(filterInfoPanel, fliter.name());
+			filterInfoPanels.put(fliter, filterInfoPanel);
 		}
 
 		Timer timer = new Timer(250, new ActionListener() {
@@ -97,11 +97,11 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				/* update all info panels. */
-				for (ControlledComponent controlled : MainWindow.this.pipeline) {
-					ComponentInfoPanel componentInfoPanel = controlledInfoPanels.get(controlled);
-					componentInfoPanel.input(MainWindow.this.pipeline.trafficCounter(controlled).input());
-					componentInfoPanel.output(MainWindow.this.pipeline.trafficCounter(controlled).output());
-					componentInfoPanel.format(Optional.of(controlled.metadata().format()));
+				for (Filter filter : MainWindow.this.pipeline) {
+					FilterInfoPanel filterInfoPanel = filterInfoPanels.get(filter);
+					filterInfoPanel.input(MainWindow.this.pipeline.trafficCounter(filter).input());
+					filterInfoPanel.output(MainWindow.this.pipeline.trafficCounter(filter).output());
+					filterInfoPanel.format(Optional.of(filter.metadata().format()));
 				}
 			}
 		});

@@ -38,15 +38,13 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.event.EventListenerList;
 
-import net.pterodactylus.sonitus.data.ControlledComponent;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.MetadataListener;
 import net.pterodactylus.sonitus.data.Pipeline;
-import net.pterodactylus.sonitus.data.Sink;
-import net.pterodactylus.sonitus.data.Source;
 
 /**
- * {@link JPanel} that displays all components of a {@link Pipeline}.
+ * {@link JPanel} that displays all filters of a {@link Pipeline}.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
@@ -58,11 +56,11 @@ public class PipelinePanel extends JPanel {
 	/** The pipeline being displayed. */
 	private final Pipeline pipeline;
 
-	/** The component hover listeners. */
-	private final EventListenerList componentSelectionListeners = new EventListenerList();
+	/** The filter selection listeners. */
+	private final EventListenerList filterSelectionListeners = new EventListenerList();
 
-	/** The currently selected component. */
-	private JComponent selectedComponent;
+	/** The currently selected filter. */
+	private JComponent selectedFilter;
 
 	/**
 	 * Creates a new pipeline panel displaying the given pipeline.
@@ -81,13 +79,13 @@ public class PipelinePanel extends JPanel {
 	//
 
 	/**
-	 * Adds the given component selection listener to this panel.
+	 * Adds the given filter selection listener to this panel.
 	 *
-	 * @param componentSelectionListener
-	 * 		The component selection listener to add
+	 * @param filterSelectionListener
+	 * 		The filter selection listener to add
 	 */
-	public void addComponentHoverListener(ComponentSelectionListener componentSelectionListener) {
-		componentSelectionListeners.add(ComponentSelectionListener.class, componentSelectionListener);
+	public void addFilterSelectionListener(FilterSelectionListener filterSelectionListener) {
+		filterSelectionListeners.add(FilterSelectionListener.class, filterSelectionListener);
 	}
 
 	//
@@ -99,16 +97,11 @@ public class PipelinePanel extends JPanel {
 		/* clear everything. */
 		removeAll();
 
-		/* count all sinks. */
+		/* count all filters. */
 		int sinkCount = 0;
-		for (ControlledComponent component : pipeline.components()) {
-			if (!(component instanceof Source)) {
-				logger.finest(String.format("%s is not a Source, skipping.", component.name()));
-				sinkCount++;
-				continue;
-			}
-			Collection<Sink> sinks = pipeline.sinks((Source) component);
-			logger.finest(String.format("%s has %d sinks: %s", component.name(), sinks.size(), sinks));
+		for (Filter filter : pipeline.filters()) {
+			Collection<Filter> sinks = pipeline.filters(filter);
+			logger.finest(String.format("%s has %d filters: %s", filter.name(), sinks.size(), sinks));
 			if (sinks.isEmpty()) {
 				sinkCount++;
 			}
@@ -120,120 +113,119 @@ public class PipelinePanel extends JPanel {
 			gridCellCount *= n;
 		}
 
-		/* paint all components recursively. */
-		addControlled(pipeline.source(), 0, 0, gridCellCount, null);
+		/* paint all filters recursively. */
+		addFilter(pipeline.source(), 0, 0, gridCellCount, null);
 	}
 
 	/**
-	 * Displays the given component.
+	 * Displays the given filter.
 	 *
-	 * @param controlledComponent
-	 * 		The component to add this panel.
+	 * @param filter
+	 * 		The filter to add this panel.
 	 * @param level
-	 * 		The level at which to show the component (the source is level {@code 0})
+	 * 		The level at which to show the filter (the source is level {@code 0})
 	 * @param position
-	 * 		The position at which to display the component
+	 * 		The position at which to display the filter
 	 * @param width
-	 * 		The width of the component in grid cells
+	 * 		The width of the filter in grid cells
 	 */
-	private void addControlled(final ControlledComponent controlledComponent, int level, int position, int width, ControlledComponent parentComponent) {
-		/* create a GUI component that displays the component. */
-		final JPanel componentPanel = createComponentPanel(controlledComponent, parentComponent);
-		componentPanel.addMouseListener(new MouseAdapter() {
+	private void addFilter(final Filter filter, int level, int position, int width, Filter parentFilter) {
+		/* create a GUI component that displays the filter. */
+		final JPanel filterPanel = createFilterPanel(filter, parentFilter);
+		filterPanel.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				for (Component component : getComponents()) {
 					component.setBackground(UIManager.getColor("Panel.background"));
 				}
-				for (ComponentSelectionListener componentSelectionListener : componentSelectionListeners.getListeners(ComponentSelectionListener.class)) {
-					componentPanel.setBackground(Color.LIGHT_GRAY);
-					componentSelectionListener.componentSelected(controlledComponent);
+				for (FilterSelectionListener filterSelectionListener : filterSelectionListeners.getListeners(FilterSelectionListener.class)) {
+					filterPanel.setBackground(Color.LIGHT_GRAY);
+					filterSelectionListener.filterSelected(filter);
 				}
-				selectedComponent = componentPanel;
+				selectedFilter = filterPanel;
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent mouseEvent) {
-				if (componentPanel != selectedComponent) {
-					componentPanel.setBackground(Color.white);
+				if (filterPanel != selectedFilter) {
+					filterPanel.setBackground(Color.white);
 				}
 			}
 
 			@Override
 			public void mouseExited(MouseEvent mouseEvent) {
-				if (componentPanel != selectedComponent) {
-					componentPanel.setBackground(UIManager.getColor("Panel.background"));
+				if (filterPanel != selectedFilter) {
+					filterPanel.setBackground(UIManager.getColor("Panel.background"));
 				}
 			}
 		});
 
-		/* show component. */
-		add(componentPanel, new GridBagConstraints(position, level, width, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		/* show filter. */
+		add(filterPanel, new GridBagConstraints(position, level, width, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-		/* if the component does not have connected sinks, exit here. */
-		if (!(controlledComponent instanceof Source)) {
+		/* if the filter does not have connected filters, exit here. */
+		Collection<Filter> sinks = pipeline.filters(filter);
+		if (sinks.isEmpty()) {
 			add(new JPanel(), new GridBagConstraints(position, 999, width, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 			return;
 		}
 
-		/* iterate over the component’s sinks. */
-		Collection<Sink> sinks = pipeline.sinks((Source) controlledComponent);
+		/* iterate over the filter’s connected filters. */
 		if (!sinks.isEmpty()) {
 			int sinkWidth = width / sinks.size();
 			int sinkIndex = 0;
-			for (Sink connectedSink : sinks) {
-				/* distribute all sinks evenly below this source. */
-				addControlled(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth, controlledComponent);
+			for (Filter connectedSink : sinks) {
+				/* distribute all filters evenly below this source. */
+				addFilter(connectedSink, level + 1, position + sinkIndex * sinkWidth, sinkWidth, filter);
 				sinkIndex++;
 			}
 		}
 	}
 
 	/**
-	 * Creates a panel displaying a single component.
+	 * Creates a panel displaying a single filter.
 	 *
-	 * @param controlledComponent
-	 * 		The component to display
+	 * @param filter
+	 * 		The filter to display
 	 * @return The created panel
 	 */
-	private static JPanel createComponentPanel(final ControlledComponent controlledComponent, final ControlledComponent parentComponent) {
-		JPanel componentPanel = new JPanel(new BorderLayout(12, 12));
-		componentPanel.setBorder(createCompoundBorder(createEtchedBorder(), createEmptyBorder(0, 4, 0, 3)));
-		componentPanel.add(new JLabel(controlledComponent.name()), BorderLayout.WEST);
-		final JLabel titleLabel = new JLabel(controlledComponent.metadata().fullTitle());
+	private static JPanel createFilterPanel(final Filter filter, final Filter parentFilter) {
+		JPanel filterPanel = new JPanel(new BorderLayout(12, 12));
+		filterPanel.setBorder(createCompoundBorder(createEtchedBorder(), createEmptyBorder(0, 4, 0, 3)));
+		filterPanel.add(new JLabel(filter.name()), BorderLayout.WEST);
+		final JLabel titleLabel = new JLabel(filter.metadata().fullTitle());
 		titleLabel.setFont(titleLabel.getFont().deriveFont(titleLabel.getFont().getSize2D() * 0.8f));
-		componentPanel.add(titleLabel, BorderLayout.EAST);
-		if (parentComponent != null) {
-			titleLabel.setVisible(!parentComponent.metadata().fullTitle().equals(controlledComponent.metadata().fullTitle()));
+		filterPanel.add(titleLabel, BorderLayout.EAST);
+		if (parentFilter != null) {
+			titleLabel.setVisible(!parentFilter.metadata().fullTitle().equals(filter.metadata().fullTitle()));
 		}
-		controlledComponent.addMetadataListener(new MetadataListener() {
+		filter.addMetadataListener(new MetadataListener() {
 
 			@Override
-			public void metadataUpdated(ControlledComponent component, Metadata metadata) {
+			public void metadataUpdated(Filter filter, Metadata metadata) {
 				titleLabel.setText(metadata.fullTitle());
-				titleLabel.setVisible((parentComponent == null) || !parentComponent.metadata().fullTitle().equals(metadata.fullTitle()));
+				titleLabel.setVisible((parentFilter == null) || !parentFilter.metadata().fullTitle().equals(metadata.fullTitle()));
 			}
 		});
-		return componentPanel;
+		return filterPanel;
 	}
 
 	/**
 	 * Interface for objects that want to be notified if the user moves the mouse
-	 * cursor over a controlled component.
+	 * cursor over a filter.
 	 *
 	 * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
 	 */
-	public static interface ComponentSelectionListener extends EventListener {
+	public static interface FilterSelectionListener extends EventListener {
 
 		/**
-		 * Notifies the listener that the mouse is now over the given controlled
-		 * component.
+		 * Notifies the listener that the mouse is now over the given filter.
 		 *
-		 * @param controlledComponent
-		 * 		The controlled component now under the mouse
+		 * @param filter
+		 * 		The filter now under the mouse
 		 */
-		void componentSelected(ControlledComponent controlledComponent);
+		void filterSelected(Filter filter);
 
 	}
 

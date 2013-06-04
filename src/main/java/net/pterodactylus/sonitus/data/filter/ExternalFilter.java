@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
+import net.pterodactylus.sonitus.data.AbstractFilter;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
@@ -34,7 +36,7 @@ import com.google.common.collect.Iterables;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class ExternalFilter extends BasicFilter {
+public abstract class ExternalFilter extends AbstractFilter implements Filter {
 
 	/** The logger. */
 	private final Logger logger = Logger.getLogger(getClass().getName());
@@ -68,10 +70,6 @@ public abstract class ExternalFilter extends BasicFilter {
 	public void close() {
 		process.destroy();
 	}
-
-	//
-	// BASICFILTER METHODS
-	//
 
 	@Override
 	protected InputStream createInputStream() throws IOException {

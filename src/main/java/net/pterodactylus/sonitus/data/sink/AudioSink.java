@@ -34,11 +34,10 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Sink;
-import net.pterodactylus.sonitus.data.Source;
 import net.pterodactylus.sonitus.data.controller.Fader;
 import net.pterodactylus.sonitus.data.controller.Switch;
 import net.pterodactylus.sonitus.io.IntegralWriteOutputStream;
@@ -46,12 +45,12 @@ import net.pterodactylus.sonitus.io.IntegralWriteOutputStream;
 import com.google.common.base.Preconditions;
 
 /**
- * {@link Sink} implementation that uses the JDK’s {@link AudioSystem} to play
- * all {@link Source}s.
+ * {@link Filter} implementation that uses the JDK’s {@link AudioSystem} to play
+ * all the audio signal.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class AudioSink extends AbstractControlledComponent implements Sink {
+public class AudioSink extends AbstractFilter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(AudioSink.class.getName());
@@ -135,7 +134,7 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
@@ -143,13 +142,10 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 		return Arrays.<Controller<?>>asList(volumeFader, muteSwitch);
 	}
 
-	//
-	// SINK METHODS
-	//
-
 	@Override
 	public void open(Metadata metadata) throws IOException {
 		Preconditions.checkArgument(metadata.encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
+		super.open(metadata);
 		AudioFormat audioFormat = new AudioFormat(metadata.frequency(), 16, metadata.channels(), true, false);
 		try {
 			sourceDataLine = AudioSystem.getSourceDataLine(audioFormat);
@@ -178,6 +174,7 @@ public class AudioSink extends AbstractControlledComponent implements Sink {
 	@Override
 	public void process(byte[] buffer) throws IOException {
 		sourceDataLineOutputStream.write(buffer);
+		super.process(buffer);
 		logger.finest(String.format("AudioSink: Wrote %d Bytes.", buffer.length));
 	}
 

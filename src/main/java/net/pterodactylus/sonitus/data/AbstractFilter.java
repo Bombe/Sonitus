@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.pterodactylus.sonitus.data.filter;
+package net.pterodactylus.sonitus.data;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -26,20 +26,27 @@ import java.io.PipedOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
-import net.pterodactylus.sonitus.data.Controller;
-import net.pterodactylus.sonitus.data.Filter;
-import net.pterodactylus.sonitus.data.Metadata;
-
+import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 
 /**
- * Basic {@link Filter} implementation that pipes its input to its output.
+ * Abstract {@link Filter} implementation that takes care of managing {@link
+ * MetadataListener}s and pipes its input to its output.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class BasicFilter extends AbstractControlledComponent implements Filter {
+public abstract class AbstractFilter implements Filter {
+
+	/** The name of this filter. */
+	private final String name;
+
+	/** The list of metadata listeners. */
+	private final List<MetadataListener> metadataListeners = Lists.newCopyOnWriteArrayList();
+
+	/** The current metadata. */
+	private final AtomicReference<Metadata> metadata = new AtomicReference<Metadata>();
 
 	/** The input stream from which to read. */
 	private InputStream inputStream;
@@ -48,27 +55,56 @@ public class BasicFilter extends AbstractControlledComponent implements Filter {
 	private OutputStream outputStream;
 
 	/**
-	 * Creates a new dummy filter with the given name.
+	 * Creates a new abstract filter.
 	 *
 	 * @param name
 	 * 		The name of the filter
 	 */
-	public BasicFilter(String name) {
-		super(name);
+	protected AbstractFilter(String name) {
+		this.name = name;
 	}
 
 	//
-	// CONTROLLED METHODS
+	// LISTENER MANAGEMENT
 	//
+
+	@Override
+	public void addMetadataListener(MetadataListener metadataListener) {
+		metadataListeners.add(metadataListener);
+	}
+
+	@Override
+	public void removeMetadataListener(MetadataListener metadataListener) {
+		metadataListeners.remove(metadataListener);
+	}
+
+	//
+	// FILTER METHODS
+	//
+
+	@Override
+	public String name() {
+		return name;
+	}
 
 	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
 
-	//
-	// FILTER METHODS
-	//
+	@Override
+	public Metadata metadata() {
+		return metadata.get();
+	}
+
+	@Override
+	public void metadataUpdated(Metadata metadata) {
+		if (metadata.equals(this.metadata.get())) {
+			return;
+		}
+		this.metadata.set(metadata);
+		fireMetadataUpdated(metadata);
+	}
 
 	@Override
 	public void open(Metadata metadata) throws IOException {
@@ -101,6 +137,22 @@ public class BasicFilter extends AbstractControlledComponent implements Filter {
 			throw new EOFException();
 		}
 		return Arrays.copyOf(buffer, read);
+	}
+
+	//
+	// EVENT METHODS
+	//
+
+	/**
+	 * Notifies all registered metadata listeners that the metadata has changed.
+	 *
+	 * @param metadata
+	 * 		The new metadata
+	 */
+	protected void fireMetadataUpdated(Metadata metadata) {
+		for (MetadataListener metadataListener : metadataListeners) {
+			metadataListener.metadataUpdated(this, metadata);
+		}
 	}
 
 	//

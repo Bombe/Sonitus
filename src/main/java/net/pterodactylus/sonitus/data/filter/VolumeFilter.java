@@ -47,17 +47,13 @@ public class VolumeFilter extends AudioProcessingFilter {
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
 	public List<Controller<?>> controllers() {
 		return Arrays.<Controller<?>>asList(volumeFader, muteSwitch);
 	}
-
-	//
-	// AUDIOPROCESSINGFILTER METHODS
-	//
 
 	@Override
 	protected int[] processSamples(int[] samples) {

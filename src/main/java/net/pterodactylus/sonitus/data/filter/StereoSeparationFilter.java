@@ -42,17 +42,13 @@ public class StereoSeparationFilter extends AudioProcessingFilter {
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
 	public List<Controller<?>> controllers() {
 		return Arrays.<Controller<?>>asList(separationKnob);
 	}
-
-	//
-	// AUDIOPROCESSINGFILTER METHODS
-	//
 
 	@Override
 	protected int[] processSamples(int[] samples) {

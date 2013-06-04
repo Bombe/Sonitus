@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
@@ -31,7 +32,7 @@ import net.pterodactylus.sonitus.data.Metadata;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class TimeCounterFilter extends BasicFilter {
+public class TimeCounterFilter extends AbstractFilter implements Filter {
 
 	/** The byte counter. */
 	private final AtomicLong counter = new AtomicLong();
@@ -95,7 +96,7 @@ public class TimeCounterFilter extends BasicFilter {
 	}
 
 	//
-	// BASICFILTER METHODS
+	// FILTER METHODS
 	//
 
 	@Override

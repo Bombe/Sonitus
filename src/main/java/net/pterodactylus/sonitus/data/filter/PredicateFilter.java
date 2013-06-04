@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
@@ -33,7 +34,7 @@ import com.google.common.base.Predicate;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class PredicateFilter extends BasicFilter {
+public class PredicateFilter extends AbstractFilter implements Filter {
 
 	/** The predicate. */
 	private final Predicate<Metadata> metadataPredicate;

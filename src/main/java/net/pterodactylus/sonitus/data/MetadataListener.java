@@ -25,13 +25,13 @@ package net.pterodactylus.sonitus.data;
 public interface MetadataListener {
 
 	/**
-	 * Notifies a listener when the metadata of the given component was updated.
+	 * Notifies a listener when the metadata of the given filter was updated.
 	 *
-	 * @param component
-	 * 		The component whose metadata was updated
+	 * @param filter
+	 * 		The filter whose metadata was updated
 	 * @param metadata
 	 * 		The new metadata
 	 */
-	void metadataUpdated(ControlledComponent component, Metadata metadata);
+	void metadataUpdated(Filter filter, Metadata metadata);
 
 }

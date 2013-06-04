@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Sink;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
 import com.google.common.io.BaseEncoding;
@@ -43,7 +42,7 @@ import com.google.common.io.Closeables;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class Icecast2Sink extends AbstractControlledComponent implements Sink {
+public class Icecast2Sink extends AbstractFilter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(Icecast2Sink.class.getName());
@@ -111,17 +110,13 @@ public class Icecast2Sink extends AbstractControlledComponent implements Sink {
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
 	public List<Controller<?>> controllers() {
 		return Collections.emptyList();
 	}
-
-	//
-	// SINK METHODS
-	//
 
 	@Override
 	public void open(Metadata metadata) throws IOException {

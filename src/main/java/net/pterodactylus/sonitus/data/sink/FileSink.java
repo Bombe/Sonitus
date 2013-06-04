@@ -19,14 +19,10 @@ package net.pterodactylus.sonitus.data.sink;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Logger;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
-import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Sink;
 
 /**
  * {@link net.pterodactylus.sonitus.data.Sink} that writes all received data
@@ -34,7 +30,7 @@ import net.pterodactylus.sonitus.data.Sink;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class FileSink extends AbstractControlledComponent implements Sink {
+public class FileSink extends AbstractFilter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(FileSink.class.getName());
@@ -57,16 +53,7 @@ public class FileSink extends AbstractControlledComponent implements Sink {
 	}
 
 	//
-	// CONTROLLED METHODS
-	//
-
-	@Override
-	public List<Controller<?>> controllers() {
-		return Collections.emptyList();
-	}
-
-	//
-	// SINK METHODS
+	// FILTER METHODS
 	//
 
 	@Override

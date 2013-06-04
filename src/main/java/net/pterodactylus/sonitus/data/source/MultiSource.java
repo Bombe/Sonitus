@@ -27,21 +27,20 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
-import net.pterodactylus.sonitus.data.AbstractControlledComponent;
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
-import net.pterodactylus.sonitus.data.Source;
 
 import com.google.inject.Inject;
 
 /**
- * {@link Source} implementation that simply forwards another source and
- * supports changing the source without letting the {@link
- * net.pterodactylus.sonitus.data.Sink} know.
+ * {@link Filter} implementation that simply forwards data from another filter
+ * and supports changing the source without letting downstream filters know.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class MultiSource extends AbstractControlledComponent implements Source {
+public class MultiSource extends AbstractFilter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(MultiSource.class.getName());
@@ -50,7 +49,7 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	private final EventListenerList sourceFinishedListeners = new EventListenerList();
 
 	/** The current source. */
-	private final AtomicReference<Source> source = new AtomicReference<Source>();
+	private final AtomicReference<Filter> source = new AtomicReference<Filter>();
 
 	/** Whether the source was changed. */
 	private boolean sourceChanged;
@@ -95,10 +94,10 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	 * @param source
 	 * 		The new source to use
 	 */
-	public void setSource(Source source) {
+	public void setSource(Filter source) {
 		checkNotNull(source, "source must not be null");
 
-		Source oldSource = this.source.getAndSet(source);
+		Filter oldSource = this.source.getAndSet(source);
 		if (!source.equals(oldSource)) {
 			synchronized (this.source) {
 				sourceChanged = true;
@@ -115,7 +114,7 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 
 	/**
 	 * Notifies all registered listeners that the current source finished playing
-	 * and that a new source should be {@link #setSource(Source) set}.
+	 * and that a new source should be {@link #setSource(Filter) set}.
 	 *
 	 * @see SourceFinishedListener
 	 */
@@ -126,7 +125,7 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	}
 
 	//
-	// CONTROLLED METHODS
+	// FILTER METHODS
 	//
 
 	@Override
@@ -143,10 +142,6 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 		}
 		return super.metadata();
 	}
-
-	//
-	// SOURCE METHODS
-	//
 
 	@Override
 	public byte[] get(int bufferSize) throws EOFException, IOException {
@@ -167,7 +162,7 @@ public class MultiSource extends AbstractControlledComponent implements Source {
 	// PRIVATE METHODS
 	//
 
-	/** Waits for a new source to be {@link #setSource(Source) set}. */
+	/** Waits for a new source to be {@link #setSource(Filter) set}. */
 	private void waitForNewSource() {
 		fireSourceFinished();
 		synchronized (source) {

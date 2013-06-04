@@ -20,6 +20,7 @@ package net.pterodactylus.sonitus.data.filter;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.io.ProcessingOutputStream;
 
@@ -28,7 +29,7 @@ import net.pterodactylus.sonitus.io.ProcessingOutputStream;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public abstract class AudioProcessingFilter extends BasicFilter {
+public abstract class AudioProcessingFilter extends AbstractFilter implements Filter {
 
 	/**
 	 * Creates a new audio processing filter with the given name.
@@ -41,7 +42,7 @@ public abstract class AudioProcessingFilter extends BasicFilter {
 	}
 
 	//
-	// BASICFILTER METHODS
+	// FILTER METHODS
 	//
 
 	@Override

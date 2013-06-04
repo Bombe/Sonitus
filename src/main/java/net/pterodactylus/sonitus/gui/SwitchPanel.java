@@ -22,9 +22,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.pterodactylus.sonitus.data.controller.Switch;
@@ -39,8 +37,8 @@ public class SwitchPanel extends JPanel {
 	/**
 	 * Creates a new fader panel.
 	 *
-	 * @param fader
-	 * 		The fader being controlled
+	 * @param switchController
+	 * 		The switch being controlled
 	 */
 	public SwitchPanel(final Switch switchController) {
 		super(new GridBagLayout());

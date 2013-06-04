@@ -20,6 +20,8 @@ package net.pterodactylus.sonitus.data.filter;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import net.pterodactylus.sonitus.data.AbstractFilter;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
 /**
@@ -29,7 +31,7 @@ import net.pterodactylus.sonitus.data.Metadata;
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
-public class RateLimitingFilter extends BasicFilter {
+public class RateLimitingFilter extends AbstractFilter implements Filter {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger(RateLimitingFilter.class.getName());
