@@ -68,16 +68,11 @@ public class OggVorbisDecoder extends ExternalFilter {
 	//
 
 	@Override
-	public Metadata metadata() {
-		return super.metadata().encoding("PCM");
-	}
-
-	@Override
 	public void open(Metadata metadata) throws IOException {
 		checkNotNull(metadata, "metadata must not be null");
 		checkArgument(metadata.encoding().equalsIgnoreCase("Vorbis"), "source must be Vorbis-encoded");
 
-		super.open(metadata);
+		super.open(metadata.encoding("PCM"));
 	}
 
 	//

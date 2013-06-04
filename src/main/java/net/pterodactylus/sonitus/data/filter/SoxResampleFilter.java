@@ -58,16 +58,11 @@ public class SoxResampleFilter extends ExternalFilter {
 	//
 
 	@Override
-	public Metadata metadata() {
-		return super.metadata().frequency(rate);
-	}
-
-	@Override
 	public void open(Metadata metadata) throws IOException {
 		checkNotNull(metadata, "metadata must not be null");
 		checkArgument(metadata.encoding().equalsIgnoreCase("PCM"), "source must be PCM-encoded");
 
-		super.open(metadata);
+		super.open(metadata.frequency(rate));
 	}
 
 	//
