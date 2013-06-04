@@ -30,6 +30,9 @@ import com.google.common.base.Optional;
  */
 public class Metadata {
 
+	/** Marker for unknown metadata. */
+	public static final Metadata UNKNOWN = new Metadata();
+
 	/** The format metadata. */
 	private final FormatMetadata formatMetadata;
 
