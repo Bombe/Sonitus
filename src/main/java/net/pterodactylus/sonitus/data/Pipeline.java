@@ -339,6 +339,24 @@ public class Pipeline implements Iterable<Filter> {
 		//
 
 		/**
+		 * Returns the source of this connection.
+		 *
+		 * @return The source of this connection
+		 */
+		public Filter source() {
+			return source;
+		}
+
+		/**
+		 * Returns the sinks of this connection.
+		 *
+		 * @return The sinks of this connection
+		 */
+		public Collection<Filter> sinks() {
+			return sinks;
+		}
+
+		/**
 		 * Returns the time this connection was started.
 		 *
 		 * @return The time this connection was started (in milliseconds since Jan 1,
