@@ -151,6 +151,11 @@ public class StreamSource extends AbstractFilter {
 	}
 
 	@Override
+	public void open(Metadata metadata) throws IOException {
+		/* ignore metadata when opening. */
+	}
+
+	@Override
 	public DataPacket get(int bufferSize) throws IOException {
 		byte[] buffer = new byte[bufferSize];
 		metadataStream.read(buffer);
