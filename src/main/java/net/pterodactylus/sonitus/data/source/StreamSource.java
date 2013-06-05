@@ -66,8 +66,6 @@ public class StreamSource extends AbstractFilter {
 	 * the response header for vital information (sampling frequency, number of
 	 * channels, etc.).
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param streamUrl
 	 * 		The URL of the stream
 	 * @throws IOException

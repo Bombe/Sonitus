@@ -79,8 +79,6 @@ public class Icecast2Sink extends AbstractFilter {
 	/**
 	 * Creates a new Icecast2 sink.
 	 *
-	 * @param eventBus
-	 * 		The event bus
 	 * @param server
 	 * 		The hostname of the server
 	 * @param port
