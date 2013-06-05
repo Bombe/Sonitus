@@ -66,7 +66,7 @@ public interface Filter {
 	Metadata metadata();
 
 	/**
-	 * Notifies the sink that the metadata of the audio stream has changed. This
+	 * Notifies the filter that the metadata of the audio stream has changed. This
 	 * method should return as fast as possible, i.e. every heavy lifting should be
 	 * done from another thread.
 	 *
@@ -91,7 +91,7 @@ public interface Filter {
 	DataPacket get(int bufferSize) throws IOException;
 
 	/**
-	 * Opens this sink using the format parameters of the given metadata.
+	 * Opens this filter using the format parameters of the given metadata.
 	 *
 	 * @param metadata
 	 * 		The metadata of the stream
@@ -100,7 +100,7 @@ public interface Filter {
 	 */
 	void open(Metadata metadata) throws IOException;
 
-	/** Closes this sink. */
+	/** Closes this filter. */
 	void close();
 
 	/**

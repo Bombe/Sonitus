@@ -27,8 +27,7 @@ import net.pterodactylus.sonitus.data.Metadata;
 
 /**
  * Rate limiting filter that only passes a specified amount of data per second
- * from its {@link net.pterodactylus.sonitus.data.Source} to its {@link
- * net.pterodactylus.sonitus.data.Sink}.
+ * from its source to its sinks.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */

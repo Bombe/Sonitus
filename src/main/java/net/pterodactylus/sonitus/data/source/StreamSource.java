@@ -31,6 +31,7 @@ import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.ContentMetadata;
 import net.pterodactylus.sonitus.data.Controller;
 import net.pterodactylus.sonitus.data.DataPacket;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.io.MetadataStream;
@@ -40,7 +41,7 @@ import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 
 /**
- * {@link Source} implementation that can download an audio stream from a
+ * {@link Filter} implementation that can download an audio stream from a
  * streaming server.
  * <p/>
  * Currently only “audio/mpeg” (aka MP3) streams are supported.

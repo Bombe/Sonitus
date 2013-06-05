@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.DataPacket;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
 /**
- * {@link net.pterodactylus.sonitus.data.Sink} that writes all received data
- * into a file.
+ * {@link Filter} that writes all received data into a file.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */

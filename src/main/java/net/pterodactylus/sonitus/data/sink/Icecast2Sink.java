@@ -39,8 +39,8 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.Closeables;
 
 /**
- * {@link net.pterodactylus.sonitus.data.Sink} implementation that delivers all
- * incoming data to an Icecast2 server.
+ * {@link Filter} implementation that delivers all incoming data to an Icecast2
+ * server.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
