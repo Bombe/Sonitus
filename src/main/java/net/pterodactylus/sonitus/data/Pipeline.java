@@ -296,7 +296,7 @@ public class Pipeline implements Iterable<Filter> {
 	 *
 	 * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
 	 */
-	public class Connection implements Runnable {
+	public static class Connection implements Runnable {
 
 		/** The source. */
 		private final Filter source;
