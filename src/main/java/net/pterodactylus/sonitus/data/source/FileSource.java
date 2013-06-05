@@ -29,6 +29,7 @@ import java.util.List;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.io.IdentifyingInputStream;
@@ -82,13 +83,13 @@ public class FileSource extends AbstractFilter {
 	}
 
 	@Override
-	public byte[] get(int bufferSize) throws IOException {
+	public DataPacket get(int bufferSize) throws IOException {
 		byte[] buffer = new byte[bufferSize];
 		int read = fileInputStream.read(buffer);
 		if (read == -1) {
 			throw new EOFException();
 		}
-		return Arrays.copyOf(buffer, read);
+		return new DataPacket(metadata(), Arrays.copyOf(buffer, read));
 	}
 
 	//

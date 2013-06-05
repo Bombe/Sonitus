@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.Metadata;
 
 /**
@@ -72,9 +73,9 @@ public class FileSink extends AbstractFilter {
 	}
 
 	@Override
-	public void process(byte[] buffer) throws IOException {
-		fileOutputStream.write(buffer);
-		logger.finest(String.format("FileSink: Wrote %d Bytes.", buffer.length));
+	public void process(DataPacket dataPacket) throws IOException {
+		fileOutputStream.write(dataPacket.buffer());
+		logger.finest(String.format("FileSink: Wrote %d Bytes.", dataPacket.buffer().length));
 	}
 
 }

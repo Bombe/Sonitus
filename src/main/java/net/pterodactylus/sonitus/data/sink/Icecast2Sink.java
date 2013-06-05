@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.DataPacket;
+import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.io.InputStreamDrainer;
 
@@ -190,8 +192,8 @@ public class Icecast2Sink extends AbstractFilter {
 	}
 
 	@Override
-	public void process(byte[] buffer) throws IOException {
-		socketOutputStream.write(buffer);
+	public void process(DataPacket dataPacket) throws IOException {
+		socketOutputStream.write(dataPacket.buffer());
 		socketOutputStream.flush();
 	}
 

@@ -22,12 +22,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
 /**
  * {@link Filter} implementation that uses the number of bytes that have been
- * {@link #process(byte[]) processed} together with the {@link Metadata} to
+ * {@link #process(DataPacket) processed} together with the {@link Metadata} to
  * calculate how long a source is already playing.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
@@ -77,7 +78,7 @@ public class TimeCounterFilter extends AbstractFilter implements Filter {
 
 	/**
 	 * Returns the number of milliseconds worth of data that has been passed into
-	 * {@link #process(byte[])}. If no metadata has yet been set, {@code 0} is
+	 * {@link #process(DataPacket)}. If no metadata has yet been set, {@code 0} is
 	 * returned.
 	 *
 	 * @return The number of milliseconds the current source is already playing
@@ -109,9 +110,9 @@ public class TimeCounterFilter extends AbstractFilter implements Filter {
 	}
 
 	@Override
-	public void process(byte[] buffer) throws IOException {
-		super.process(buffer);
-		counter.getAndAdd(buffer.length);
+	public void process(DataPacket dataPacket) throws IOException {
+		super.process(dataPacket);
+		counter.getAndAdd(dataPacket.buffer().length);
 		updateTimestamp(false);
 	}
 

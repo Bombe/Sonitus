@@ -124,19 +124,22 @@ public abstract class AbstractFilter implements Filter {
 	}
 
 	@Override
-	public void process(byte[] buffer) throws IOException {
-		outputStream.write(buffer);
+	public void process(DataPacket dataPacket) throws IOException {
+		if (dataPacket.metadata().isPresent() && !dataPacket.metadata().get().equalsIgnoreComment(this.metadata.get())) {
+			metadataUpdated(dataPacket.metadata().get());
+		}
+		outputStream.write(dataPacket.buffer());
 		outputStream.flush();
 	}
 
 	@Override
-	public byte[] get(int bufferSize) throws IOException {
+	public DataPacket get(int bufferSize) throws IOException {
 		byte[] buffer = new byte[bufferSize];
 		int read = inputStream.read(buffer);
 		if (read == -1) {
 			throw new EOFException();
 		}
-		return Arrays.copyOf(buffer, read);
+		return new DataPacket(metadata(), Arrays.copyOf(buffer, read));
 	}
 
 	//

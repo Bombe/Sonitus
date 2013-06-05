@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
@@ -83,10 +84,10 @@ public class RateLimitingFilter extends AbstractFilter implements Filter {
 	}
 
 	@Override
-	public void process(byte[] buffer) throws IOException {
-		super.process(buffer);
+	public void process(DataPacket dataPacket) throws IOException {
+		super.process(dataPacket);
 		/* delay. */
-		counter += buffer.length;
+		counter += dataPacket.buffer().length;
 		long waitTime = (long) (counter / (rate / 1000.0));
 		while ((System.currentTimeMillis() - startTime) < waitTime) {
 			try {

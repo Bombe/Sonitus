@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.ContentMetadata;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.FormatMetadata;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.io.MetadataStream;
@@ -150,10 +151,10 @@ public class StreamSource extends AbstractFilter {
 	}
 
 	@Override
-	public byte[] get(int bufferSize) throws IOException {
+	public DataPacket get(int bufferSize) throws IOException {
 		byte[] buffer = new byte[bufferSize];
 		metadataStream.read(buffer);
-		return buffer;
+		return new DataPacket(metadata(), buffer);
 	}
 
 	//

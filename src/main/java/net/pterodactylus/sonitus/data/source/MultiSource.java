@@ -29,6 +29,7 @@ import javax.swing.event.EventListenerList;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 
@@ -144,7 +145,7 @@ public class MultiSource extends AbstractFilter {
 	}
 
 	@Override
-	public byte[] get(int bufferSize) throws EOFException, IOException {
+	public DataPacket get(int bufferSize) throws EOFException, IOException {
 		while (true) {
 			try {
 				return source.get().get(bufferSize);

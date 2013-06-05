@@ -36,6 +36,7 @@ import javax.sound.sampled.SourceDataLine;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.Controller;
+import net.pterodactylus.sonitus.data.DataPacket;
 import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.controller.Fader;
@@ -172,10 +173,10 @@ public class AudioSink extends AbstractFilter {
 	}
 
 	@Override
-	public void process(byte[] buffer) throws IOException {
-		sourceDataLineOutputStream.write(buffer);
-		super.process(buffer);
-		logger.finest(String.format("AudioSink: Wrote %d Bytes.", buffer.length));
+	public void process(DataPacket dataPacket) throws IOException {
+		sourceDataLineOutputStream.write(dataPacket.buffer());
+		super.process(dataPacket);
+		logger.finest(String.format("AudioSink: Wrote %d Bytes.", dataPacket.buffer().length));
 	}
 
 	//

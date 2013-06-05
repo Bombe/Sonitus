@@ -80,13 +80,15 @@ public interface Filter {
 	 *
 	 * @param bufferSize
 	 * 		The maximum amount of bytes to retrieve from the audio stream
-	 * @return A buffer filled with up to {@code bufferSize} bytes of data; the
+	 * @return A data packet containing the metadata of the stream (optional) and
+	 *         the buffer filled with up to {@code bufferSize} bytes of data; the
 	 *         returned buffer may contain less data than requested but will not
-	 *         contain excess elements
+	 *         contain excess elements (i.e. it can be smaller than the requested
+	 *         size)
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
-	byte[] get(int bufferSize) throws IOException;
+	DataPacket get(int bufferSize) throws IOException;
 
 	/**
 	 * Opens this sink using the format parameters of the given metadata.
@@ -102,13 +104,13 @@ public interface Filter {
 	void close();
 
 	/**
-	 * Processes the given buffer of data.
+	 * Processes the given data packet.
 	 *
-	 * @param buffer
+	 * @param dataPacket
 	 * 		The data to process
 	 * @throws IOException
 	 * 		if an I/O error occurs
 	 */
-	void process(byte[] buffer) throws IOException;
+	void process(DataPacket dataPacket) throws IOException;
 
 }
