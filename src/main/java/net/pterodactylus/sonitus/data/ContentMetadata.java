@@ -193,6 +193,23 @@ public class ContentMetadata {
 		return new ContentMetadata(artist().orNull(), name().orNull(), title(), comment);
 	}
 
+	/**
+	 * Returns whether this content metadata object equals the given object if the
+	 * comments of this and the given object are ignored.
+	 *
+	 * @param object
+	 * 		The object to compare to this one
+	 * @return {@code true} if the given object and this object are equal if the
+	 *         comments are ignored, {@code false} otherwise
+	 */
+	public boolean equalsIgnoreComment(Object object) {
+		if (!(object instanceof ContentMetadata)) {
+			return false;
+		}
+		ContentMetadata contentMetadata = (ContentMetadata) object;
+		return artist().equals(contentMetadata.artist()) && name().equals(contentMetadata.name()) && title().equals(contentMetadata.title());
+	}
+
 	//
 	// OBJECT METHODS
 	//

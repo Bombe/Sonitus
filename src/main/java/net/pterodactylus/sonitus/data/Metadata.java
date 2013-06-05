@@ -236,6 +236,23 @@ public class Metadata {
 		return String.format("%s%s", title(), comment().isPresent() ? String.format(" (%s)", comment().get()) : "");
 	}
 
+	/**
+	 * Returns whether this metadata object equals the given object if the comments
+	 * of this and the given object are ignored.
+	 *
+	 * @param object
+	 * 		The object to compare to this one
+	 * @return {@code true} if the given object and this object are equal if the
+	 *         comments are ignored, {@code false} otherwise
+	 */
+	public boolean equalsIgnoreComment(Object object) {
+		if (!(object instanceof Metadata)) {
+			return false;
+		}
+		Metadata metadata = (Metadata) object;
+		return formatMetadata.equals(metadata.formatMetadata) && contentMetadata.equalsIgnoreComment(metadata.contentMetadata);
+	}
+
 	//
 	// OBJECT METHODS
 	//
