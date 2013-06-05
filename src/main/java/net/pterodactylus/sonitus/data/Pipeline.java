@@ -151,6 +151,7 @@ public class Pipeline implements Iterable<Filter> {
 		}
 		List<Filter> filters = Lists.newArrayList();
 		filters.add(source);
+		source.open(Metadata.UNKNOWN);
 		/* collect all source->sink pairs. */
 		while (!filters.isEmpty()) {
 			Filter filter = filters.remove(0);
