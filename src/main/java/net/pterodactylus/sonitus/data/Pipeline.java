@@ -93,7 +93,8 @@ public class Pipeline implements Iterable<Filter> {
 	 * @param filter
 	 * 		The filter to get the connected filters for
 	 * @return The filters connected to the given filter, or an empty list if the
-	 *         filter does not exist in this pipeline, or is not connected to any filters
+	 *         filter does not exist in this pipeline, or is not connected to any
+	 *         filters
 	 */
 	public List<Filter> filters(Filter filter) {
 		return filters.get(filter);
