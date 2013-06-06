@@ -97,6 +97,9 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 
 	@Override
 	public DataPacket get(int bufferSize) throws IOException {
+		if (filterConnections.get(lastFilter).ioException().isPresent()) {
+			throw filterConnections.get(lastFilter).ioException().get();
+		}
 		return lastFilter.get(bufferSize);
 	}
 
