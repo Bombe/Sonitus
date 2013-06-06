@@ -136,7 +136,7 @@ public class MultiSource extends AbstractFilter {
 
 	@Override
 	public Metadata metadata() {
-		if (super.metadata() == null) {
+		if (super.metadata() == Metadata.UNKNOWN) {
 			/* no metadata yet, wait for it. */
 			waitForNewSource();
 			sourceChanged = false;
