@@ -31,6 +31,8 @@ import com.google.common.collect.Lists;
 
 /**
  * Parser and container for information about a FLAC stream.
+ * <p/>
+ * Information taken from <a href="http://flac.sourceforge.net/format.html">http://flac.sourceforge.net/format.html</a>.
  *
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
