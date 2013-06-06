@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
@@ -38,6 +39,9 @@ import com.google.common.io.Closeables;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public abstract class AbstractFilter implements Filter {
+
+	/** The logger. */
+	private static final Logger logger = Logger.getLogger(AbstractFilter.class.getName());
 
 	/** The name of this filter. */
 	private final String name;
@@ -128,6 +132,7 @@ public abstract class AbstractFilter implements Filter {
 		if (dataPacket.metadata().isPresent() && !dataPacket.metadata().get().equalsIgnoreComment(this.metadata.get())) {
 			metadataUpdated(dataPacket.metadata().get());
 		}
+		logger.finest(String.format("Writing %d bytes to %s...", dataPacket.buffer().length, name()));
 		outputStream.write(dataPacket.buffer());
 		outputStream.flush();
 	}
