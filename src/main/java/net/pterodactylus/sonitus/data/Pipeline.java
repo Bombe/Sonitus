@@ -317,6 +317,9 @@ public class Pipeline implements Iterable<Filter> {
 		/** The number of copied bytes. */
 		private long counter;
 
+		/** The exception that was encountered, if any. */
+		private Optional<IOException> ioException = Optional.absent();
+
 		/**
 		 * Creates a new connection.
 		 *
@@ -377,6 +380,17 @@ public class Pipeline implements Iterable<Filter> {
 			return counter;
 		}
 
+		/**
+		 * Returns the I/O exception that was encountered while processing this
+		 * connection.
+		 *
+		 * @return The I/O exception that occured, or {@link Optional#absent()} if no
+		 *         exception occured
+		 */
+		public Optional<IOException> ioException() {
+			return ioException;
+		}
+
 		//
 		// ACTIONS
 		//
@@ -396,13 +410,9 @@ public class Pipeline implements Iterable<Filter> {
 			while (!stopped.get()) {
 				try {
 					final DataPacket dataPacket;
-					try {
-						logger.finest(String.format("Getting %d bytes from %s...", 4096, source.name()));
-						dataPacket = source.get(4096);
-						logger.finest(String.format("Got %d bytes from %s.", dataPacket.buffer().length, source.name()));
-					} catch (IOException ioe1) {
-						throw new IOException(String.format("I/O error while reading from %s.", source.name()), ioe1);
-					}
+					logger.finest(String.format("Getting %d bytes from %s...", 4096, source.name()));
+					dataPacket = source.get(4096);
+					logger.finest(String.format("Got %d bytes from %s.", dataPacket.buffer().length, source.name()));
 					List<Future<Void>> futures = executorService.invokeAll(FluentIterable.from(sinks).transform(new Function<Filter, Callable<Void>>() {
 
 						@Override
@@ -411,13 +421,9 @@ public class Pipeline implements Iterable<Filter> {
 
 								@Override
 								public Void call() throws Exception {
-									try {
-										logger.finest(String.format("Sending %d bytes to %s.", dataPacket.buffer().length, sink.name()));
-										sink.process(dataPacket);
-										logger.finest(String.format("Sent %d bytes to %s.", dataPacket.buffer().length, sink.name()));
-									} catch (IOException ioe1) {
-										throw new IOException(String.format("I/O error while writing to %s", sink.name()), ioe1);
-									}
+									logger.finest(String.format("Sending %d bytes to %s.", dataPacket.buffer().length, sink.name()));
+									sink.process(dataPacket);
+									logger.finest(String.format("Sent %d bytes to %s.", dataPacket.buffer().length, sink.name()));
 									return null;
 								}
 							};
@@ -429,8 +435,7 @@ public class Pipeline implements Iterable<Filter> {
 					}
 					counter += dataPacket.buffer().length;
 				} catch (IOException e) {
-					/* TODO */
-					e.printStackTrace();
+					ioException = Optional.of(e);
 					break;
 				} catch (InterruptedException e) {
 					/* TODO */
