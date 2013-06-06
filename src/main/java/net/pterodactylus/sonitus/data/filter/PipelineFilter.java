@@ -28,8 +28,6 @@ import net.pterodactylus.sonitus.data.Filter;
 import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Pipeline.Connection;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 /**
@@ -84,13 +82,7 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 			filter.open(currentMetadata);
 			currentMetadata = filter.metadata();
 			Connection connection = new Connection(currentSource, Arrays.asList(filter));
-			String threadName = String.format("%s → %s.", connection.source().name(), FluentIterable.from(connection.sinks()).transform(new Function<Filter, String>() {
-
-				@Override
-				public String apply(Filter sink) {
-					return sink.name();
-				}
-			}));
+			String threadName = String.format("%s → %s", connection.source().name(), filter.name());
 			new Thread(connection, threadName).start();
 			currentSource = filter;
 		}
