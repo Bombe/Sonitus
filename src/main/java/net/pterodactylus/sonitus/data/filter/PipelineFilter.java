@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.DataPacket;
@@ -38,6 +39,9 @@ import com.google.common.collect.Maps;
  * @author <a href="mailto:bombe@pterodactylus.net">David ‘Bombe’ Roden</a>
  */
 public class PipelineFilter extends AbstractFilter implements Filter {
+
+	/** The logger. */
+	private static final Logger logger = Logger.getLogger(PipelineFilter.class.getName());
 
 	/** The first filter. */
 	private final Filter source;
@@ -89,6 +93,7 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 			Connection connection = new Connection(currentSource, Arrays.asList(filter));
 			filterConnections.put(filter, connection);
 			String threadName = String.format("%s → %s", connection.source().name(), filter.name());
+			logger.info(String.format("Starting Thread: %s.", threadName));
 			new Thread(connection, threadName).start();
 			currentSource = filter;
 		}
@@ -98,8 +103,10 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 	@Override
 	public DataPacket get(int bufferSize) throws IOException {
 		if (filterConnections.get(lastFilter).ioException().isPresent()) {
+			logger.info(String.format("Rethrowing exception from %s: %s", lastFilter.name(), filterConnections.get(lastFilter).ioException().get().getMessage()));
 			throw filterConnections.get(lastFilter).ioException().get();
 		}
+		logger.info(String.format("Requesting %d bytes from %s...", bufferSize, lastFilter.name()));
 		return lastFilter.get(bufferSize);
 	}
 
