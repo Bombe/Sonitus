@@ -299,6 +299,9 @@ public class Pipeline implements Iterable<Filter> {
 	 */
 	public static class Connection implements Runnable {
 
+		/** The logger. */
+		private static final Logger logger = Logger.getLogger(Connection.class.getName());
+
 		/** The source. */
 		private final Filter source;
 
