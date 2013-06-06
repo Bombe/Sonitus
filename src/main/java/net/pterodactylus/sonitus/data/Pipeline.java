@@ -138,15 +138,16 @@ public class Pipeline implements Iterable<Filter> {
 		}
 		List<Filter> filters = Lists.newArrayList();
 		filters.add(source);
-		source.open(Metadata.UNKNOWN);
+		Metadata currentMetadata = Metadata.UNKNOWN;
 		/* collect all source->sink pairs. */
 		while (!filters.isEmpty()) {
 			Filter filter = filters.remove(0);
+			logger.info(String.format("Opening %s with %s...", filter.name(), currentMetadata));
+			filter.open(currentMetadata);
+			currentMetadata = filter.metadata();
 			Collection<Filter> sinks = this.filters.get(filter);
 			connections.add(new Connection(filter, sinks));
 			for (Filter sink : sinks) {
-				logger.info(String.format("Opening %s with %s...", sink.name(), source.metadata()));
-				sink.open(filter.metadata());
 				filters.add(sink);
 			}
 		}
