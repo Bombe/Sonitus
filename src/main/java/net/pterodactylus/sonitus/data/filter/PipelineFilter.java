@@ -92,6 +92,7 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 			new Thread(connection, threadName).start();
 			currentSource = filter;
 		}
+		metadataUpdated(currentMetadata);
 	}
 
 	@Override
