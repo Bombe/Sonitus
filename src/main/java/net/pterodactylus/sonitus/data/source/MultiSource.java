@@ -105,7 +105,7 @@ public class MultiSource extends AbstractFilter {
 				this.source.notifyAll();
 			}
 			metadataUpdated(source.metadata());
-			logger.info(String.format("Next Source set: %s", source));
+			logger.info(String.format("Next Source set: %s", source.name()));
 		}
 	}
 
@@ -150,6 +150,7 @@ public class MultiSource extends AbstractFilter {
 			try {
 				return source.get().get(bufferSize);
 			} catch (EOFException eofe1) {
+				logger.info(String.format("Got EOF from %s.", source.get().name()));
 				waitForNewSource();
 			} finally {
 				synchronized (source) {
