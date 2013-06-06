@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import net.pterodactylus.sonitus.data.AbstractFilter;
 import net.pterodactylus.sonitus.data.DataPacket;
@@ -29,6 +30,7 @@ import net.pterodactylus.sonitus.data.Metadata;
 import net.pterodactylus.sonitus.data.Pipeline.Connection;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * {@link Filter} that combines several filters into one.
@@ -45,6 +47,9 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 
 	/** The last filter (for convenience). */
 	private final Filter lastFilter;
+
+	/** The connections for each filter. */
+	private final Map<Filter, Connection> filterConnections = Maps.newHashMap();
 
 	/**
 	 * Creates a new pipeline filter.
@@ -82,6 +87,7 @@ public class PipelineFilter extends AbstractFilter implements Filter {
 			filter.open(currentMetadata);
 			currentMetadata = filter.metadata();
 			Connection connection = new Connection(currentSource, Arrays.asList(filter));
+			filterConnections.put(filter, connection);
 			String threadName = String.format("%s → %s", connection.source().name(), filter.name());
 			new Thread(connection, threadName).start();
 			currentSource = filter;
